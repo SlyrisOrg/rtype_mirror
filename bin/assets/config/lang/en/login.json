@@ -1,0 +1,16 @@
+{
+  "loginscene": {
+    "logbutton" : "LOGIN",
+    "exitbutton" : "EXIT",
+    "exityesbutton" : "YES",
+    "exitnobutton" : "NO",
+    "exittextmessage" : "Do you want to quit the game ?",
+    "erroryesbutton" : "OK",
+    "accountinformationimage" : "RTAccount/Information",
+    "accountinformationimagesize" : [207, 11],
+    "accountnamelabelimage" : "RTAccountName/AccountName",
+    "accountnamelabelsize": [102, 10],
+    "accountpasswordlabelimage" : "RTPassword/Password",
+    "accountpasswordlabelsize": [117, 10]
+  }
+}

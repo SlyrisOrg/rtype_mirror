@@ -1,0 +1,6 @@
+{
+  "createscene": {
+    "choosefactionimage" : "RTMainScene/TextCreateFR",
+    "choosefactionimagesize" : [248, 28]
+  }
+}

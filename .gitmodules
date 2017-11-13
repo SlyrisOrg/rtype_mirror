@@ -1,0 +1,9 @@
+[submodule "vendor/core"]
+	path = vendor/core
+	url = ssh://git.slyris.eu:29418/core
+[submodule "bin/assets/gui"]
+	path = bin/assets/gui
+	url = https://github.com/Milerius/GUISpace.git
+[submodule "vendor/rapidjson"]
+	path = vendor/rapidjson
+	url = https://github.com/Tencent/rapidjson.git

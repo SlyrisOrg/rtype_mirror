@@ -1,0 +1,26 @@
+{
+  "RTypeError": {
+    "Success": "Success.",
+    "NotFound": "Internal error occurred, please contact an administrator.",
+    "InternalError": "Internal error occurred, please contact an administrator.",
+    "InvalidSignature": "Error invalid signature.",
+    "InvalidToken": "Error invalid Token.",
+    "InvalidRequest": "Error invalid request.",
+    "UserPseudoEmpty": "Error user pseudo is empty.",
+    "UserPseudoBadFormat": "Error user pseudo bad format.",
+    "UserAlreadyTaken": "This nickname is already taken by another user.",
+    "UserNameEmpty": "Error username is empty.",
+    "UserNameBadFormat": "Error username bad format.",
+    "UserEmailEmpty": "Error user email is empty.",
+    "UserEmailBadFormat": "Error user email bad format.",
+    "UserPasswordEmpty": "Error password is empty.",
+    "UserPasswordBadFormat": "Error password bad format.",
+    "UserGetDataFail": "Error user get data fail",
+    "UserPutDataFail": "Error user put data fail.",
+    "UserPostDataFail": "Error user post data fail.",
+    "UserSigningFail": "Username or password is incorrect. Please try logging in again.",
+    "UserSignupFail": "Error user signup fail.",
+    "CredentialsEmpty": "Username or email is missing",
+    "NoInternet": "Oops, it seems you do not have internet"
+  }
+}
