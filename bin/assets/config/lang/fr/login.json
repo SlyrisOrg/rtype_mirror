@@ -1,0 +1,16 @@
+{
+  "loginscene": {
+    "logbutton" : "CONNEXION",
+    "exitbutton" : "QUITTER",
+    "erroryesbutton" : "D'ACCORD",
+    "exityesbutton" : "OUI",
+    "exitnobutton" : "NON",
+    "exittextmessage" : "Voulez vous quittez le jeu ?",
+    "accountinformationimage" : "RTMainScene/InformationFR",
+    "accountinformationimagesize" : [207, 17],
+    "accountnamelabelimage" : "RTMainScene/AccountNameLabelFR",
+    "accountnamelabelsize": [114, 10],
+    "accountpasswordlabelimage" : "RTMainScene/PasswordFR",
+    "accountpasswordlabelsize": [98, 10]
+  }
+}

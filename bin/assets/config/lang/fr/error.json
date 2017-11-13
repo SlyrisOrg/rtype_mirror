@@ -1,0 +1,26 @@
+{
+  "RTypeError": {
+    "Success": "Succès.",
+    "NotFound": "Une erreur interne s'est produite, veuillez contacter un administrateur.",
+    "InternalError": "Une erreur interne s'est produite, veuillez contacter un administrateur.",
+    "InvalidSignature": "Erreur, la signature invalide.",
+    "InvalidToken": "Erreur, le Token est invalide.",
+    "InvalidRequest": "Erreur, la requête est invalide.",
+    "UserPseudoEmpty": "Erreur, le pseudo est vide.",
+    "UserPseudoBadFormat": "Erreur, le pseudo à un mauvais format.",
+    "UserAlreadyTaken": "Ce nom d'utilisateur est déjà pris par un autre utilisateur.",
+    "UserNameEmpty": "Erreur, le nom d'utilisateur est vide.",
+    "UserNameBadFormat": "Erreur, le nom d'utilisateur a un mauvais format.",
+    "UserEmailEmpty": "Erreur, l'email de l'utilisateur est vide.",
+    "UserEmailBadFormat": "Erreur, l'email de l'utilisateur a un mauvais format.",
+    "UserPasswordEmpty": "Erreur, le mot de passe ne peut pas etre vide.",
+    "UserPasswordBadFormat": "Erreur, le mot de passe semble avoir un format invalide, veuillez réessayer.",
+    "UserGetDataFail": "Erreur, la récupération des données de l'utilisateur a échouée.",
+    "UserPutDataFail": "Erreur, l'inscription des données de l'utilisateur a échouée.",
+    "UserPostDataFail": "Erreur pendant de l'envoie des données de l'utilisateur.",
+    "UserSigningFail": "L'identifiant ou le mot de passe est incorrect. Veuillez reessayer de vous connecter.",
+    "UserSignupFail": "Erreur, l'inscription à échouée.",
+    "CredentialsEmpty": "Nom d'utilisateur ou email manquant",
+    "NoInternet": "Oops, il semblerait que vous n'avez pas internet."
+  }
+}

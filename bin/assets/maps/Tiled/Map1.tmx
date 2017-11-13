@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.2" orientation="isometric" renderorder="right-down" width="40" height="40" tilewidth="128" tileheight="64" nextobjectid="1">
+ <tileset firstgid="1" source="Bricks.tsx"/>
+ <tileset firstgid="13" source="Water.tsx"/>
+ <tileset firstgid="62" source="Grass.tsx"/>
+ <tileset firstgid="82" source="low.tsx"/>
+ <tileset firstgid="97" source="RiverBerd.tsx"/>
+ <tileset firstgid="106" source="Wood.tsx"/>
+ <tileset firstgid="110" source="dirt.tsx"/>
+ <layer name="Calque 1" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztwwEJAAAMBKEr9/0rrcdQcNVUVVVVVVUfPVOdr1A=
+  </data>
+ </layer>
+</map>
