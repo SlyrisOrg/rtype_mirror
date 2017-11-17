@@ -1,6 +1,6 @@
 set(CONFIG ${CMAKE_SOURCE_DIR}/Project/rtype/config)
 
-set(GAME_TEMPLATE_CONFIG_HEADERS
+set(RTYPE_CONFIG_HEADERS
         ${CONFIG}/Configuration.hpp
         ${CONFIG}/LoginConfig.hpp
         ${CONFIG}/ErrorConfig.hpp
@@ -11,7 +11,7 @@ set(GAME_TEMPLATE_CONFIG_HEADERS
         PARENT_SCOPE
         )
 
-set(GAME_TEMPLATE_CONFIG_SOURCES
+set(RTYPE_CONFIG_SOURCES
         ${CONFIG}/Configuration.cpp
         ${CONFIG}/LoginConfig.cpp
         ${CONFIG}/ErrorConfig.cpp
