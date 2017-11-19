@@ -119,6 +119,10 @@ namespace rtype
         __loadJSON(path, doc);
         auto &&value = doc["createscene"];
         cfg::create::chooseFactionImage = value["choosefactionimage"].GetString();
+        cfg::create::backButtonText = value["backbutton"].GetString();
+        cfg::create::createButtonText = value["createbutton"].GetString();
+        cfg::create::factionHeadLabel = value["factionheadlabel"].GetString();
+        cfg::create::spaceshipHeadLabel = value["factionheadspaceshiplabel"].GetString();
         cfg::create::chooseFactionSize = {{0.f, value["choosefactionimagesize"].GetArray()[0].GetFloat()},
                                           {0.f, value["choosefactionimagesize"].GetArray()[1].GetFloat()}};
     }

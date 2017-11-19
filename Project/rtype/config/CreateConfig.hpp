@@ -12,6 +12,10 @@ namespace cfg::create
 {
     static inline constexpr const char *createLayout = "RTCreate.layout";
     extern std::string chooseFactionImage;
+    extern std::string backButtonText;
+    extern std::string createButtonText;
+    extern std::string factionHeadLabel;
+    extern std::string spaceshipHeadLabel;
     extern CEGUI::USize chooseFactionSize;
 }
 

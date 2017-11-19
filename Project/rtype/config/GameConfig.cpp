@@ -12,5 +12,5 @@ namespace cfg::game
     unsigned int height = cfg::maxHeight;
     inline std::string lang = cfg::defaultLang;
     inline std::string apiURL = "http://rtype.slyris.eu/api/";
-    inline std::string tokenSession = "INVALID TOKEN";
+    inline std::string tokenSession = "JWT ";
 }
