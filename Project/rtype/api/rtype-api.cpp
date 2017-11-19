@@ -14,7 +14,7 @@ namespace rtype
     {
         auto url = utility::conversions::to_string_t(cfg::game::apiURL + "user/signin");
         auto &&client = __request(url, {std::make_pair(U("name"), username), std::make_pair(U("password"), password)});
-
+        DEBUG_REQUEST(request);
         return client.request(request).then([&freshAccount, &ec](const web::http::http_response &response) {
             if (response.status_code() == web::http::status_codes::OK) {
                 return response.extract_json();
@@ -25,13 +25,20 @@ namespace rtype
         });
     }
 
-    pplx::task<void> API::requestCreatePlayer(const std::string &pseudo, const std::string &tokens,
+    pplx::task<void> API::requestCreatePlayer(const std::string &pseudo,
+                                              unsigned int factionId,
+                                              const std::string &tokens,
                                               std::error_code &ec) noexcept
     {
         auto url = utility::conversions::to_string_t(cfg::game::apiURL + "user");
-        auto &&client = __request(url, {std::make_pair(U("nickname"), pseudo)});
-
-        request.headers().add(U("Token"), utility::conversions::to_string_t(tokens));
+        web::json::value postData;
+        postData["nickname"] = web::json::value::string(utility::conversions::to_string_t(pseudo));
+        postData["faction"] = web::json::value::number(factionId);
+        web::http::client::http_client client(url);
+        request.headers().clear();
+        __prepareRequest(request, postData);
+        request.headers().add(U("Authorization"), utility::conversions::to_string_t(tokens));
+        DEBUG_REQUEST(request);
         return client.request(request).then([&ec](const web::http::http_response &response) {
             if (response.status_code() == web::http::status_codes::OK) {
                 return response.extract_json();
@@ -71,7 +78,7 @@ namespace rtype
 #endif
                 log(lg::Info) << "Token Session -> " << token << std::endl;
                 freshAccount = obj.at(U("content")).as_object().at(U("new")).as_bool();
-                cfg::game::tokenSession = token;
+                cfg::game::tokenSession.append(token);
             } else {
                 log(lg::Warning) << ec.message() << std::endl;
             }

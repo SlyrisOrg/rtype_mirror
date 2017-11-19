@@ -23,12 +23,18 @@
 
 #if defined(DEBUG)
 #if defined(USING_WINDOWS)
-#define DEBUG_JSON(value) log(lg::Debug) << "Receive -> " << utility::conversions::utf16_to_utf8((value).serialize()) << std::endl
+#define DEBUG_REQUEST(value) log(lg::Debug) << "Http request send ->\n" << \
+        utility::conversions::utf16_to_utf8((value).to_string()) << std::endl
+#define DEBUG_JSON(value) log(lg::Debug) << "Http response receive ->\n" << \
+        utility::conversions::utf16_to_utf8((value).serialize()) << std::endl
 #else
-#define DEBUG_JSON(value) log(lg::Debug) << "Receive -> " << utility::conversions::to_string_t((value).serialize()) << std::endl
+#define DEBUG_REQUEST(value) log(lg::Debug) << "Http request send ->\n" << (value).to_string() << std::endl
+#define DEBUG_JSON(value) log(lg::Debug) << "Http response receive ->\n" << \
+        utility::conversions::to_string_t((value).serialize()) << std::endl
 #endif
 #else
 #define DEBUG_JSON(value)
+#define DEBUG_REQUEST(value)
 #endif
 
 namespace rtype
@@ -41,6 +47,7 @@ namespace rtype
         static pplx::task<void> requestLogin(const std::string &username, const std::string &password,
                                              bool &freshAccount, std::error_code &ec) noexcept;
         static pplx::task<void> requestCreatePlayer(const std::string &pseudo,
+                                                    unsigned int factionId,
                                                     const std::string &tokens, std::error_code &ec) noexcept;
 
     private:
