@@ -21,16 +21,6 @@
 #include <rtype/error/RTypeError.hpp>
 #include <rtype/gutils/manager/EventManager.hpp>
 
-#if defined(DEBUG)
-#if defined(USING_WINDOWS)
-#define DEBUG_JSON(value) log(lg::Debug) << "Receive -> " << utility::conversions::utf16_to_utf8((value).serialize()) << std::endl
-#else
-#define DEBUG_JSON(value) log(lg::Debug) << "Receive -> " << utility::conversions::to_string_t((value).serialize()) << std::endl
-#endif
-#else
-#define DEBUG_JSON(value)
-#endif
-
 namespace rtype
 {
     namespace lg = logging;
@@ -41,6 +31,7 @@ namespace rtype
         static pplx::task<void> requestLogin(const std::string &username, const std::string &password,
                                              bool &freshAccount, std::error_code &ec) noexcept;
         static pplx::task<void> requestCreatePlayer(const std::string &pseudo,
+                                                    unsigned int factionId,
                                                     const std::string &tokens, std::error_code &ec) noexcept;
 
     private:
@@ -50,7 +41,8 @@ namespace rtype
         static void __prepareRequest(web::http::http_request &request, web::json::value &postData) noexcept;
         static void __login(bool &freshAccount, const pplx::task<web::json::value> &task, std::error_code &ec) noexcept;
         static void __create(const pplx::task<web::json::value> &task, std::error_code &code) noexcept;
-
+        static void __debugJson(const web::json::value& value) noexcept;
+        static void __debugRequest(const web::http::http_request& request) noexcept;
     private:
         static lg::Logger log;
         static web::http::http_request request;
