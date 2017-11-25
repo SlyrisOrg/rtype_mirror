@@ -23,6 +23,7 @@ namespace rtype
         //! Public static functions
         static void setText(std::pair<CEGUI::Window *, std::string> &&tp) noexcept;
         static void setSize(std::pair<CEGUI::Window *, CEGUI::USize> &&tp) noexcept;
+        static void replaceText(std::tuple<CEGUI::Window *, std::string, std::string> &&tp) noexcept;
         static void setProperty(std::tuple<CEGUI::Window *, std::string, std::string> &&tp) noexcept;
         static CEGUI::Window *setSheet(std::string const &sheetName) noexcept;
         static void destroySheet(CEGUI::Window &sheet) noexcept;

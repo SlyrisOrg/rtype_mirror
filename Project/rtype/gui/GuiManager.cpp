@@ -32,6 +32,14 @@ namespace rtype
         widget->setText(value);
     }
 
+    void GuiManager::replaceText(std::tuple<CEGUI::Window *, std::string, std::string> &&tp) noexcept
+    {
+        const auto& [widget, search, replace] = tp;
+        std::string stdStr = widget->getText().c_str();
+        stdStr.replace(stdStr.find(search), search.length(), replace);
+        widget->setText(stdStr);
+    }
+
     void GuiManager::setSize(std::pair<CEGUI::Window *, CEGUI::USize> &&tp) noexcept
     {
         const auto& [widget, value] = tp;
