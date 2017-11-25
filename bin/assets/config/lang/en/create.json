@@ -1,6 +1,10 @@
 {
   "createscene": {
     "choosefactionimage" : "RTFaction/TextCreate",
-    "choosefactionimagesize" : [192, 28]
+    "choosefactionimagesize" : [192, 28],
+    "backbutton": "BACK",
+    "createbutton": "CREATE",
+    "factionheadlabel": "The \"Bheet\" faction",
+    "factionheadspaceshiplabel": "The \"Bheet\" Spaceship"
   }
 }
