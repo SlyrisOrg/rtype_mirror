@@ -13,6 +13,7 @@ namespace rtype
     Game::Game() noexcept
     {
         _evtMgr.subscribe<evt::GameShutdown>(*this);
+        _evtMgr.subscribe<evt::RestoreDefault>(*this);
     }
 
     Game::~Game() noexcept
@@ -78,9 +79,16 @@ namespace rtype
         _isRunning = true;
     }
 
+
+    void Game::receive(const evt::RestoreDefault &evt) noexcept
+    {
+        World::initialState(evt.win);
+    }
+
     void Game::run()
     {
         __initSystems();
         __launch();
     }
+
 }
