@@ -14,7 +14,7 @@ namespace rtype
     {
         auto url = utility::conversions::to_string_t(cfg::game::apiURL + "user/signin");
         auto &&client = __request(url, {std::make_pair(U("name"), username), std::make_pair(U("password"), password)});
-
+        __debugRequest(request);
         return client.request(request).then([&freshAccount, &ec](const web::http::http_response &response) {
             if (response.status_code() == web::http::status_codes::OK) {
                 return response.extract_json();
@@ -25,13 +25,20 @@ namespace rtype
         });
     }
 
-    pplx::task<void> API::requestCreatePlayer(const std::string &pseudo, const std::string &tokens,
+    pplx::task<void> API::requestCreatePlayer(const std::string &pseudo,
+                                              unsigned int factionId,
+                                              const std::string &tokens,
                                               std::error_code &ec) noexcept
     {
         auto url = utility::conversions::to_string_t(cfg::game::apiURL + "user");
-        auto &&client = __request(url, {std::make_pair(U("nickname"), pseudo)});
-
-        request.headers().add(U("Token"), utility::conversions::to_string_t(tokens));
+        web::json::value postData;
+        postData["nickname"] = web::json::value::string(utility::conversions::to_string_t(pseudo));
+        postData["faction"] = web::json::value::number(factionId);
+        web::http::client::http_client client(url);
+        request.headers().clear();
+        __prepareRequest(request, postData);
+        request.headers().add(U("Authorization"), utility::conversions::to_string_t(tokens));
+        __debugRequest(request);
         return client.request(request).then([&ec](const web::http::http_response &response) {
             if (response.status_code() == web::http::status_codes::OK) {
                 return response.extract_json();
@@ -41,10 +48,7 @@ namespace rtype
             __create(previousTask, ec);
         });
     }
-}
 
-namespace rtype
-{
     void API::__prepareRequest(web::http::http_request &request, web::json::value &postData) noexcept
     {
         request.set_method(web::http::methods::POST);
@@ -58,7 +62,7 @@ namespace rtype
         try {
             auto response = task.get();
             web::json::object obj = response.as_object();
-            DEBUG_JSON(response);
+            __debugJson(response);
             ec = static_cast<RTypeErrorCode>(obj.at(U("payload")).as_integer());
 
             if (!ec) {
@@ -71,7 +75,7 @@ namespace rtype
 #endif
                 log(lg::Info) << "Token Session -> " << token << std::endl;
                 freshAccount = obj.at(U("content")).as_object().at(U("new")).as_bool();
-                cfg::game::tokenSession = token;
+                cfg::game::tokenSession.append(token);
             } else {
                 log(lg::Warning) << ec.message() << std::endl;
             }
@@ -91,7 +95,7 @@ namespace rtype
         try {
             auto response = previousTask.get();
             web::json::object obj = response.as_object();
-            DEBUG_JSON(response);
+            __debugJson(response);
             ec = static_cast<RTypeErrorCode>(obj.at(U("payload")).as_integer());
             if (!ec) {
                 log(lg::Info) << ec.message() << std::endl;
@@ -120,5 +124,25 @@ namespace rtype
         request.headers().clear();
         __prepareRequest(request, postData);
         return client;
+    }
+
+    void API::__debugJson(const web::json::value &value) noexcept
+    {
+        using namespace utility::conversions;
+#if defined(USING_WINDOWS)
+        log(lg::Debug) << "Http response receive ->\n" << utf16_to_utf8(value.serialize()) << std::endl;
+#else
+        log(lg::Debug) << "Http response receive ->\n" << to_string_t((value).serialize()) << std::endl;
+#endif
+    }
+
+    void API::__debugRequest(const web::http::http_request &request) noexcept
+    {
+#if defined(USING_WINDOWS)
+        using namespace utility::conversions;
+        log(lg::Debug) << "Http request send ->\n" << utf16_to_utf8(request.to_string()) << std::endl;
+#else
+        log(lg::Debug) << "Http request send ->\n" << request.to_string() << std::endl;
+#endif
     }
 }
