@@ -18,9 +18,19 @@ namespace rtype
     public:
         World()
         {
-            _win.setMouseCursorVisible(false);
-            _win.setPosition(sf::Vector2i((sf::VideoMode::getDesktopMode().width / 2) - cfg::game::width / 2,
-                                          (sf::VideoMode::getDesktopMode().height / 2) - cfg::game::height / 2));
+            World::initialState(_win);
+        }
+
+        /**
+         * @param win SFML Window
+         * @note use this fonction if you want to restore the initial state of the window.
+         * Usage : Fullscreen events, World Initialization, after a alt-tab on a desktop
+         */
+        static void initialState(sf::Window &win) noexcept
+        {
+            win.setMouseCursorVisible(false);
+            win.setPosition(sf::Vector2i((sf::VideoMode::getDesktopMode().width / 2) - cfg::game::width / 2,
+                                         (sf::VideoMode::getDesktopMode().height / 2) - cfg::game::height / 2));
         }
 
     protected:

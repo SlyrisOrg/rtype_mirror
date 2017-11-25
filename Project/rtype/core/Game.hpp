@@ -21,6 +21,7 @@ namespace rtype
 
     public:
         void receive(const evt::GameShutdown &evt) noexcept;
+        void receive(const evt::RestoreDefault &evt) noexcept;
         void run();
 
     private:
