@@ -30,10 +30,11 @@ namespace rtype
         void __update(const sf::Time &time) noexcept;
         void __sysUpdate(const sf::Time &time) noexcept;
         void __sysDraw() noexcept;
-
+        void __render() noexcept;
     private:
         bool _isRunning{false};
         logging::Logger _log{"RType", logging::Info};
+
     };
 }
 
