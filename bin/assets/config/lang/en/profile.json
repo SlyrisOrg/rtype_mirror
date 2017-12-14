@@ -1,5 +1,13 @@
 {
   "profilscene": {
-    "levellabel": "LEVEL"
+    "labels": {
+      "levellabel": "LEVEL",
+      "shoplabel": "        SHOP",
+      "profilelabel": "        PROFILE",
+      "playlabel": "PLAY",
+      "optionsbuttonlabel": "OPTIONS",
+      "logoutbuttonlabel": "LOG OUT",
+      "exitdesktopbuttonlabel": "EXIT TO DESKTOP"
+    }
   }
 }

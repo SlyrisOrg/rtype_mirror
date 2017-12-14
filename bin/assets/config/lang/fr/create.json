@@ -2,9 +2,11 @@
   "createscene": {
     "choosefactionimage" : "RTMainScene/TextCreateFR",
     "choosefactionimagesize" : [248, 28],
-    "backbutton": "RETOUR",
-    "createbutton": "CREER",
-    "factionheadlabel": "La Faction : \"Bheet\"",
-    "factionheadspaceshiplabel": "Le vaisseau : \"Bheet\""
+    "labels": {
+      "backbutton": "RETOUR",
+      "createbutton": "CREER",
+      "factionheadlabel": "La Faction : \"Bheet\"",
+      "factionheadspaceshiplabel": "Le vaisseau : \"Bheet\""
+    }
   }
 }

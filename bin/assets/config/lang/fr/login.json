@@ -5,7 +5,7 @@
     "erroryesbutton" : "D'ACCORD",
     "exityesbutton" : "OUI",
     "exitnobutton" : "NON",
-    "exittextmessage" : "Voulez vous quittez le jeu ?",
+    "exittextmessage" : "Voulez vous quitter le jeu ?",
     "accountinformationimage" : "RTMainScene/InformationFR",
     "accountinformationimagesize" : [207, 17],
     "accountnamelabelimage" : "RTMainScene/AccountNameLabelFR",

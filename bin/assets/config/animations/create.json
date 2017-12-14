@@ -1,0 +1,75 @@
+{
+  "createanim": [
+    {
+      "name":"BheetArrival",
+      "animinfo":
+      {
+        "animation":"BheetArrival",
+        "speed": 0.08,
+        "repeat": 0,
+        "status":2,
+        "loop":false
+      }
+    },
+    {
+      "name":"KooyArrival",
+      "animinfo":
+      {
+        "animation":"KooyArrival",
+        "speed": 0.08,
+        "repeat": 0,
+        "status":2,
+        "loop":false
+      }
+    },
+    {
+      "name":"MaulArrival",
+      "animinfo":
+      {
+        "animation":"MaulArrival",
+        "speed": 0.08,
+        "repeat": 0,
+        "status":2,
+        "loop":false
+      }
+    },
+    {
+      "name":"BheetLv1",
+      "animinfo":
+      {
+        "animation":"BheetLv1",
+        "speed": 0.08,
+        "repeat":0,
+        "status":2,
+        "loop":true
+      }
+    },
+    {
+      "name":"MaulLv1",
+      "animinfo":
+      {
+        "animation":"MaulLv1",
+        "speed": 0.08,
+        "repeat":0,
+        "status":2,
+        "loop":true
+      }
+    },
+    {
+      "name":"KooyLv1",
+      "animinfo":
+      {
+        "animation":"KooyLv1",
+        "speed": 0.08,
+        "repeat":0,
+        "status":2,
+        "loop":true
+      }
+    }
+  ],
+  "multianim": {
+    "Bheet": ["BheetArrival", "BheetLv1"],
+    "Kooy": ["KooyArrival", "KooyLv1"],
+    "Maul": ["MaulArrival", "MaulLv1"]
+  }
+}

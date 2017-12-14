@@ -1,5 +1,13 @@
 {
   "profilscene": {
-    "levellabel": "NIVEAU"
+    "labels": {
+      "levellabel": "NIVEAU",
+      "shoplabel": "        BOUTIQUE",
+      "profilelabel": "        PROFIL",
+      "playlabel": "JOUER",
+      "optionsbuttonlabel": "OPTIONS",
+      "logoutbuttonlabel": "DECONNEXION",
+      "exitdesktopbuttonlabel": "QUITTER LE JEU"
+    }
   }
 }
