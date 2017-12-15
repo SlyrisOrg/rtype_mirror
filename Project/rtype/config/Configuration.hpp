@@ -14,6 +14,7 @@
  * @author Roman Sztergbaum
  */
 
+#include <atomic>
 #include <string>
 #include <rapidjson/document.h>
 #include <SFML/Audio.hpp>
@@ -53,7 +54,11 @@ namespace rtype
                      BheetLv1, // 0
                      KooyLv1, // 1
                      MaulLv1, // 2
-                     ShipInterior);
+                     BheetArrival,
+                     KooyArrival,
+                     MaulArrival,
+                     ShipInterior,
+                     BGProfil);
 
         //! Video Enum
         RESOURCE_ADD(Video, Intro);
@@ -62,20 +67,25 @@ namespace rtype
         RESOURCE_ADD(Music,
                      BattleExtInstrumentalAmb,
                      AbandonedFacilitiesInstrumentalAmb,
-                     SpaceshipBridgeInstrumentalAmb);
+                     SpaceshipBridgeInstrumentalAmb,
+                     MarketInstrumentalAmb);
 
         //! SoundEffect Enum
         RESOURCE_ADD(SoundEffect,
                      Click,
-                     ClickLogin,
+                     ClickSmooth,
                      LoginSuccess,
-                     ComputerError);
+                     ComputerError,
+                     ChangeFaction);
 
         //! Animation Enum
         RESOURCE_ADD(Animation,
                      BheetLv1,
                      KooyLv1,
-                     MaulLv1);
+                     MaulLv1,
+                     BheetArrival,
+                     KooyArrival,
+                     MaulArrival);
     public:
         /**
          * @brief
@@ -84,10 +94,10 @@ namespace rtype
          * The function is static because the Configuration class is not instantiable.
          * @see Configuration constructor
          */
-        static void initialize();
+        static void initialize(std::atomic_uint &nbCounts);
 
-    private:
-
+        static void changeLang(const std::string &lang) noexcept;
+    public:
         using TAnimation = Animation::EnumType;
         using TSprite = Sprite::EnumType;
         using TVideo = Video::EnumType;
@@ -95,62 +105,84 @@ namespace rtype
         using TSndEffect = SoundEffect::EnumType;
 
     private:
-
         //! Private static functions
         //! Used in intern by initialize() public static function
 
         //! Private init functions
 
         /**
+         * @note Generic function for load resources.
+         * @tparam EnumT Type of the resource to load
+         * @tparam Handle is the variable that will contain the resources to load.
+         * @param path The path to the resource folder to load.
+         * @param suffix suffix of the resource to load (can be for example: avi, png, mp3, etc)
+         */
+        template <typename EnumT, typename Handle>
+        static void __initResources(const std::string &path, const std::string &suffix, Handle &handle,
+                                    std::string_view resourceType, std::atomic_uint &nbCounts)
+        {
+            for (const auto &cur : EnumT::values()) {
+                auto str = path + cur.toString() + suffix;
+                handle.load(cur, str);
+                log(lg::Debug) << "Loading " << resourceType << " " << cur.toString() + suffix
+                               << " successfully loaded."
+                               << std::endl;
+                nbCounts++;
+            }
+        }
+
+        /**
          * @note
          * This function is the first called by initialize (), it parses the program's JSON configuration files.
          */
-        static void __initConfig() noexcept;
+        static void __initConfig(std::atomic_uint &currentNbFiles) noexcept;
 
         /**
          * @note
          * This function is called by initialize(), it loads the SFML textures.
          * @throw std::runtime_error if a texture cannot be loaded.
          */
-        static void __initTextures();
+        static void __initTextures(std::atomic_uint &nbCounts);
 
         /**
          * @note
          * This function is called by initialize(), it loads the SFML musics.
          * @throw std::runtime_error if one music cannot be loaded.
          */
-        static void __initMusics();
+        static void __initMusics(std::atomic_uint &atomic);
 
         /**
          * @fn static void __initVideos()
          * This function is called by initialize(), it loads the sfe::Movie videos.
          * @throw std::runtime_error if one video cannot be loaded.
          */
-        static void __initVideos();
+        static void __initVideos(std::atomic_uint &atomic);
 
         /**
          * @note
          * This function is called by initialize(), it loads the SFML soundseffects.
          * @throw std::runtime_error if a sound effect cannot be loaded.
          */
-        static void __initSoundEffects();
+        static void __initSoundEffects(std::atomic_uint &atomic);
 
         /**
          * @note
          * This functions is called by initialize(), it loads the SFML animations.
          * @throw std::runtime_error if an animation cannot be loaded
          */
-        static void __initAnims();
+        static void __initAnims(std::atomic_uint &atomic);
 
+    private:
         /**
          * @param animation anim enum values to be initialized.
          * @param sprite sprite sheet of the animation to be itinialized.
-         * @param x The number of squares of the sprite sheet per line.
-         * @param y The number of squares of the sprite sheet per column
+         * @param nbColumns The number of squares of the sprite sheet per line.
+         * @param nbLines The number of squares of the sprite sheet per column
          * @note
          * This functions is called by __initAnims(), it loads the frames of an animation.
          */
-        static void __initFrames(TAnimation animation, TSprite sprite, unsigned int x, unsigned int y) noexcept;
+        static void __initFrames(TAnimation animation, TSprite sprite, unsigned int nbColumns, unsigned int nbLines,
+                                 unsigned int nbAnims, std::atomic_uint &nbCounts) noexcept;
 
         //! Private get functions
 
@@ -187,13 +219,15 @@ namespace rtype
          */
         static void __loadJSON(const std::string &path, rapidjson::Document &document);
 
+        static void __parseAnims(std::atomic_uint &atomic);
+        static void __parseCreateAnims();
         /**
          * @note
          * This function parse each scenes Configuration files for the game language.
          * @throw see __prepareParse
          */
         static void __parseLangConfig();
-
+        static void __parseLangConfig(std::atomic_uint &nbCounts);
         /**
          * @note
          * This function parse the JSON file that contains the Login scene configurations.
@@ -214,8 +248,31 @@ namespace rtype
          */
         static void __parseErrorConfig();
 
-    public:
+        /**
+         * @note
+         * This function parse the JSON file that contains the Profil scene configurations.
+         * @throw from __prepareParse
+         */
+        static void __parseProfilConfig();
 
+        /**
+         * @note
+         * This function fill a container of animations.
+         * @tparam Map -> Container to fill
+         * @param value -> Current json value
+         *
+         */
+        template <typename Map>
+        static void __fillAnimationsInfos(const rapidjson::Value &value, Map &map);
+
+        /**
+         * @note
+         * This function fill a multianimation map.
+         */
+        template <typename Map, typename AnimMap>
+        static void __fillMultiAnim(const rapidjson::Value &value, Map &map, AnimMap &animMap);
+
+    public:
         static sfutils::ResourceManager<sf::Texture, TSprite> textures;
         static sfutils::ResourceManager<sfutils::Animation, TAnimation> animations;
         static sfutils::ResourceManager<sf::Music, TMusic> musics;
@@ -223,7 +280,6 @@ namespace rtype
         static sfutils::ResourceManager<sf::SoundBuffer, TSndEffect> effects;
 
     private:
-
         static lg::Logger log;
 
     private:
