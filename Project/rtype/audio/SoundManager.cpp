@@ -24,9 +24,7 @@ namespace rtype
     //! Callbacks
     void SoundManager::receive(const gutils::evt::PlaySoundEffect &evt) noexcept
     {
-        sf::Sound sound;
-        _sndQueue.push_back(sound);
-        auto &snd = _sndQueue.back();
+        auto& snd = _sndQueue.emplace_back(sf::Sound());
         snd.setBuffer(evt.buff);
         snd.setVolume(evt.volume);
         snd.setLoop(evt.loop);
