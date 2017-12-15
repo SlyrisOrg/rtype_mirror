@@ -9,9 +9,12 @@
 
 namespace cfg::game
 {
+    //! Game Settings
     extern unsigned int width;
     extern unsigned int height;
     extern std::string lang;
+
+    //! API
     extern std::string apiURL;
     extern std::string tokenSession;
 }
