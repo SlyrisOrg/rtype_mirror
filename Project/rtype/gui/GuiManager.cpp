@@ -2,12 +2,12 @@
 // Created by milerius on 17/11/17.
 //
 
-#include <rtype/gui/GuiManager.hpp>
+#include <rtype/gui/GUIManager.hpp>
 
 namespace rtype
 {
     //! Constructors
-    GuiManager::GuiManager(gutils::EventManager &evtMgr, sf::RenderWindow &win, const std::string &root) :
+    GUIManager::GUIManager(gutils::EventManager &evtMgr, sf::RenderWindow &win, const std::string &root) :
         _win(win),
         _evtMgr(evtMgr)
     {
@@ -20,31 +20,39 @@ namespace rtype
     }
 
     //! Callbacks
-    void GuiManager::receive(const gutils::evt::GuiEvents &evt) noexcept
+    void GUIManager::receive(const gutils::evt::GuiEvents &evt) noexcept
     {
         __processEvent(evt.evt, *_context);
     }
 
     //! Public static functions
-    void GuiManager::setText(std::pair<CEGUI::Window *, std::string> &&tp) noexcept
+    void GUIManager::setText(std::pair<CEGUI::Window *, std::string> &&tp) noexcept
     {
-        const auto& [widget, value] = tp;
+        const auto &[widget, value] = tp;
         widget->setText(value);
     }
 
-    void GuiManager::setSize(std::pair<CEGUI::Window *, CEGUI::USize> &&tp) noexcept
+    void GUIManager::replaceText(GuiReplaceText &&gui) noexcept
     {
-        const auto& [widget, value] = tp;
+        const auto &[widget, search, replace] = gui;
+        std::string stdStr = widget->getText().c_str();
+        stdStr.replace(stdStr.find(search), search.length(), replace);
+        widget->setText(stdStr);
+    }
+
+    void GUIManager::setSize(std::pair<CEGUI::Window *, CEGUI::USize> &&tp) noexcept
+    {
+        const auto &[widget, value] = tp;
         widget->setSize(value);
     }
 
-    void GuiManager::setProperty(std::tuple<CEGUI::Window *, std::string, std::string> &&tp) noexcept
+    void GUIManager::setProperty(GuiProperty &&gui) noexcept
     {
-        const auto& [widget, property, value] = tp;
+        const auto &[widget, property, value] = gui;
         widget->setProperty(property, value);
     }
 
-    CEGUI::Window *GuiManager::setSheet(std::string const &sheetName) noexcept
+    CEGUI::Window *GUIManager::setSheet(std::string const &sheetName) noexcept
     {
         CEGUI::Window *sheet{nullptr};
         try {
@@ -63,29 +71,34 @@ namespace rtype
         return sheet;
     }
 
-    void GuiManager::destroySheet(CEGUI::Window &sheet) noexcept
+    void GUIManager::destroySheet(CEGUI::Window &sheet) noexcept
     {
-        sheet.destroy();
+        try {
+            CEGUI::WindowManager::getSingletonPtr()->destroyWindow(&sheet);
+        }
+        catch (const CEGUI::InvalidRequestException &error) {
+            std::cerr << error.what() << std::endl;
+        }
     }
 
     //! Public member functions
-    const CEGUI::System &GuiManager::getSystem() const noexcept
+    const CEGUI::System &GUIManager::getSystem() const noexcept
     {
         return *_system;
     }
 
-    const CEGUI::WindowManager &GuiManager::getWindowManager() const noexcept
+    const CEGUI::WindowManager &GUIManager::getWindowManager() const noexcept
     {
         return *_windowMgr;
     }
 
-    void GuiManager::update(double deltaTime) noexcept
+    void GUIManager::update(double deltaTime) noexcept
     {
         _system->injectTimePulse(static_cast<float>(deltaTime));
         _context->injectTimePulse(static_cast<float>(deltaTime));
     }
 
-    void GuiManager::draw() noexcept
+    void GUIManager::draw() noexcept
     {
         _win.pushGLStates();
         _rdr->beginRendering();
@@ -95,12 +108,12 @@ namespace rtype
     }
 
     //! Private member functions
-    void GuiManager::__initRenderer() noexcept
+    void GUIManager::__initRenderer() noexcept
     {
         _rdr = &CEGUI::OpenGLRenderer::bootstrapSystem();
     }
 
-    void GuiManager::__initMaps() noexcept
+    void GUIManager::__initMaps() noexcept
     {
         _keyMap[sf::Keyboard::Key::A] = CEGUI::Key::A;
         _keyMap[sf::Keyboard::Key::B] = CEGUI::Key::B;
@@ -209,80 +222,81 @@ namespace rtype
         _mouseButtonMap[sf::Mouse::Button::XButton2] = CEGUI::X2Button;
     }
 
-    void GuiManager::__initResources(const std::string &root)
+    void GUIManager::__initResources(const std::string &root)
     {
+        using namespace std::string_literals;
         auto rp = static_cast<CEGUI::DefaultResourceProvider *>(_system->getResourceProvider());
-        rp->setResourceGroupDirectory("fonts", root + "fonts/");
-        rp->setResourceGroupDirectory("imagesets", root + "imagesets/");
-        rp->setResourceGroupDirectory("layouts", root + "layouts/");
-        rp->setResourceGroupDirectory("looknfeels", root + "looknfeel/");
-        rp->setResourceGroupDirectory("schemes", root + "schemes/");
-        rp->setResourceGroupDirectory("lua_scripts", root + "lua_scripts/");
-        CEGUI::Font::setDefaultResourceGroup("fonts");
-        CEGUI::ImageManager::setImagesetDefaultResourceGroup("imagesets");
-        CEGUI::WindowManager::setDefaultResourceGroup("layouts");
-        CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeels");
-        CEGUI::Scheme::setDefaultResourceGroup("schemes");
-        CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
+        rp->setResourceGroupDirectory("fonts", root + "fonts/"s);
+        rp->setResourceGroupDirectory("imagesets", root + "imagesets/"s);
+        rp->setResourceGroupDirectory("layouts", root + "layouts/"s);
+        rp->setResourceGroupDirectory("looknfeels", root + "looknfeel/"s);
+        rp->setResourceGroupDirectory("schemes", root + "schemes/"s);
+        rp->setResourceGroupDirectory("lua_scripts", root + "lua_scripts/"s);
+        CEGUI::Font::setDefaultResourceGroup("fonts"s);
+        CEGUI::ImageManager::setImagesetDefaultResourceGroup("imagesets"s);
+        CEGUI::WindowManager::setDefaultResourceGroup("layouts"s);
+        CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeels"s);
+        CEGUI::Scheme::setDefaultResourceGroup("schemes"s);
+        CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts"s);
 
-        CEGUI::XMLParser *parser = _system->getXMLParser();
-        if (parser->isPropertyPresent("SchemaDefaultResourceGroup"))
-            parser->setProperty("SchemaDefaultResourceGroup", "schemas");
+        auto parser = _system->getXMLParser();
+        if (parser->isPropertyPresent("SchemaDefaultResourceGroup"s))
+            parser->setProperty("SchemaDefaultResourceGroup"s, "schemas"s);
 
-        CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme");
-        CEGUI::SchemeManager::getSingleton().createFromFile("ODSkin.scheme");
-        CEGUI::SchemeManager::getSingleton().createFromFile("GameMenu.scheme");
-        CEGUI::SchemeManager::getSingleton().createFromFile("AlfiskoSkin.scheme");
-        CEGUI::SchemeManager::getSingleton().createFromFile("Generic.scheme");
-        CEGUI::SchemeManager::getSingleton().createFromFile("WindowsLook.scheme");
-        CEGUI::SchemeManager::getSingleton().createFromFile("ASSkin.scheme");
-        CEGUI::SchemeManager::getSingleton().createFromFile("RType.scheme");
-        _system->getDefaultGUIContext().getMouseCursor().setDefaultImage("RTMainElements/Cursors/mouse_n");
+        CEGUI::SchemeManager::getSingleton().createFromFile("TaharezLook.scheme"s);
+        CEGUI::SchemeManager::getSingleton().createFromFile("ODSkin.scheme"s);
+        CEGUI::SchemeManager::getSingleton().createFromFile("GameMenu.scheme"s);
+        CEGUI::SchemeManager::getSingleton().createFromFile("AlfiskoSkin.scheme"s);
+        CEGUI::SchemeManager::getSingleton().createFromFile("Generic.scheme"s);
+        CEGUI::SchemeManager::getSingleton().createFromFile("WindowsLook.scheme"s);
+        CEGUI::SchemeManager::getSingleton().createFromFile("ASSkin.scheme"s);
+        CEGUI::SchemeManager::getSingleton().createFromFile("RType.scheme"s);
+        _system->getDefaultGUIContext().getMouseCursor().setDefaultImage("RTMainElements/Cursors/mouse_n"s);
     }
 
-    void GuiManager::__initSystem() noexcept
+    void GUIManager::__initSystem() noexcept
     {
         _system = CEGUI::System::getSingletonPtr();
         _windowMgr = CEGUI::WindowManager::getSingletonPtr();
     }
 
-    void GuiManager::__initContext() noexcept
+    void GUIManager::__initContext() noexcept
     {
         _context = &CEGUI::System::getSingletonPtr()->getDefaultGUIContext();
     }
 
-    bool GuiManager::__processEvent(const sf::Event &event, CEGUI::GUIContext &context) noexcept
+    bool GUIManager::__processEvent(const sf::Event &event, CEGUI::GUIContext &context) noexcept
     {
-        bool res = false;
+        auto res = false;
         switch (event.type) {
-            case sf::Event::Resized:
-                _system->notifyDisplaySizeChanged(
-                    CEGUI::Sizef(static_cast<float>(event.size.width), static_cast<float>(event.size.height)));
-                break;
-            case sf::Event::KeyPressed:
-                res = context.injectKeyDown(_keyMap[event.key.code]);
-                break;
-            case sf::Event::KeyReleased:
-                res = context.injectKeyUp(_keyMap[event.key.code]);
-                break;
-            case sf::Event::TextEntered:
-                res = context.injectChar(event.text.unicode);
-                break;
-            case sf::Event::MouseMoved:
-                res = context.injectMousePosition(static_cast<float>(event.mouseMove.x),
-                                                  static_cast<float>(event.mouseMove.y));
-                break;
-            case sf::Event::MouseButtonPressed:
-                res = context.injectMouseButtonDown(_mouseButtonMap[event.mouseButton.button]);
-                break;
-            case sf::Event::MouseButtonReleased:
-                res = context.injectMouseButtonUp(_mouseButtonMap[event.mouseButton.button]);
-                break;
-            case sf::Event::MouseWheelMoved:
-                res = context.injectMouseWheelChange(static_cast<float>(event.mouseWheel.delta));
-                break;
-            default :
-                break;
+        case sf::Event::Resized:
+            _system->notifyDisplaySizeChanged(
+                CEGUI::Sizef(static_cast<float>(event.size.width), static_cast<float>(event.size.height)));
+            break;
+        case sf::Event::KeyPressed:
+            res = context.injectKeyDown(_keyMap[event.key.code]);
+            break;
+        case sf::Event::KeyReleased:
+            res = context.injectKeyUp(_keyMap[event.key.code]);
+            break;
+        case sf::Event::TextEntered:
+            res = context.injectChar(event.text.unicode);
+            break;
+        case sf::Event::MouseMoved:
+            res = context.injectMousePosition(static_cast<float>(event.mouseMove.x),
+                                              static_cast<float>(event.mouseMove.y));
+            break;
+        case sf::Event::MouseButtonPressed:
+            res = context.injectMouseButtonDown(_mouseButtonMap[event.mouseButton.button]);
+            break;
+        case sf::Event::MouseButtonReleased:
+            res = context.injectMouseButtonUp(_mouseButtonMap[event.mouseButton.button]);
+            break;
+        case sf::Event::MouseWheelMoved:
+            res = context.injectMouseWheelChange(static_cast<float>(event.mouseWheel.delta));
+            break;
+        default:
+            break;
         }
         return res;
     }
