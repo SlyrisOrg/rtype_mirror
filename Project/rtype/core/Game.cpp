@@ -30,7 +30,7 @@ namespace rtype
         _systemMgr.add<SVideo>(_win);
         _systemMgr.add<SAudio>();
         _log(lg::Info) << "Successfully initialized RType" << std::endl;
-        _evtMgr.emit<evt::EnterScene>(Scene::Intro);
+        _evtMgr.emit<evt::EnterScene>(Scene::Loading);
     }
 
     void Game::__sysUpdate(const sf::Time &time) noexcept
@@ -48,12 +48,16 @@ namespace rtype
         _systemMgr[Sys::Gui].draw();
     }
 
-    void Game::__update(const sf::Time &time) noexcept
+    void Game::__render() noexcept
     {
-        __sysUpdate(time);
         _win.clear();
         __sysDraw();
         _win.display();
+    }
+
+    void Game::__update(const sf::Time &time) noexcept
+    {
+        __sysUpdate(time);
     }
 
     void Game::__launch() noexcept
@@ -70,6 +74,7 @@ namespace rtype
                 __update(TimePerFrame);
             }
             __update(timeSinceLastUpdate);
+            __render();
         }
     }
 

@@ -7,7 +7,7 @@
 
 #include <config/Config.hpp>
 
-#ifdef USING_OSX
+#ifdef USING_CLANG
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundefined-var-template"
 #pragma clang diagnostic ignored "-Wnon-virtual-dtor"
@@ -16,7 +16,7 @@
 #include <CEGUI/RendererModules/OpenGL/GLRenderer.h>
 #include <CEGUI/CEGUI.h>
 
-#ifdef USING_OSX
+#ifdef USING_CLANG
 #pragma clang diagnostic pop
 #endif
 
