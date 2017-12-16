@@ -9,8 +9,8 @@
 
 namespace rtype
 {
-    template <size_t size>
-    struct BaseGui
+    template <size_t Size>
+    struct BaseGUI
     {
         CEGUI::Window &operator[](size_t idx) noexcept
         {
@@ -25,7 +25,21 @@ namespace rtype
         }
 
         CEGUI::Window *sheet{nullptr};
-        std::array<CEGUI::Window *, size> widgets{{nullptr}};
+        std::array<CEGUI::Window *, Size> widgets{{nullptr}};
+    };
+
+    struct GuiReplaceText
+    {
+        CEGUI::Window* widget;
+        std::string search;
+        std::string replace;
+    };
+
+    struct GuiProperty
+    {
+        CEGUI::Window* widget;
+        std::string property;
+        std::string value;
     };
 }
 
