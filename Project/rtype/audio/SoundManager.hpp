@@ -66,6 +66,7 @@ namespace rtype
          */
         void receive(const evt::PlayMusic &evt) noexcept;
 
+        void receive(const evt::ResetMusicVolume &evt) noexcept;
     private:
         using SoundQueue = std::deque<sf::Sound>;
 
