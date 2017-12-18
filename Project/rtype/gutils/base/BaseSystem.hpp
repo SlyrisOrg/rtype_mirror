@@ -18,7 +18,7 @@ namespace gutils
         {
         }
 
-        ~BaseSystem() noexcept override = default;
+        virtual ~BaseSystem() noexcept = default;
 
     public:
         //! update the current system
@@ -51,7 +51,7 @@ namespace gutils
 
     protected:
         std::string _systemName;
-        logging::Logger _log{_systemName, logging::Info};
+        logging::Logger _log{_systemName, logging::Debug};
     };
 }
 
