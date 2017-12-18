@@ -6,7 +6,7 @@
 
 namespace cfg::error
 {
-    inline std::array<std::string, 22u> tab =
+    std::array<std::string, 22u> tab =
         {
             {
                 "Success.",

@@ -44,6 +44,7 @@ namespace cfg::error
         NoInternet = 21
     };
 
+    //! Lang
     extern std::array<std::string, 22u> tab;
 }
 

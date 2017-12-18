@@ -2,12 +2,23 @@
 // Created by roman sztergbaum on 16/09/2017.
 //
 
+#include <thread>
+#include <fstream>
+#include <config/Config.hpp>
 #include <rapidjson/istreamwrapper.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rtype/config/Configuration.hpp>
-#include <fstream>
+#include <rtype/config/ProfilConfig.hpp>
+#include <rtype/config/SpaceshipConfig.hpp>
+
+/**
+ * @bug Windows standard library have a macro which conflict with rapidjson GetObject.
+ */
+#ifdef USING_MSVC
+#undef GetObject
+#endif
 
 //! Static initializations.
 namespace rtype
@@ -17,80 +28,246 @@ namespace rtype
     sfutils::ResourceManager<sf::Music, Configuration::TMusic> Configuration::musics;
     sfutils::ResourceManager<sfe::Movie, Configuration::TVideo> Configuration::videos;
     sfutils::ResourceManager<sf::SoundBuffer, Configuration::TSndEffect> Configuration::effects;
-    lg::Logger Configuration::log = lg::Logger{"Configuration", lg::Info};
+    lg::Logger Configuration::_log = lg::Logger{"Configuration", lg::Debug};
 }
 
 //! Public functions
 namespace rtype
 {
-    void Configuration::initialize()
+    void Configuration::initialize(std::atomic_uint &nbCounts)
     {
-        __initConfig();
-        __initTextures();
-        __initMusics();
-        __initSoundEffects();
-        __initVideos();
-        __initAnims();
+        std::thread([&nbCounts]() {
+            __initTextures(nbCounts);
+            __initAnims(nbCounts);
+        }).detach();
+        std::thread([&nbCounts]() {
+            __initMusics(nbCounts);
+            __initSoundEffects(nbCounts);
+        }).detach();
+        std::thread([&nbCounts]() {
+            __initConfig(nbCounts);
+            __initVideos(nbCounts);
+        }).detach();
+    }
+
+    void Configuration::changeLang(const std::string &lang) noexcept
+    {
+        using namespace std::string_literals;
+        try {
+            const auto path = cfg::configPath + "config.json"s;
+            rapidjson::Document doc;
+            __loadJSON(path, doc);
+            auto &&gameCFG = doc["gameconfig"];
+            gameCFG["lang"].SetString(lang.c_str(), static_cast<rapidjson::SizeType>(lang.length()));
+            __writeDoc(path, doc);
+            __getLangGameConfig(doc);
+            __parseLangConfig();
+        }
+        catch (const std::runtime_error &err) {
+            _log(lg::Error) << err.what() << std::endl;
+        }
+    }
+
+    void Configuration::changeMusic(float musicVolume) noexcept
+    {
+        __changeSounds("musicvolume", musicVolume, "music");
+    }
+
+    void Configuration::changeSoundsEffect(float soundsEffectVolume) noexcept
+    {
+        __changeSounds("soundseffectvolume", soundsEffectVolume, "soundseffect");
+    }
+
+    void Configuration::contextSettings() noexcept
+    {
+        using namespace std::string_literals;
+
+        try {
+            const auto path = cfg::configPath + "config.json"s;
+            rapidjson::Document doc;
+            __loadJSON(path, doc);
+            __getWindowSize(doc);
+        }
+        catch (const std::runtime_error &error) {
+            _log(lg::Error) << error.what() << std::endl;
+        }
     }
 }
 
 //! Private functions
 namespace rtype
 {
-    void Configuration::__initConfig() noexcept
+    void Configuration::__changeSounds(const std::string &label, float volume, const std::string &labelToCheck)
     {
+        using namespace std::string_literals;
+
         try {
-            auto path = utils::unpackToString(cfg::configPath, "config.json");
+            const auto path = cfg::configPath + "config.json"s;
+            rapidjson::Document doc;
+            __loadJSON(path, doc);
+            auto &&gameCFG = doc["gameconfig"];
+            gameCFG[labelToCheck.c_str()].SetBool(volume != 0.0f);
+            gameCFG[label.c_str()].SetFloat(volume);
+            __writeDoc(path, doc);
+            __getSoundsConfig(doc);
+        }
+        catch (const std::runtime_error &err) {
+            _log(lg::Error) << err.what() << std::endl;
+        }
+    }
+
+    void Configuration::__writeDoc(const std::string &path, rapidjson::Document &doc)
+    {
+        std::ofstream ofs(path);
+        rapidjson::OStreamWrapper osw(ofs);
+        rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
+        doc.Accept(writer);
+    }
+
+    void Configuration::__initConfig(std::atomic_uint &currentNbFiles) noexcept
+    {
+        using namespace std::string_literals;
+
+        try {
+            const auto path = cfg::configPath + "config.json"s;
             rapidjson::Document doc;
             __loadJSON(path, doc);
             __getLangGameConfig(doc);
+            __getSoundsConfig(doc);
             __getWindowSize(doc);
-            __parseLangConfig();
+            currentNbFiles += 1u;
+            __parseLangConfig(currentNbFiles);
         }
         catch (const std::runtime_error &error) {
-            log(lg::Error) << error.what() << std::endl;
+            _log(lg::Error) << error.what() << std::endl;
         }
     }
 
-    void Configuration::__initTextures()
+    void Configuration::__initTextures(std::atomic_uint &nbCounts)
     {
-        LOAD_RESOURCE(Sprite, textures, cur, cfg::spritePath);
+        using namespace std::string_view_literals;
+        __initResources<Sprite>(cfg::spritePath, ".png", textures, "textures"sv, nbCounts);
     }
 
-    void Configuration::__initMusics()
+    void Configuration::__initMusics(std::atomic_uint &nbCounts)
     {
-        LOAD_MUSIC(Music, musics, cur, "music", cfg::musicPath);
+        using namespace std::string_view_literals;
+        __initResources<Music>(cfg::musicPath, ".ogg", musics, "musics"sv, nbCounts);
     }
 
-    void Configuration::__initVideos()
+    void Configuration::__initVideos(std::atomic_uint &nbCounts)
     {
-        LOAD_VIDEO(Video, videos, cur);
+        using namespace std::string_view_literals;
+        __initResources<Video>(cfg::videoPath, ".avi", videos, "video"sv, nbCounts);
     }
 
-    void Configuration::__initSoundEffects()
+    void Configuration::__initSoundEffects(std::atomic_uint &nbCounts)
     {
-        LOAD_MUSIC(SoundEffect, effects, cur, "sound effect", cfg::soundEffectPath);
+        using namespace std::string_view_literals;
+        __initResources<SoundEffect>(cfg::soundEffectPath, ".ogg", effects, "sounds effect"sv, nbCounts);
     }
 
     void Configuration::__getLangGameConfig(const rapidjson::Document &document) noexcept
     {
-        auto &&value = document["gameconfig"];
-        cfg::game::lang = value["lang"].GetString();
+        auto &&gameCFG = document["gameconfig"];
+        cfg::game::lang = gameCFG["lang"].GetString();
         if (cfg::game::lang != "en" && cfg::game::lang != "fr")
             cfg::game::lang = cfg::defaultLang;
-        log(lg::Info) << "The language in game is : " << cfg::game::lang << std::endl;
+        _log(lg::Info) << "The language in game is : " << cfg::game::lang << std::endl;
+    }
+
+    void Configuration::__getSoundsConfig(const rapidjson::Document &document) noexcept
+    {
+        auto &&gameCFG = document["gameconfig"];
+
+        cfg::game::soundseffect = gameCFG["soundseffect"].GetBool();
+        cfg::game::music = gameCFG["music"].GetBool();
+        cfg::game::musicVolume = gameCFG["musicvolume"].GetFloat();
+        cfg::game::soundseffectVolume = gameCFG["soundseffectvolume"].GetFloat();
+
+        if (cfg::game::musicVolume > 100.0f || cfg::game::musicVolume < 0.0f)
+            cfg::game::musicVolume = 100.0f;
+        if (!cfg::game::music)
+            cfg::game::musicVolume = 0.0f;
+        if (!cfg::game::soundseffect)
+            cfg::game::soundseffectVolume = 0.0f;
+        if (cfg::game::soundseffectVolume > 100.0f || cfg::game::soundseffectVolume < 0.0f)
+            cfg::game::soundseffectVolume = 100.0f;
+
+        _log(lg::Info) << "\nmusic: " << std::boolalpha << cfg::game::music << "\nsoundseffect: "
+                       << cfg::game::soundseffect << std::noboolalpha << "\nmusic volume: " << cfg::game::musicVolume
+                       << "\nsounds effect volume: " << cfg::game::soundseffectVolume << std::endl;
     }
 
     void Configuration::__getWindowSize(const rapidjson::Document &document) noexcept
     {
-        auto &&value = document["gameconfig"];
-        cfg::game::width = value["width"].GetUint();
-        cfg::game::height = value["height"].GetUint();
+        auto &&gameCFG = document["gameconfig"];
+
+        cfg::game::width = gameCFG["width"].GetUint();
+        cfg::game::height = gameCFG["height"].GetUint();
+
         if (cfg::game::width > cfg::maxWidth)
             cfg::game::width = cfg::maxWidth;
         if (cfg::game::height > cfg::maxHeight)
             cfg::game::width = cfg::maxHeight;
-        log(lg::Info) << "Window size : " << cfg::game::width << ", " << cfg::game::height << std::endl;
+
+        cfg::game::fullscreen = gameCFG["fullscreen"].GetBool();
+        _log(lg::Info) << "Window size : " << cfg::game::width << ", " << cfg::game::height << std::endl;
+    }
+
+    void Configuration::__parseAnims(std::atomic_uint &nbCounts)
+    {
+        __parseCreateAnims();
+        nbCounts += 1u;
+    }
+
+    template <typename Map>
+    void Configuration::__fillAnimationsInfos(const rapidjson::Value &animValue, Map &map)
+    {
+        for (const auto &v : animValue.GetArray()) {
+            float speed = v.GetObject()["animinfo"].GetObject()["speed"].GetFloat();
+            bool loop = v.GetObject()["animinfo"].GetObject()["loop"].GetBool();
+            int repeat = v.GetObject()["animinfo"].GetObject()["repeat"].GetInt();
+            auto status = static_cast<sfutils::AnimatedSprite::Status>(v.GetObject()["animinfo"].GetObject()["status"].GetInt());
+            const std::string animation = v.GetObject()["animinfo"].GetObject()["animation"].GetString();
+            AnimInfo info{loop, repeat, status, speed, animation};
+            const auto &name = v.GetObject()["name"].GetString();
+            _log(lg::Debug) << "\nAnimation : " << name << "\nAnimInfo : " << info << std::endl;
+            map.emplace(std::make_pair(name, info));
+        }
+    }
+
+    template <typename Map, typename AnimMap>
+    void Configuration::__fillMultiAnim(const rapidjson::Value &value, Map &map, AnimMap &animMap)
+    {
+        using namespace sfutils;
+
+        for (const auto &cur : value.GetObject()) {
+            const auto &name = cur.name.GetString();
+            std::vector<sfutils::AnimatedSprite> multiAnimTab;
+            for (const auto &val : cur.value.GetArray()) {
+                const rtype::AnimInfo &animInfo = map[val.GetString()];
+                Animation animValue = std::string_view(animInfo.animation);
+                TAnimation realValue = animValue;
+                multiAnimTab.emplace_back(AnimatedSprite(&animations.get(realValue), animInfo.status,
+                                                         sf::seconds(animInfo.speed), animInfo.loop, animInfo.repeat));
+            }
+            animMap.emplace(name, multiAnimTab);
+        }
+    }
+
+    void Configuration::__parseCreateAnims()
+    {
+        using namespace std::string_literals;
+
+        const auto path = cfg::animConfigPath + "create.json"s;
+        rapidjson::Document doc;
+        __loadJSON(path, doc);
+        const auto &createCFG = doc["createanim"];
+        __fillAnimationsInfos(createCFG, cfg::create::animCreate);
+        const auto &multi = doc["multianim"];
+        __fillMultiAnim(multi, cfg::create::animCreate, cfg::create::multiAnimMap);
+        cfg::ship::multiAnimMap = cfg::create::multiAnimMap;
     }
 
     void Configuration::__parseLangConfig()
@@ -98,84 +275,133 @@ namespace rtype
         __parseErrorConfig();
         __parseLoginConfig();
         __parseCreateConfig();
+        __parseProfilConfig();
+    }
+
+    void Configuration::__parseLangConfig(std::atomic_uint &nbCounts)
+    {
+        __parseErrorConfig();
+        nbCounts += 1;
+        __parseLoginConfig();
+        nbCounts += 1;
+        __parseCreateConfig();
+        nbCounts += 1;
+        __parseProfilConfig();
+        nbCounts += 1;
     }
 
     void Configuration::__parseErrorConfig()
     {
-        auto path = utils::unpackToString(cfg::configPath, "lang/", cfg::game::lang, "/", "error.json");
+        using namespace std::string_literals;
+        const auto path = cfg::configPath + "lang/"s + cfg::game::lang + "/"s + "error.json"s;
         rapidjson::Document doc;
         __loadJSON(path, doc);
-        auto &&value = doc["RTypeError"];
-        int i = 0;
-        for (rapidjson::Value::ConstMemberIterator itr = value.MemberBegin(); itr != value.MemberEnd(); itr++) {
-            cfg::error::tab[i++] = itr->value.GetString();
+        auto &&errorObject = doc["RTypeError"];
+        unsigned int i = 0;
+        for (auto error = errorObject.MemberBegin(); error != errorObject.MemberEnd(); ++error) {
+            cfg::error::tab[i++] = error->value.GetString();
         }
     }
 
     void Configuration::__parseCreateConfig()
     {
-        auto path = utils::unpackToString(cfg::configPath, "lang/", cfg::game::lang, "/", "create.json");
+        using namespace std::string_literals;
+
+        const auto path = cfg::configPath + "lang/"s + cfg::game::lang + "/"s + "create.json"s;
         rapidjson::Document doc;
         __loadJSON(path, doc);
-        auto &&value = doc["createscene"];
-        cfg::create::chooseFactionImage = value["choosefactionimage"].GetString();
-        cfg::create::backButtonText = value["backbutton"].GetString();
-        cfg::create::createButtonText = value["createbutton"].GetString();
-        cfg::create::factionHeadLabel = value["factionheadlabel"].GetString();
-        cfg::create::spaceshipHeadLabel = value["factionheadspaceshiplabel"].GetString();
-        cfg::create::chooseFactionSize = {{0.f, value["choosefactionimagesize"].GetArray()[0].GetFloat()},
-                                          {0.f, value["choosefactionimagesize"].GetArray()[1].GetFloat()}};
+        auto &&createCFG = doc["createscene"];
+        auto &&labelCFG = doc["createscene"]["labels"];
+        cfg::create::chooseFactionImage = createCFG["choosefactionimage"].GetString();
+        cfg::create::chooseFactionSize = {{0.f, createCFG["choosefactionimagesize"].GetArray()[0].GetFloat()},
+                                          {0.f, createCFG["choosefactionimagesize"].GetArray()[1].GetFloat()}};
+        for (auto &&label : labelCFG.GetObject()) {
+            const auto &labelPair = cfg::create::createLabel[label.name.GetString()];
+            cfg::create::createLabel[label.name.GetString()] = std::make_pair(labelPair.first, label.value.GetString());
+        }
+    }
+
+    void Configuration::__parseProfilConfig()
+    {
+        using namespace std::string_literals;
+        const auto path = cfg::configPath + "lang/"s + cfg::game::lang + "/"s + "profile.json"s;
+        rapidjson::Document doc;
+        __loadJSON(path, doc);
+        auto &&value = doc["profilscene"]["labels"];
+        for (auto &&label : value.GetObject()) {
+            const auto &labelPair = cfg::profil::profileLabel[label.name.GetString()];
+            cfg::profil::profileLabel[label.name.GetString()] = std::make_pair(labelPair.first,
+                                                                               label.value.GetString());
+        }
     }
 
     void Configuration::__parseLoginConfig()
     {
-        auto path = utils::unpackToString(cfg::configPath, "lang/", cfg::game::lang, "/", "login.json");
+        using namespace std::string_literals;
+
+        const auto path = cfg::configPath + "lang/"s + cfg::game::lang + "/"s + "login.json"s;
         rapidjson::Document doc;
         __loadJSON(path, doc);
-        auto &&value = doc["loginscene"];
-        cfg::login::loginButtonText = value["logbutton"].GetString();
-        cfg::login::exitButtonText = value["exitbutton"].GetString();
-        cfg::login::exitYesButtonText = value["exityesbutton"].GetString();
-        cfg::login::exitNoButtonText = value["exitnobutton"].GetString();
-        cfg::login::exitMessageText = value["exittextmessage"].GetString();
-        cfg::login::exitMessageText.insert(0, 140, ' ');
-        cfg::login::errorYesText = value["erroryesbutton"].GetString();
-        cfg::login::accountInformationImage = value["accountinformationimage"].GetString();
-        cfg::login::accountNameLabelImage = value["accountnamelabelimage"].GetString();
-        cfg::login::accountPasswordLabelImage = value["accountpasswordlabelimage"].GetString();
-        cfg::login::accountInformationSize = {{0.f, value["accountinformationimagesize"].GetArray()[0].GetFloat()},
-                                              {0.f, value["accountinformationimagesize"].GetArray()[1].GetFloat()}};
-        cfg::login::accountNameLabelSize = {{0.f, value["accountnamelabelsize"].GetArray()[0].GetFloat()},
-                                            {0.f, value["accountnamelabelsize"].GetArray()[1].GetFloat()}};
-        cfg::login::accountPasswordLabelSize = {{0.f, value["accountpasswordlabelsize"].GetArray()[0].GetFloat()},
-                                                {0.f, value["accountpasswordlabelsize"].GetArray()[1].GetFloat()}};
+        auto &&loginCFG = doc["loginscene"];
+        auto &&labelCFG = doc["loginscene"]["labels"];
+
+        for (auto &&label : labelCFG.GetObject()) {
+            const auto &labelPair = cfg::login::logLabel[label.name.GetString()];
+            cfg::login::logLabel[label.name.GetString()] = std::make_pair(labelPair.first, label.value.GetString());
+        }
+
+        cfg::login::logLabel["exittextmessage"].second.insert(0, 140, ' ');
+        cfg::login::accountInformationImage = loginCFG["accountinformationimage"].GetString();
+        cfg::login::accountNameLabelImage = loginCFG["accountnamelabelimage"].GetString();
+        cfg::login::accountPasswordLabelImage = loginCFG["accountpasswordlabelimage"].GetString();
+        cfg::login::accountInformationSize = {{0.f, loginCFG["accountinformationimagesize"].GetArray()[0].GetFloat()},
+                                              {0.f, loginCFG["accountinformationimagesize"].GetArray()[1].GetFloat()}};
+        cfg::login::accountNameLabelSize = {{0.f, loginCFG["accountnamelabelsize"].GetArray()[0].GetFloat()},
+                                            {0.f, loginCFG["accountnamelabelsize"].GetArray()[1].GetFloat()}};
+        cfg::login::accountPasswordLabelSize = {{0.f, loginCFG["accountpasswordlabelsize"].GetArray()[0].GetFloat()},
+                                                {0.f, loginCFG["accountpasswordlabelsize"].GetArray()[1].GetFloat()}};
     }
 
     void Configuration::__loadJSON(const std::string &path, rapidjson::Document &document)
     {
+        using namespace std::string_literals;
+
         std::ifstream ifs(path);
         rapidjson::IStreamWrapper isw(ifs);
         document.ParseStream(isw);
-        log(lg::Info) << "Parsing file : " << path << std::endl;
+        _log(lg::Info) << "Parsing file : " << path << std::endl;
         if (document.HasParseError()) {
-            log(lg::Error) << document.GetParseError() << " " << "Offset : " << document.GetErrorOffset() << std::endl;
-            throw std::runtime_error(utils::unpackToString("Parse file -> ", path, " failed."));
+            _log(lg::Error) << document.GetParseError() << " " << "Offset : " << document.GetErrorOffset() << std::endl;
+            throw std::runtime_error("Parse file -> "s + path + " failed."s);
         }
     }
 
-    void Configuration::__initAnims()
+    void Configuration::__initAnims(std::atomic_uint &nbCounts)
     {
-        __initFrames(Animation::BheetLv1, Sprite::BheetLv1, 12, 5);
-        __initFrames(Animation::KooyLv1, Sprite::KooyLv1, 12, 5);
-        __initFrames(Animation::MaulLv1, Sprite::MaulLv1, 12, 5);
+        __initFrames(Animation::BheetLv1, Sprite::BheetLv1, 11, 7, 75, nbCounts);
+        __initFrames(Animation::KooyLv1, Sprite::KooyLv1, 11, 7, 75, nbCounts);
+        __initFrames(Animation::MaulLv1, Sprite::MaulLv1, 11, 7, 75, nbCounts);
+        __initFrames(Animation::BheetArrival, Sprite::BheetArrival, 12, 7, 80, nbCounts);
+        __initFrames(Animation::KooyArrival, Sprite::KooyArrival, 12, 7, 80, nbCounts);
+        __initFrames(Animation::MaulArrival, Sprite::MaulArrival, 12, 7, 80, nbCounts);
+        __parseAnims(nbCounts);
     }
 
-    void Configuration::__initFrames(TAnimation animation, TSprite sprite, unsigned int x, unsigned int y) noexcept
+    void Configuration::__initFrames(TAnimation animation, TSprite sprite,
+                                     unsigned int nbColumns,
+                                     unsigned int nbLines,
+                                     unsigned int nbAnims,
+                                     std::atomic_uint &nbCounts) noexcept
     {
         auto &text = animations.load(animation, &textures.get(sprite));
-        for (unsigned int i = 0; i < y; i++) {
-            text.addFramesLine(x, y, i);
+        auto end = nbLines - 1;
+        for (unsigned int i = 0; i < end; i++) {
+            text.addFramesLine(nbColumns, nbLines, i, nbColumns);
         }
-        log(lg::Info) << "Loading Animation " << Animation::toString(animation) << " successfully loaded." << std::endl;
+        auto animLastLine = (nbAnims - ((nbLines - 1) * nbColumns));
+        text.addFramesLine(animLastLine, nbLines, nbLines - 1, nbColumns);
+        _log(lg::Debug) << "Loading Animation " << Animation::toString(animation) << " successfully loaded."
+                        << std::endl;
+        nbCounts += 1;
     }
 }
