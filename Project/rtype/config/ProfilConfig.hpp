@@ -33,7 +33,7 @@ namespace cfg::profil
     inline float xp = 0.f;
 
     //! Lang
-    using TProfilWidget = rtype::PW::EnumType;
+    using TProfilWidget = rtype::ProfilWidgets::EnumType;
     using LabelValues = std::pair<TProfilWidget, std::string>;
     using namespace std::string_literals;
     extern std::unordered_map<std::string, LabelValues> profileLabel;

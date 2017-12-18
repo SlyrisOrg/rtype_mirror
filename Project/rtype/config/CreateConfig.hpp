@@ -25,7 +25,7 @@ namespace cfg::create
     extern std::unordered_map<std::string, std::vector<sfutils::AnimatedSprite>> multiAnimMap;
 
     //! Lang
-    using TCreateWidget = rtype::CW::EnumType;
+    using TCreateWidget = rtype::CreateWidgets::EnumType;
     using CLabelValues = std::pair<TCreateWidget, std::string>;
     using namespace std::string_literals;
     extern std::unordered_map<std::string, CLabelValues> createLabel;

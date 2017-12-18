@@ -24,7 +24,7 @@ namespace cfg::login
     extern CEGUI::USize accountPasswordLabelSize;
 
     //! Lang
-    using TLoginWidget = rtype::LOGW::EnumType;
+    using TLoginWidget = rtype::LoginWidgets::EnumType;
     using TLabelValues = std::pair<TLoginWidget, std::string>;
     extern std::unordered_map<std::string, TLabelValues> logLabel;
 }
