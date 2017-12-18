@@ -6,6 +6,7 @@
 
 namespace cfg::error
 {
+    using namespace std::string_literals;
     inline std::array<std::string, 22u> tab =
         {
             {

@@ -7,7 +7,11 @@
 
 namespace cfg::game
 {
-    //! The two next variables below canno't be inlined, thanks to MSVC bug.
+    bool soundseffect = true;
+    bool music = true;
+    bool fullscreen = false;
+    float soundseffectVolume = 70.0f;
+    float musicVolume = 30.0f;
     unsigned int width = cfg::maxWidth;
     unsigned int height = cfg::maxHeight;
     inline std::string lang = cfg::defaultLang;
