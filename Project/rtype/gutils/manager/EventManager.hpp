@@ -44,7 +44,6 @@ namespace gutils
     //! Type-Erasure again
     struct BaseReceiver : private utils::NonCopyable
     {
-        ~BaseReceiver() override = default;
     };
 
     template <typename Derived>

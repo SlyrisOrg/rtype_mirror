@@ -27,6 +27,8 @@ namespace gutils
         {
         }
 
+        virtual ~AScene() noexcept = default;
+
         //! Member Functions
 
         /**
