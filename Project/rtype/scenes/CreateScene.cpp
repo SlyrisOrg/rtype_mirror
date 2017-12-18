@@ -27,8 +27,8 @@ namespace rtype
 
     void CreateScene::__unselectOtherFactions(CreateFactionT factionA, CreateFactionT factionB) noexcept
     {
-        reinterpret_cast<CEGUI::ToggleButton *>(&_gui[factionA])->setSelected(false);
-        reinterpret_cast<CEGUI::ToggleButton *>(&_gui[factionB])->setSelected(false);
+        static_cast<CEGUI::ToggleButton &>(_gui[factionA]).setSelected(false);
+        static_cast<CEGUI::ToggleButton &>(_gui[factionB]).setSelected(false);
 
         GUIManager::applyCEGUIFunc(&GUIManager::setProperty,
                                    GuiProperty{&_gui[factionA], "NormalImage",
@@ -44,7 +44,7 @@ namespace rtype
     void CreateScene::__changeSelectedFaction(CreateFactionT faction, CreateFactionT factionReset,
                                               CreateFactionT secondFactionReset) noexcept
     {
-        bool isSelected = reinterpret_cast<CEGUI::ToggleButton *>(&_gui[faction])->isSelected();
+        bool isSelected = static_cast<CEGUI::ToggleButton &>(_gui[faction]).isSelected();
         if (isSelected && _gui[CreateWidgets::FactionName].getText().c_str() != CreateWidgets::toString(faction)) {
             _evtMgr.emit<gutils::evt::PlaySoundEffect>(Configuration::SoundEffect::ClickSmooth);
             __oldSelectedFaction = __selectedFaction;
@@ -108,7 +108,7 @@ namespace rtype
             _gui[CreateWidgets::CreateButton].setWantsMultiClickEvents(false);
             _gui[CreateWidgets::CreateButton].setMouseAutoRepeatEnabled(false);
             _evtMgr.emit<gutils::evt::PlayMusic>(Configuration::Music::SpaceshipBridgeInstrumentalAmb, true);
-            auto ptr = reinterpret_cast<CEGUI::ToggleButton *>(&_gui[CreateWidgets::Bheet]);
+            auto ptr = static_cast<CEGUI::ToggleButton *>(&_gui[CreateWidgets::Bheet]);
             ptr->setSelected(true);
             __setImage();
             __setText();
