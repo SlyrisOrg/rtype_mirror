@@ -8,7 +8,7 @@
 /**
  * @attention
  *
- * This comment is a general comment on the configuration of RType in general.
+ * This comment is a general comment on the configuration of RType.
  * As you can see the files are not header only as usual on other projects.
  * All simply because in the programming of video games we prefer the readability,
  * the ability to maintain some of the code.
@@ -34,8 +34,12 @@ namespace cfg
 {
     inline static constexpr const unsigned int maxWidth = 1920;
     inline static constexpr const unsigned int maxHeight = 1080;
+    inline static constexpr const unsigned int nbConfigLang = 4;
+    inline static constexpr const unsigned int nbConfigAnimations = 1;
+    inline static constexpr const unsigned int nbConfigs = 1 + nbConfigLang + nbConfigAnimations;
     inline static constexpr const char *defaultLang = "en";
-    inline static constexpr const char *title = "template-game";
+    inline static constexpr const char *title = "RType";
+    inline static constexpr const char *animConfigPath = "assets/config/animations/";
     inline static constexpr const char *configPath = "assets/config/";
     inline static constexpr const char *guiRoot = "assets/gui/";
     inline static constexpr const char *spritePath = "assets/sprite/";
