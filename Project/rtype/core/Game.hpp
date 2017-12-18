@@ -17,7 +17,7 @@ namespace rtype
     {
     public:
         Game() noexcept;
-        ~Game() noexcept final;
+        ~Game() noexcept;
 
     public:
         void receive(const evt::GameShutdown &evt) noexcept;

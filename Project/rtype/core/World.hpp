@@ -29,12 +29,16 @@ namespace rtype
         static void initialState(sf::Window &win) noexcept
         {
             win.setMouseCursorVisible(false);
+            //! On Windows we don't want initial state
+#ifndef USING_WINDOWS
             win.setPosition(sf::Vector2i((sf::VideoMode::getDesktopMode().width / 2) - cfg::game::width / 2,
                                          (sf::VideoMode::getDesktopMode().height / 2) - cfg::game::height / 2));
+#endif
         }
 
     protected:
-        sf::RenderWindow _win{sf::VideoMode(cfg::game::width, cfg::game::height), cfg::title, sf::Style::None};
+        sf::RenderWindow _win{sf::VideoMode(cfg::game::width, cfg::game::height), cfg::title,
+                              cfg::game::fullscreen ? sf::Style::Fullscreen : sf::Style::None};
         gutils::EventManager _evtMgr;
         gutils::SystemManager _systemMgr{_evtMgr};
     };
