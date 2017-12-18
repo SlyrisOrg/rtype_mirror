@@ -66,6 +66,7 @@ namespace rtype
          */
         void receive(const evt::PlayMusic &evt) noexcept;
 
+        void receive(const evt::ResetMusicVolume &evt) noexcept;
     private:
         using SoundQueue = std::deque<sf::Sound>;
 
@@ -74,6 +75,7 @@ namespace rtype
         SoundQueue _sndQueue;
         gutils::EventManager &_evtMgr;
         lg::Logger _log{"AudioManager", lg::Info};
+
     };
 }
 
