@@ -41,7 +41,7 @@ namespace gutils
         //! The idx is here for skip some system if you want.
         void update(double deltaTime, unsigned int idx = 0) const noexcept
         {
-            for (auto cur = _system.begin() + idx; cur != _system.end(); cur++) {
+            for (auto cur = _system.begin() + idx; cur != _system.end(); ++cur) {
                 (*cur)->update(deltaTime);
             }
         }

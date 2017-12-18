@@ -35,6 +35,27 @@ namespace gutils::evt
 {
     using namespace std::string_view_literals;
 
+    struct FullScreen final : public gutils::InsideEvents
+    {
+        FullScreen() noexcept
+        {
+            showEvents("FullScreen");
+        }
+    };
+
+    struct ResetMusicVolume final : public gutils::InsideEvents
+    {
+        explicit ResetMusicVolume(rtype::Configuration::Music msc) noexcept :
+        music(rtype::Configuration::musics.get(msc)),
+        musicName(msc.toString())
+        {
+            showEvents("Reset volume Music"sv);
+        }
+
+        sf::Music &music;
+        std::string musicName;
+    };
+
     struct ResetText final : public gutils::InsideEvents
     {
         ResetText() noexcept
@@ -68,9 +89,8 @@ namespace gutils::evt
 
     struct PlayMusic final : public gutils::InsideEvents
     {
-        explicit PlayMusic(rtype::Configuration::Music msc, float volume = 50, bool loop = false) noexcept :
+        explicit PlayMusic(rtype::Configuration::Music msc, bool loop = false) noexcept :
             music(rtype::Configuration::musics.get(msc)),
-            volume(volume),
             loop(loop),
             musicName(msc.toString())
         {
@@ -78,16 +98,14 @@ namespace gutils::evt
         }
 
         sf::Music &music;
-        float volume;
         bool loop;
         std::string musicName;
     };
 
     struct PlaySoundEffect final : public gutils::InsideEvents
     {
-        explicit PlaySoundEffect(rtype::Configuration::SoundEffect eff, float volume = 50, bool loop = false) noexcept :
+        explicit PlaySoundEffect(rtype::Configuration::SoundEffect eff, bool loop = false) noexcept :
             buff(rtype::Configuration::effects.get(eff)),
-            volume(volume),
             loop(loop),
             soundEffectName(eff.toString())
         {
@@ -95,7 +113,6 @@ namespace gutils::evt
         }
 
         sf::SoundBuffer &buff;
-        float volume;
         bool loop;
         std::string soundEffectName;
     };
