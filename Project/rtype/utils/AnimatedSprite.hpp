@@ -26,8 +26,8 @@ namespace sfutils
             return *this;
         };
 
-        AnimatedSprite(AnimatedSprite &&) noexcept = default;
-        AnimatedSprite &operator=(AnimatedSprite &&) noexcept = default;
+        //AnimatedSprite(AnimatedSprite &&) = default;
+        //AnimatedSprite &operator=(AnimatedSprite &&) = default;
 
         using FuncType = std::function<void()>;
         static FuncType defaultFunc;
