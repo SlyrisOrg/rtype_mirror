@@ -1,7 +1,7 @@
 set(VIDEO ${CMAKE_SOURCE_DIR}/Project/rtype/video/)
 
 set(RTYPE_VIDEO_HEADERS
-        ${VIDEO}/VideoManager.cpp
+        ${VIDEO}/VideoManager.hpp
         PARENT_SCOPE)
 
 set(RTYPE_VIDEO_SOURCES
