@@ -5,6 +5,7 @@
 #ifndef RTYPE_SPACESHIPCONFIG_HPP
 #define RTYPE_SPACESHIPCONFIG_HPP
 
+#include <unordered_map>
 #include <string>
 #include <rtype/utils/AnimatedSprite.hpp>
 
