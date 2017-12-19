@@ -65,12 +65,9 @@ function run_xunit
 	./$i --gtest_output="xml:${i}-${TYPE}-result.xml"
     done
     cd ..
-    mkdir -p test-result
-    cd test-result
-    mkdir -p ctest-${TYPE}
-    cd -
+    mkdir -p test-result/ctest
     cp bin/*.xml test-result/
-    cp $BUILD_DIR/Testing/*/*.xml test-result/ctest-${TYPE}
+    cp $BUILD_DIR/Testing/*/*.xml test-result/ctest/
 }
 
 parse_args "$@"
