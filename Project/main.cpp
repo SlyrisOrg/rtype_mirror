@@ -21,7 +21,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv, char **env)
         return 1;
 #endif
 
-#ifdef USING_WINDOWS
+#if defined(USING_WINDOWS) && defined(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2)
     SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 #endif
     try {
