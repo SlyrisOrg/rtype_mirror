@@ -19,7 +19,9 @@ namespace sfutils
         ResourceManager(const ResourceManager &) = delete;
         ResourceManager &operator=(const ResourceManager &) = delete;
 
-        ResourceManager() noexcept = default;
+        ResourceManager() noexcept
+        {
+        }
 
         template <typename ...Args>
         Resource &load(const Identifier &id, Args &&...args)
@@ -72,7 +74,7 @@ namespace sfutils
         ResourceManager(const ResourceManager &) = delete;
         ResourceManager &operator=(const ResourceManager &) = delete;
 
-        ResourceManager() noexcept = default;
+        ResourceManager() = default;
 
         template <typename ...Args>
         sf::Music &load(const Identifier &id, Args &&...args)

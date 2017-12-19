@@ -18,16 +18,13 @@ namespace sfutils
 
         AnimatedSprite &operator=(const AnimatedSprite &other) noexcept
         {
-            this->setAnimation(other._animation);
-            this->_loop = other._loop;
-            this->_repeat = other._repeat;
-            this->_status = other._status;
-            this->_delta = other._delta;
+            setAnimation(other._animation);
+            _loop = other._loop;
+            _repeat = other._repeat;
+            _status = other._status;
+            _delta = other._delta;
             return *this;
-        };
-
-        AnimatedSprite(AnimatedSprite &&) noexcept = default;
-        AnimatedSprite &operator=(AnimatedSprite &&) noexcept = default;
+        }
 
         using FuncType = std::function<void()>;
         static FuncType defaultFunc;
