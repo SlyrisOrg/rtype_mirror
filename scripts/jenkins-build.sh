@@ -70,7 +70,7 @@ function run_xunit
     mkdir -p ctest-${TYPE}
     cd -
     cp bin/*.xml test-result/
-    cp $BUILD_DIR/Testing/*/*.xml test-result/ctest-${TYPE}
+    cp $BUILD_DIR/Testing/*/*.xml test-result/ctest/
 }
 
 parse_args "$@"
