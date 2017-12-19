@@ -7,7 +7,9 @@
       "playlabel": "JOUER",
       "optionsbuttonlabel": "OPTIONS",
       "logoutbuttonlabel": "DECONNEXION",
-      "exitdesktopbuttonlabel": "QUITTER LE JEU"
+      "exitdesktopbuttonlabel": "QUITTER LE JEU",
+      "soundslabel": "Volume effets sonore : ",
+      "musiclabel": "Volume musique : "
     }
   }
 }

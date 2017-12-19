@@ -7,7 +7,9 @@
       "playlabel": "PLAY",
       "optionsbuttonlabel": "OPTIONS",
       "logoutbuttonlabel": "LOG OUT",
-      "exitdesktopbuttonlabel": "EXIT TO DESKTOP"
+      "exitdesktopbuttonlabel": "EXIT TO DESKTOP",
+      "soundslabel": "Sounds Effect Volume: ",
+      "musiclabel": "Music Volume: "
     }
   }
 }
