@@ -4,3 +4,6 @@
 [submodule "vendor/rapidjson"]
 	path = vendor/rapidjson
 	url = https://github.com/Tencent/rapidjson.git
+[submodule "vendor/core"]
+	path = vendor/core
+	url = ssh://git.slyris.eu:29418/core
