@@ -4,6 +4,8 @@ project(rtype)
 enable_testing()
 include(CTest)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+set(BUILD_CORE_TESTS OFF CACHE BOOL "disable core tests" FORCE)
 add_subdirectory(vendor/core)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/vendor/core/cmake-utils/Module)

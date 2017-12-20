@@ -24,19 +24,26 @@ function build($type)
     cd build-$type
     $cmd = "-DCMAKE_BUILD_TYPE=$type"
     cmake $cmd -G "Visual Studio 15 2017 Win64" ..
-    cmake --build . --config $type -- /verbosity:minimal
+    cmake --build . --config $type -- /verbosity:minimal /m
+}
+
+function run_xunit_impl($type)
+{
+   foreach ($file in get-ChildItem *-test.exe) {
+    $var = $file.name
+    echo $var
+    & ./$var --gtest_output="xml:$var-windows-$type-result.xml"
+    }
 }
 
 function run_xunit($type)
 {
     cd ..
     cd bin/$type
-    foreach ($file in get-ChildItem *.exe) {
-    $var = $file.name
-    echo $var
-    & ./$var --gtest_output="xml:$var-windows-$type-result.xml"
-    }
-    cd ../..
+    run_xunit_impl $type
+    cd ..
+    run_xunit_impl
+    cd ..
 }
 
 function run_ctest($type)
@@ -53,6 +60,7 @@ function publish_result($type)
     mkdir ctest
     cd ..
     cp bin/$type/*.xml test-result/
+    cp bin/*.xml test-result/
     cp build-$type/Testing/*/*.xml test-result/ctest
 }
 
