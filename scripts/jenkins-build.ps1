@@ -24,7 +24,7 @@ function build($type)
     cd build-$type
     $cmd = "-DCMAKE_BUILD_TYPE=$type"
     cmake $cmd -G "Visual Studio 15 2017 Win64" ..
-    cmake --build . --config $type -- /verbosity:minimal
+    cmake --build . --config $type -- /verbosity:minimal /m
 }
 
 function run_xunit($type)
