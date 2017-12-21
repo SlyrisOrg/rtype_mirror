@@ -17,6 +17,7 @@ namespace rtype
         Profil = 3,
         Loading = 4,
         Queue = 5,
+        Lobby = 6,
     };
 }
 

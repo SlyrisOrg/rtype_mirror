@@ -13,6 +13,7 @@
 #include <rtype/scenes/ProfilScene.hpp>
 #include <rtype/scenes/LoadingScene.hpp>
 #include <rtype/scenes/QueueScene.hpp>
+#include <rtype/scenes/LobbyScene.hpp>
 
 namespace rtype
 {
@@ -29,6 +30,7 @@ namespace rtype
             _sceneMgr.add<CreateScene>(Scene::Create, _evtMgr, "CreateScene", win);
             _sceneMgr.add<ProfilScene>(Scene::Profil, _evtMgr, "ProfilScene", win);
             _sceneMgr.add<QueueScene>(Scene::Queue, _evtMgr, "QueueScene", win);
+            _sceneMgr.add<LobbyScene>(Scene::Lobby, _evtMgr, "LobbyScene", win);
         }
 
         void update(double deltaTime) noexcept override

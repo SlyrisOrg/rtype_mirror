@@ -2,14 +2,15 @@
 // Created by zouz on 21/12/17.
 //
 
-#ifndef RTYPE_FORWARDENUMQEUE_HPP
-#define RTYPE_FORWARDENUMQEUE_HPP
+#ifndef RTYPE_FORWARDENUMLOBBY_HPP
+#define RTYPE_FORWARDENUMLOBBY_HPP
 
 #include <utils/Enums.hpp>
 
 namespace rtype
 {
-    ENUM(QueueWidgets,
+
+    ENUM(LobbyWidgets,
          TimerBar,
          DiscardButton,
          Timer,
@@ -20,6 +21,5 @@ namespace rtype
          PlayerThreeButton,
          PlayerFourButton
     );
-}
-
-#endif //RTYPE_FORWARDENUMQEUE_HPP
+};
+#endif //RTYPE_FORWARDENUMLOBBY_HPP

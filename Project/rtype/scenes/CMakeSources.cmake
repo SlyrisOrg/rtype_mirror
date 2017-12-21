@@ -8,6 +8,7 @@ set(RTYPE_SCENES_HEADERS
         ${SCENES}/CreateScene.hpp
         ${SCENES}/LoadingScene.hpp
         ${SCENES}/QueueScene.hpp
+        ${SCENES}/LobbyScene.hpp
         ${SCENES}/SceneManager.hpp
         ${SCENES}/private/GameSettings.hpp
         ${SCENES}/private/ForwardEnumProfil.hpp
@@ -15,6 +16,7 @@ set(RTYPE_SCENES_HEADERS
         ${SCENES}/private/ForwardEnumLoading.hpp
         ${SCENES}/private/ForwardEnumLogin.hpp
         ${SCENES}/private/ForwardEnumQueue.hpp
+        ${SCENES}/private/ForwardEnumLobby.hpp
         PARENT_SCOPE)
 
 set(RTYPE_SCENES_SOURCES
@@ -23,6 +25,7 @@ set(RTYPE_SCENES_SOURCES
         ${SCENES}/ProfilScene.cpp
         ${SCENES}/IntroScene.cpp
         ${SCENES}/QueueScene.cpp
+        ${SCENES}/LobbyScene.cpp
         PARENT_SCOPE
         )
 
