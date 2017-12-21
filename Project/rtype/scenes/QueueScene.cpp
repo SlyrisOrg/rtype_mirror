@@ -46,6 +46,7 @@ namespace rtype
 
     bool QueueScene::keyPressed([[maybe_unused]]const gutils::evt::KeyPressed &evt) noexcept
     {
+        __gotoLobbyScene(evt);
         return false;
     }
 
@@ -130,6 +131,14 @@ namespace rtype
             spr.setTexture(Configuration::textures.get(Configuration::Sprite::BorderBG));
             spr.setPosition(pos);
             pos.x += offset;
+        }
+    }
+
+    void QueueScene::__gotoLobbyScene(const gutils::evt::KeyPressed &evt) noexcept
+    {
+        if (evt.key == sf::Keyboard::F1)
+        {
+            _evtMgr.emit<gutils::evt::ChangeScene>(rtype::Scene::Lobby);
         }
     }
 }

@@ -11,6 +11,7 @@ set(RTYPE_CONFIG_HEADERS
         ${CONFIG}/SpaceshipConfig.hpp
         ${CONFIG}/LoadingConfig.hpp
         ${CONFIG}/QueueConfig.hpp
+        ${CONFIG}/LobbyConfig.hpp
         PARENT_SCOPE
         )
 
