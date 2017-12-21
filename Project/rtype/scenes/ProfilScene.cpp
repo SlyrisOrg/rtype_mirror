@@ -63,6 +63,9 @@ namespace rtype
                                                           evt::Subscriber(&ps::__optionsWindow, this));
         _gui[ProfilWidgets::OptionsCloseButton].subscribeEvent(pb::EventClicked,
                                                                evt::Subscriber(&ps::__closeOptionsWindow, this));
+        //TODO Temporary going to QScene, Need to offer game choice before.
+        _gui[ProfilWidgets::PlayButton].subscribeEvent(pb::EventClicked,
+                                                       evt::Subscriber(&ps::__goingToQueue, this));
     }
 
     bool ProfilScene::__setGUI() noexcept
@@ -79,6 +82,12 @@ namespace rtype
             _gui[widgetID].setText(widgetTxt);
         }
         _settings.resetValue();
+    }
+
+    void ProfilScene::__goingToQueue() noexcept
+    {
+        _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::MarketInstrumentalAmb);
+        _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Queue);
     }
 
     void ProfilScene::__getData() const noexcept

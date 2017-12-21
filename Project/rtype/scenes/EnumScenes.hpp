@@ -15,7 +15,8 @@ namespace rtype
         Login = 1,
         Create = 2,
         Profil = 3,
-        Loading = 4
+        Loading = 4,
+        Queue = 5
     };
 }
 
