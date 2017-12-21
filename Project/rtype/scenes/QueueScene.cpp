@@ -27,6 +27,9 @@ namespace rtype
     void QueueScene::draw() noexcept
     {
         _win.draw(_bg);
+        for (auto &&currentBorder : _bordersBg) {
+            _win.draw(currentBorder);
+        }
     }
 
     void QueueScene::leave() noexcept
@@ -118,6 +121,18 @@ namespace rtype
     void QueueScene::__initTextures() noexcept
     {
         _bg.setTexture(Configuration::textures.get(Configuration::Sprite::QueueBackground));
+
+        //! Initial pos + 
+        float x = _gui[QueueWidgets::BorderFour].getPosition().d_x.d_offset + 6.0f;
+        float y = _gui[QueueWidgets::BorderFour].getPosition().d_y.d_offset + 12.0f;
+        float offset = _gui[QueueWidgets::BorderTwo].getPosition().d_x.d_offset - _gui[QueueWidgets::BorderFour].getPosition().d_x.d_offset;
+        sf::Vector2f pos(x, y);
+        for (unsigned int i = 0; i < 4; ++i) {
+            auto &spr = _bordersBg.emplace_back();
+            spr.setTexture(Configuration::textures.get(Configuration::Sprite::BorderBG));
+            spr.setPosition(pos);
+            pos.x += offset;
+        }
     }
 }
 

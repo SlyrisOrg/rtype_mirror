@@ -12,7 +12,9 @@ namespace rtype
     ENUM(QueueWidgets,
          TimerBar,
          DiscardButton,
-         Timer
+         Timer,
+         BorderFour,
+         BorderTwo
     );
 }
 

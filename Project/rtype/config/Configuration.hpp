@@ -58,7 +58,8 @@ namespace rtype
              MaulArrival,
              ShipInterior,
              BGProfil,
-             QueueBackground);
+             QueueBackground,
+             BorderBG);
 
         //! Video Enum
         ENUM(Video,
