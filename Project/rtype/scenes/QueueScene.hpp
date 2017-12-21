@@ -50,6 +50,7 @@ namespace rtype
 
     private:
         QueueGui _gui;
+        std::vector<sf::Sprite> _bordersBg;
         sf::Sprite _bg;
     };
 }

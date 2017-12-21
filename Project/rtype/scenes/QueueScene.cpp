@@ -27,6 +27,9 @@ namespace rtype
     void QueueScene::draw() noexcept
     {
         _win.draw(_bg);
+        for (auto &&currentBorder : _bordersBg) {
+            _win.draw(currentBorder);
+        }
     }
 
     void QueueScene::leave() noexcept
@@ -118,6 +121,13 @@ namespace rtype
     void QueueScene::__initTextures() noexcept
     {
         _bg.setTexture(Configuration::textures.get(Configuration::Sprite::QueueBackground));
+        sf::Vector2f pos(30.0f, 245.0f);
+        for (auto i = 0; i < 4; ++i) {
+            auto& spr = _bordersBg.emplace_back();
+            spr.setTexture(Configuration::textures.get(Configuration::Sprite::BorderBG));
+            spr.setPosition(pos);
+            pos.x += 477;
+        }
     }
 }
 
