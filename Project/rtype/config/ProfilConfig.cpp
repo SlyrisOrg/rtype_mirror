@@ -42,6 +42,9 @@ namespace cfg::profil
             },
             {
                 "musiclabel", {TProfilWidget::LabelMusic, "Music Volume: "}
+            },
+            {
+                "applybuttonlabel", {TProfilWidget::ApplyButton, "APPLY"}
             }
 
         };

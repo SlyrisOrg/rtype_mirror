@@ -27,13 +27,13 @@ namespace rtype
                 sf::VideoMode mode(cfg::game::width, cfg::game::height);
                 _win.create(mode, cfg::title, sf::Style::Fullscreen);
                 _win.setMouseCursorVisible(false);
-                cfg::game::fullscreen = !cfg::game::fullscreen;
             } else {
                 sf::VideoMode mode(cfg::game::width, cfg::game::height);
                 _win.create(mode, cfg::title, sf::Style::None);
                 _evtMgr.emit<evt::RestoreDefault>(_win);
-                cfg::game::fullscreen = !cfg::game::fullscreen;
             }
+            cfg::game::fullscreen = !cfg::game::fullscreen;
+            _win.resetGLStates();
         }
 
     public:

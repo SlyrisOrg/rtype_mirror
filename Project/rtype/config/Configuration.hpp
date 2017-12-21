@@ -57,7 +57,8 @@ namespace rtype
              KooyArrival,
              MaulArrival,
              ShipInterior,
-             BGProfil);
+             BGProfil,
+             QueueBackground);
 
         //! Video Enum
         ENUM(Video,
@@ -68,7 +69,8 @@ namespace rtype
              BattleExtInstrumentalAmb,
              AbandonedFacilitiesInstrumentalAmb,
              SpaceshipBridgeInstrumentalAmb,
-             MarketInstrumentalAmb);
+             MarketInstrumentalAmb,
+             DarkVoidAmb);
 
         //! SoundEffect Enum
         ENUM(SoundEffect,
