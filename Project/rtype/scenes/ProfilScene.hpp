@@ -57,6 +57,7 @@ namespace rtype
         void __cancelMainMenuWindow() noexcept;
         void __checkResume(const sf::Keyboard::Key &key) noexcept;
         void __mainMenuWindow() noexcept;
+        void __goingToQueue() noexcept;
         void __getData() const noexcept;
 
     private:
