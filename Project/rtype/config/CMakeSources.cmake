@@ -10,6 +10,7 @@ set(RTYPE_CONFIG_HEADERS
         ${CONFIG}/ProfilConfig.hpp
         ${CONFIG}/SpaceshipConfig.hpp
         ${CONFIG}/LoadingConfig.hpp
+        ${CONFIG}/QueueConfig.hpp
         PARENT_SCOPE
         )
 
