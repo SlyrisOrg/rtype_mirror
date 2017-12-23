@@ -18,6 +18,7 @@ namespace rtype
         Loading = 4,
         Queue = 5,
         Lobby = 6,
+        Demo = 7
     };
 }
 

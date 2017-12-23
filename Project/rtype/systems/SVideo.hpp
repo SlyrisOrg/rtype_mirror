@@ -24,7 +24,7 @@ namespace rtype
             _videoMgr.update();
         }
 
-        void draw() noexcept override
+        void draw() noexcept
         {
             _videoMgr.draw();
         }

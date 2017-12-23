@@ -25,7 +25,7 @@ namespace rtype
             _guiMgr.update(deltaTime);
         }
 
-        void draw() noexcept override
+        void draw() noexcept
         {
             _guiMgr.draw();
         }
