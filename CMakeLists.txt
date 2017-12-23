@@ -25,6 +25,7 @@ add_subdirectory(Project/rtype/error)
 add_subdirectory(Project/rtype/gutils)
 add_subdirectory(Project/rtype/gui)
 add_subdirectory(Project/rtype/video)
+add_subdirectory(Project/rtype/protocol)
 
 set(HEADERS_PROJECT
         ${RTYPE_CORE_HEADERS}
@@ -37,6 +38,7 @@ set(HEADERS_PROJECT
         ${RTYPE_ERROR_HEADERS}
         ${RTYPE_GUTILS_HEADERS}
         ${RTYPE_GUI_HEADERS}
+        ${RTYPE_PROTO_HEADERS}
         Project/rtype/gameobject/GameObject.hpp
         ${RTYPE_VIDEO_HEADERS}
         )
