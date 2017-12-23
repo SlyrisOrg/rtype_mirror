@@ -43,9 +43,9 @@ namespace rtype
 
     void Game::__sysDraw() noexcept
     {
-        _systemMgr[Sys::Video].draw();
-        _systemMgr[Sys::Scene].draw();
-        _systemMgr[Sys::Gui].draw();
+        _systemMgr.get<SVideo>(Sys::Video).draw();
+        _systemMgr.get<SScenes>(Sys::Scene).draw();
+        _systemMgr.get<SGui>(Sys::Gui).draw();
     }
 
     void Game::__render() noexcept
