@@ -24,9 +24,6 @@ namespace gutils
         //! update the current system
         virtual void update(double deltaTime) noexcept = 0;
 
-        //! Window / Gui / Scene System can draw
-        virtual void draw() noexcept {}
-
     protected:
         gutils::EventManager &_evtMgr;
     };

@@ -14,6 +14,7 @@
 #include <rtype/scenes/LoadingScene.hpp>
 #include <rtype/scenes/QueueScene.hpp>
 #include <rtype/scenes/LobbyScene.hpp>
+#include <rtype/scenes/DemoScene.hpp>
 
 namespace rtype
 {
@@ -31,6 +32,7 @@ namespace rtype
             _sceneMgr.add<ProfilScene>(Scene::Profil, _evtMgr, "ProfilScene", win);
             _sceneMgr.add<QueueScene>(Scene::Queue, _evtMgr, "QueueScene", win);
             _sceneMgr.add<LobbyScene>(Scene::Lobby, _evtMgr, "LobbyScene", win);
+            _sceneMgr.add<DemoScene>(Scene::Demo, _evtMgr, "DemoScene", win);
         }
 
         void update(double deltaTime) noexcept override
@@ -38,7 +40,7 @@ namespace rtype
             _sceneMgr.update(deltaTime);
         }
 
-        void draw() noexcept override
+        void draw() noexcept
         {
             _sceneMgr.draw();
         }
