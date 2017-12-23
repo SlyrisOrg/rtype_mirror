@@ -53,6 +53,12 @@ namespace gutils
             return *_system[idx];
         }
 
+        template <typename ConcreteSystem>
+        ConcreteSystem &get(unsigned int idx)
+        {
+            return static_cast<ConcreteSystem &>(*_system[idx]);
+        }
+
     private:
         EventManager &_eventMgr;
         using SystemPtr = std::shared_ptr<BaseSystem>;
