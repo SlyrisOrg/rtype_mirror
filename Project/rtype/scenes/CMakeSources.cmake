@@ -1,6 +1,7 @@
 set(SCENES ${CMAKE_SOURCE_DIR}/Project/rtype/scenes/)
 
 set(RTYPE_SCENES_HEADERS
+        ${SCENES}/DemoScene.hpp
         ${SCENES}/IntroScene.hpp
         ${SCENES}/EnumScenes.hpp
         ${SCENES}/LoginScene.hpp
@@ -20,6 +21,7 @@ set(RTYPE_SCENES_HEADERS
         PARENT_SCOPE)
 
 set(RTYPE_SCENES_SOURCES
+        ${SCENES}/DemoScene.cpp
         ${SCENES}/LoginScene.cpp
         ${SCENES}/CreateScene.cpp
         ${SCENES}/ProfilScene.cpp
