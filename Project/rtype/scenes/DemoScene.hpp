@@ -5,6 +5,8 @@
 #ifndef RTYPE_DEMOSCENE_HPP
 #define RTYPE_DEMOSCENE_HPP
 
+#include <rtype/gui/BaseGUI.hpp>
+#include <rtype/config/InGameConfig.hpp>
 #include <rtype/gutils/base/AScene.hpp>
 
 namespace rtype
@@ -31,6 +33,14 @@ namespace rtype
         bool mouseMoved(const gutils::evt::MouseMoved &evt) noexcept final;
         bool mousePressed(const gutils::evt::MouseButtonPressed &evt) noexcept final;
         bool mouseReleased(const gutils::evt::MouseButtonReleased &evt) noexcept final;
+
+    private:
+        void __configure() noexcept;
+        bool __setGUI() noexcept;
+
+    private:
+        using UIGUI = BaseGUI<cfg::play::nbWidgets>;
+        UIGUI _gui;
     };
 }
 

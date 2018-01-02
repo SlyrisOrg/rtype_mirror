@@ -12,6 +12,7 @@ set(RTYPE_CONFIG_HEADERS
         ${CONFIG}/LoadingConfig.hpp
         ${CONFIG}/QueueConfig.hpp
         ${CONFIG}/LobbyConfig.hpp
+        ${CONFIG}/InGameConfig.hpp
         PARENT_SCOPE
         )
 
@@ -23,5 +24,6 @@ set(RTYPE_CONFIG_SOURCES
         ${CONFIG}/GameConfig.cpp
         ${CONFIG}/ProfilConfig.cpp
         ${CONFIG}/SpaceshipConfig.cpp
+        ${CONFIG}/InGameConfig.cpp
         PARENT_SCOPE
         )
