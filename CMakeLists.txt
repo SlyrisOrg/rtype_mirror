@@ -13,6 +13,7 @@ set(CMAKE_CONFIG_PATH ${CMAKE_SOURCE_DIR}/vendor/core/cmake-utils)
 include(${CMAKE_CONFIG_PATH}/include.cmake)
 STANDARD_COMPILATION_SETTINGS()
 RTYPE_CONFIG()
+find_package(Lua 5.3)
 
 add_subdirectory(Project/rtype/core)
 add_subdirectory(Project/rtype/scenes)
@@ -26,6 +27,7 @@ add_subdirectory(Project/rtype/gutils)
 add_subdirectory(Project/rtype/gui)
 add_subdirectory(Project/rtype/video)
 add_subdirectory(Project/rtype/protocol)
+add_subdirectory(Project/rtype/entity)
 
 set(HEADERS_PROJECT
         ${RTYPE_CORE_HEADERS}
@@ -39,7 +41,7 @@ set(HEADERS_PROJECT
         ${RTYPE_GUTILS_HEADERS}
         ${RTYPE_GUI_HEADERS}
         ${RTYPE_PROTO_HEADERS}
-        Project/rtype/gameobject/GameObject.hpp
+        ${RTYPE_ENTITY_HEADERS}
         ${RTYPE_VIDEO_HEADERS}
         )
 
