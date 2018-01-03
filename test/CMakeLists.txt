@@ -60,5 +60,5 @@ macro(add_test_core NAME_TEST NAME_EXECUTABLE SOURCE)
 endmacro()
 
 ########################################################################################################################
-add_subdirectory(game-object)
 add_subdirectory(protocol)
+add_subdirectory(ecs)
