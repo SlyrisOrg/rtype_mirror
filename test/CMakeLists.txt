@@ -62,3 +62,4 @@ endmacro()
 ########################################################################################################################
 add_subdirectory(game-object)
 add_subdirectory(protocol)
+add_subdirectory(quadtree)
