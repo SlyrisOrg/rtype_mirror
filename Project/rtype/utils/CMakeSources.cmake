@@ -4,6 +4,7 @@ set(RTYPE_UTILS_HEADERS
         ${UTILS}/AnimatedSprite.hpp
         ${UTILS}/Animation.hpp
         ${UTILS}/ResourceManager.hpp
+        ${UTILS}/QuadTree.hpp
         PARENT_SCOPE)
 
 set(RTYPE_UTILS_SOURCES
