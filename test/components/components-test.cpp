@@ -2,7 +2,6 @@
 // Created by doom on 03/01/18.
 //
 
-#include <experimental/filesystem>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -12,7 +11,6 @@
 
 TEST(Components, BoundingBox)
 {
-    std::cout << std::experimental::filesystem::current_path() << std::endl;
     sf::RectangleShape shape{sf::Vector2f(30.f, 30.f)};
     shape.setPosition(125.f, 125.f);
 
