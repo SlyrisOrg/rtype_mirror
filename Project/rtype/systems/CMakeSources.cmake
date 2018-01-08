@@ -1,6 +1,7 @@
 set(SYSTEMS ${CMAKE_SOURCE_DIR}/Project/rtype/systems/)
 
 set(RTYPE_SYSTEMS_HEADERS
+        ${SYSTEMS}/SCollision.hpp
         ${SYSTEMS}/SEvents.hpp
         ${SYSTEMS}/SGui.hpp
         ${SYSTEMS}/SScenes.hpp

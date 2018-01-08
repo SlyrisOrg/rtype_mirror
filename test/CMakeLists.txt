@@ -62,3 +62,4 @@ endmacro()
 ########################################################################################################################
 add_subdirectory(protocol)
 add_subdirectory(ecs)
+add_subdirectory(components)
