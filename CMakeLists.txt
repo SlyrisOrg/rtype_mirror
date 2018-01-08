@@ -28,6 +28,7 @@ add_subdirectory(Project/rtype/gui)
 add_subdirectory(Project/rtype/video)
 add_subdirectory(Project/rtype/protocol)
 add_subdirectory(Project/rtype/entity)
+add_subdirectory(Project/rtype/components)
 
 set(HEADERS_PROJECT
         ${RTYPE_CORE_HEADERS}
@@ -43,6 +44,7 @@ set(HEADERS_PROJECT
         ${RTYPE_PROTO_HEADERS}
         ${RTYPE_ENTITY_HEADERS}
         ${RTYPE_VIDEO_HEADERS}
+        ${RTYPE_COMPONENTS_HEADERS}
         )
 
 set(SOURCES_PROJECT Project/main.cpp
