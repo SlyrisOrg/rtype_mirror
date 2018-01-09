@@ -73,6 +73,12 @@ namespace game
                 return *std::get<Position<ComponentsList, T>::value>(_components);
             }
 
+            template <typename ...Args>
+            std::tuple<std::add_lvalue_reference_t<Args>...> getComponents() noexcept
+            {
+                return {getComponent<Args>()...};
+            }
+
             template <typename T>
             bool hasComponent() noexcept
             {
@@ -90,7 +96,7 @@ namespace game
             }
 
             template <typename T, typename ...Args>
-            Entity &addComponent(Args &&...args)
+            T &addComponent(Args &&...args)
             {
                 using namespace meta::list;
                 constexpr size_t pos = Position<ComponentsList, T>::value;
@@ -98,7 +104,7 @@ namespace game
 
                 std::get<pos>(_components) = AllocTraits<T>::allocate(al, 1);
                 AllocTraits<T>::construct(al, std::get<pos>(_components), args...);
-                return *this;
+                return getComponent<T>();
             }
 
             template <typename T>

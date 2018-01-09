@@ -99,9 +99,8 @@ TEST(ECS, MultipleForEach)
 
     for (size_t i = 0; i < 10; ++i) {
         auto id = em.createEntity();
-        em[id]
-            .addComponent<Lol>()
-            .addComponent<Box>(1, 2, 3, 4);
+        em[id].addComponent<Lol>();
+        em[id].addComponent<Box>(1, 2, 3, 4);
     }
     size_t nbMatched = 0;
     em.for_each<Lol, Box>([&nbMatched](auto &) {
@@ -180,4 +179,16 @@ TEST(ECS, CustomAllocator)
     ASSERT_EQ(box3.y, 2u);
     ASSERT_EQ(box3.width, 3u);
     ASSERT_EQ(box3.height, 4u);
+}
+
+TEST(ECS, StructuredBinding)
+{
+    EntityManager em;
+    Entity::ID id = em.createEntity();
+
+    em[id].addComponent<Box>(1, 2, 3, 4);
+    em[id].addComponent<Lol>();
+    const auto &[box, lol] = em[id].getComponents<Box, Lol>();
+    ASSERT_TRUE((std::is_same_v<decltype(box), Box &>));
+    ASSERT_TRUE((std::is_same_v<decltype(lol), Lol &>));
 }
