@@ -7,7 +7,7 @@
 namespace cfg::profil
 {
     //! Profil informations.
-    inline std::string level;
+    inline std::string level = "1";
     FactionT faction;
     inline std::string gold;
     inline std::string goldShop;

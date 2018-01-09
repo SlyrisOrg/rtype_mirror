@@ -120,7 +120,7 @@ namespace gutils
     protected:
         gutils::EventManager &_evtMgr;
         std::string _sceneName;
-        logging::Logger _log{_sceneName, logging::Info};
+        logging::Logger _log{_sceneName, logging::Debug};
         sf::RenderWindow &_win;
     };
 }
