@@ -201,6 +201,11 @@ namespace game
             }
         }
 
+        void clear() noexcept
+        {
+            _entities.clear();
+        }
+
         size_t nbEntities() const noexcept
         {
             return _entities.size();
