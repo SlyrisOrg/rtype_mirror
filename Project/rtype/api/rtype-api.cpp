@@ -153,6 +153,7 @@ namespace rtype
         cfg::profil::gold = std::to_string(profile.at(U("gold")).as_integer());
         cfg::profil::faction = static_cast<cfg::profil::FactionT>(profile.at(U("faction")).as_integer());
         cfg::profil::nickname = nickname;
+        cfg::profil::level = std::to_string(profile.at(U("level")).as_integer());
     }
 
     void API::__getData(const pplx::task<web::json::value> &task, std::error_code &ec) noexcept

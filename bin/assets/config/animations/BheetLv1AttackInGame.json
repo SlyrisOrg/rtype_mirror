@@ -1,0 +1,105 @@
+{
+  "Animation": [
+    {
+      "name": "BheetLv1AttackTopDown",
+      "action": "Idle",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 1,
+        "column": 1,
+        "nbSprite": 1
+      }
+    },
+    {
+      "name": "BheetLv1AttackTurnUp",
+      "action": "MoveUp",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 3,
+        "column": 10,
+        "nbSprite": 30
+      }
+    },
+    {
+      "name": "BheetLv1AttackTurnDown",
+      "action": "MoveDown",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 3,
+        "column": 10,
+        "nbSprite": 30
+      }
+    },
+    {
+      "name": "BheetLv1AttackRedressUp",
+      "action": "StopMoveUp",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 3,
+        "column": 10,
+        "nbSprite": 30
+      }
+    },
+    {
+      "name": "BheetLv1AttackRedressDown",
+      "action": "StopMoveDown",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 3,
+        "column": 10,
+        "nbSprite": 30
+      }
+    },
+    {
+      "name": "BheetLv1AttackRollUp",
+      "action": "RollUp",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 6,
+        "column": 10,
+        "nbSprite": 60
+      }
+    },
+    {
+      "name": "BheetLv1AttackRollDown",
+      "action": "RollDown",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 6,
+        "column": 10,
+        "nbSprite": 60
+      }
+    }
+  ],
+  "Box": {
+    "position": {
+      "x": 51,
+      "y": 10
+    },
+    "size": {
+      "width": 100,
+      "height": 129
+    }
+  }
+}
