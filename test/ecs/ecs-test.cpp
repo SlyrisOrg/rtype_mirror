@@ -99,9 +99,8 @@ TEST(ECS, MultipleForEach)
 
     for (size_t i = 0; i < 10; ++i) {
         auto id = em.createEntity();
-        em[id]
-            .addComponent<Lol>()
-            .addComponent<Box>(1, 2, 3, 4);
+        em[id].addComponent<Lol>();
+        em[id].addComponent<Box>(1, 2, 3, 4);
     }
     size_t nbMatched = 0;
     em.for_each<Lol, Box>([&nbMatched](auto &) {
