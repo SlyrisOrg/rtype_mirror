@@ -73,21 +73,34 @@ namespace game
                 return *std::get<Position<ComponentsList, T>::value>(_components);
             }
 
+            template <typename T>
+            const T &getComponent() const noexcept
+            {
+                using namespace meta::list;
+                return *std::get<Position<ComponentsList, T>::value>(_components);
+            }
+
             template <typename ...Args>
             std::tuple<std::add_lvalue_reference_t<Args>...> getComponents() noexcept
             {
                 return {getComponent<Args>()...};
             }
 
+            template <typename ...Args>
+            std::tuple<std::add_lvalue_reference_t<std::add_const_t<Args>>...> getComponents() const noexcept
+            {
+                return {getComponent<Args>()...};
+            }
+
             template <typename T>
-            bool hasComponent() noexcept
+            bool hasComponent() const noexcept
             {
                 using namespace meta::list;
                 return std::get<Position<ComponentsList, T>::value>(_components) != nullptr;
             }
 
             template <typename T, typename ...Args>
-            bool hasComponents() noexcept
+            bool hasComponents() const noexcept
             {
                 if constexpr (sizeof...(Args) > 0) {
                     return hasComponent<T>() && hasComponents<Args...>();
@@ -157,6 +170,11 @@ namespace game
         }
 
         Entity &operator[](EntityID id) noexcept
+        {
+            return _entities.at(id);
+        }
+
+        const Entity &operator[](EntityID id) const noexcept
         {
             return _entities.at(id);
         }
