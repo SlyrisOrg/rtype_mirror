@@ -95,7 +95,10 @@ namespace rtype
     class ActionMap : private utils::NonCopyable
     {
     public:
-        ActionMap() noexcept = default;
+        ActionMap() noexcept
+        {
+            
+        };
 
         void add(const T &key, const Action &action) noexcept
         {

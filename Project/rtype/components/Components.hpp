@@ -15,6 +15,7 @@ namespace rtype::components
         template <typename ...Args>
         Sprite(Args &&...args) : sprite(std::forward<Args>(args)...)
         {
+
         }
 
         sf::Sprite sprite;
