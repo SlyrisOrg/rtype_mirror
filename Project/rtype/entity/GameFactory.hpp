@@ -51,7 +51,9 @@ namespace rtype
         {
             Entity::ID bulletID = _ettMgr->createEntity();
             auto &ettMgr = *_ettMgr;
-            ettMgr[bulletID].addComponent<rtc::Sprite>(texture).sprite.setPosition(
+            auto &ett = ettMgr[bulletID];
+            sf::Sprite &sprite = ett.addComponent<rtc::Sprite>(texture).sprite;
+            sprite.setPosition(
                 sf::Vector2f{AABB.left + AABB.width,
                              AABB.top + AABB.height / 2.f -
                              ettMgr[bulletID].getComponent<rtc::Sprite>().sprite.getGlobalBounds().height /
