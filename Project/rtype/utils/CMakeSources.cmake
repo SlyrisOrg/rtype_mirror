@@ -4,6 +4,7 @@ set(RTYPE_UTILS_HEADERS
         ${UTILS}/AnimatedSprite.hpp
         ${UTILS}/Animation.hpp
         ${UTILS}/ResourceManager.hpp
+        ${UTILS}/Action.hpp
         PARENT_SCOPE)
 
 set(RTYPE_UTILS_SOURCES

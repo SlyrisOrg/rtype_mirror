@@ -5,15 +5,18 @@
 #ifndef RTYPE_DEMOSCENE_HPP
 #define RTYPE_DEMOSCENE_HPP
 
+#include <unordered_map>
 #include <utils/Enums.hpp>
 #include <rtype/entity/GameFactory.hpp>
 #include <rtype/gui/BaseGUI.hpp>
 #include <rtype/config/InGameConfig.hpp>
+#include <rtype/config/PlayerConfig.hpp>
 #include <rtype/gutils/base/AScene.hpp>
+#include <rtype/utils/Action.hpp>
 
 namespace rtype
 {
-    class DemoScene final : public gutils::AScene
+    class DemoScene final : public gutils::AScene, public rtype::ActionTarget<int>
     {
     public:
         ENUM(Sprite,
@@ -39,7 +42,8 @@ namespace rtype
 
     public:
         template <typename ...Args>
-        DemoScene(Args &&...args) noexcept : gutils::AScene(std::forward<Args>(args)...)
+        DemoScene(Args &&...args) noexcept : gutils::AScene(std::forward<Args>(args)...),
+                                             ActionTarget(cfg::player::playerInputs)
         {
         }
 
@@ -79,10 +83,10 @@ namespace rtype
                           unsigned int nbAnims);
         void __createGameObjects() noexcept;
         void __animationSystem(const sf::Time &time) noexcept;
-        void __inputSystem(double timeSinceLastFrame) noexcept;
         void __bulletSystem(double timeSinceLastFrame) noexcept;
         void __loadBulletSprite() noexcept;
-
+        void __setPlayerCallbacks() noexcept;
+        void __unbindPlayerCallbacks() noexcept;
     private:
         UIGUI _gui;
         sfutils::ResourceManager<sf::Texture, SpriteDemo> _textures;
@@ -91,6 +95,7 @@ namespace rtype
         EntityManager _ettMgr;
         bool _debugMode{false};
         std::chrono::time_point<std::chrono::steady_clock> _lastShoot;
+        std::unordered_map<std::string, Entity::ID> _entities;
     };
 }
 

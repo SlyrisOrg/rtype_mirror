@@ -34,6 +34,8 @@ namespace rtype
         _animations.clear();
         _textures.clear();
         _ettMgr.clear();
+        _entities.clear();
+        __unbindPlayerCallbacks();
     }
 
     void DemoScene::draw() noexcept
@@ -53,8 +55,8 @@ namespace rtype
 
     void DemoScene::update(double timeSinceLastFrame) noexcept
     {
+        ActionTarget::processEvents(timeSinceLastFrame);
         sf::Time t1 = sf::seconds(static_cast<float>(timeSinceLastFrame));
-        __inputSystem(timeSinceLastFrame);
         __bulletSystem(timeSinceLastFrame);
         __animationSystem(t1);
         _ettMgr.sweepEntities();
@@ -95,9 +97,10 @@ namespace rtype
         auto start = __setGUI();
         if (start) {
             __parseConfig("Bheet");
-            __loadBulletSprite();
             GameFactory::setEntityManager(&_ettMgr);
+            __loadBulletSprite();
             __createGameObjects();
+            __setPlayerCallbacks();
         }
     }
 
@@ -192,9 +195,10 @@ namespace rtype
 
     void DemoScene::__createGameObjects() noexcept
     {
-        GameFactory::createPlayerSpaceShip(_animations.get(Animation::BheetLv1AttackTopDown),
-                                           _boundingBoxFactions["Bheet"],
-                                           sf::Vector2f(200, 200));
+        auto id = GameFactory::createPlayerSpaceShip(_animations.get(Animation::BheetLv1AttackTopDown),
+                                                     _boundingBoxFactions["Bheet"],
+                                                     sf::Vector2f(200, 200));
+        _entities.emplace("Player", id);
     }
 
     void DemoScene::__animationSystem(const sf::Time &time) noexcept
@@ -202,49 +206,6 @@ namespace rtype
         _ettMgr.for_each<rtc::Animation, rtc::BoundingBox>([&time](rtype::Entity &ett) {
             sfutils::AnimatedSprite &anim = ett.getComponent<rtc::Animation>().anim;
             anim.update(time);
-        });
-    }
-
-    void DemoScene::__inputSystem(double timeSinceLastFrame) noexcept
-    {
-        auto resetPosition = [](rtc::BoundingBox &box, const sf::Vector2f &texturePos) {
-            box.AABB.left = texturePos.x + box.relativeAABB.left;
-            box.AABB.top = texturePos.y + box.relativeAABB.top;
-            box.shapeDebug.setPosition(sf::Vector2f{box.AABB.left, box.AABB.top});
-        };
-        _ettMgr.for_each<rtc::Player>([this, &timeSinceLastFrame, &resetPosition](rtype::Entity &ett) {
-            auto &anim = ett.getComponent<rtc::Animation>().anim;
-            auto &boundingBox = ett.getComponent<rtc::BoundingBox>();
-            auto limitX = (cfg::game::width - boundingBox.AABB.width);
-            auto limitY = (cfg::game::height - boundingBox.AABB.height);
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && boundingBox.AABB.left <= limitX) {
-                anim.setPosition(static_cast<float>(anim.getPosition().x + (450 * timeSinceLastFrame)),
-                                 anim.getPosition().y);
-                resetPosition(boundingBox, anim.getPosition());
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && boundingBox.AABB.left >= 0) {
-                anim.setPosition(static_cast<float>(anim.getPosition().x - (450 * timeSinceLastFrame)),
-                                 anim.getPosition().y);
-                resetPosition(boundingBox, anim.getPosition());
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && boundingBox.AABB.top <= limitY) {
-                anim.setPosition(anim.getPosition().x,
-                                 static_cast<float>(anim.getPosition().y + (450 * timeSinceLastFrame)));
-                resetPosition(boundingBox, anim.getPosition());
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && boundingBox.AABB.top >= 0) {
-                anim.setPosition(anim.getPosition().x,
-                                 static_cast<float>(anim.getPosition().y - (450 * timeSinceLastFrame)));
-                resetPosition(boundingBox, anim.getPosition());
-            }
-            using namespace std::chrono_literals;
-            auto res = std::chrono::steady_clock::now();
-
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
-                std::chrono::duration_cast<std::chrono::milliseconds>(res - _lastShoot) > 200ms) {
-                GameFactory::createBullet(_textures.get(Sprite::Bullet), boundingBox.AABB);
-                _lastShoot = std::chrono::steady_clock::now();
-            }
         });
     }
 
@@ -266,5 +227,72 @@ namespace rtype
                 ett.mark();
             }
         });
+    }
+
+    void DemoScene::__setPlayerCallbacks() noexcept
+    {
+        auto resetPosition = [](rtc::BoundingBox &box, const sf::Vector2f &texturePos) {
+            box.AABB.left = texturePos.x + box.relativeAABB.left;
+            box.AABB.top = texturePos.y + box.relativeAABB.top;
+            box.shapeDebug.setPosition(sf::Vector2f{box.AABB.left, box.AABB.top});
+        };
+
+        setKeyCallback(cfg::player::Right, [this, &resetPosition](const sf::Event &, double timeSinceLastFrame) {
+            auto[box, animation] = this->_ettMgr[_entities["Player"]].getComponents<rtc::BoundingBox, rtc::Animation>();
+            sfutils::AnimatedSprite &anim = animation.anim;
+            auto limitX = (cfg::game::width - box.AABB.width);
+            if (box.AABB.left <= limitX) {
+                anim.setPosition(static_cast<float>(anim.getPosition().x + (450 * timeSinceLastFrame)),
+                                 anim.getPosition().y);
+                resetPosition(box, anim.getPosition());
+            }
+        });
+
+        setKeyCallback(cfg::player::Left, [this, &resetPosition](const sf::Event &, double timeSinceLastFrame) {
+            auto[box, animation] = this->_ettMgr[_entities["Player"]].getComponents<rtc::BoundingBox, rtc::Animation>();
+            sfutils::AnimatedSprite &anim = animation.anim;
+            if (box.AABB.left >= 0)
+                anim.setPosition(static_cast<float>(anim.getPosition().x - (450 * timeSinceLastFrame)),
+                                 anim.getPosition().y);
+            resetPosition(box, anim.getPosition());
+        });
+
+        setKeyCallback(cfg::player::Up, [this, &resetPosition](const sf::Event &, double timeSinceLastFrame) {
+            auto[box, animation] = this->_ettMgr[_entities["Player"]].getComponents<rtc::BoundingBox, rtc::Animation>();
+            sfutils::AnimatedSprite &anim = animation.anim;
+            if (box.AABB.top >= 0) {
+                anim.setPosition(anim.getPosition().x,
+                                 static_cast<float>(anim.getPosition().y - (450 * timeSinceLastFrame)));
+                resetPosition(box, anim.getPosition());
+            }
+        });
+
+        setKeyCallback(cfg::player::Down, [this, &resetPosition](const sf::Event &, double timeSinceLastFrame) {
+            auto[box, animation] = this->_ettMgr[_entities["Player"]].getComponents<rtc::BoundingBox, rtc::Animation>();
+            sfutils::AnimatedSprite &anim = animation.anim;
+            auto limitY = (cfg::game::height - box.AABB.height);
+            if (box.AABB.top <= limitY) {
+                anim.setPosition(anim.getPosition().x,
+                                 static_cast<float>(anim.getPosition().y + (450 * timeSinceLastFrame)));
+                resetPosition(box, anim.getPosition());
+            }
+        });
+
+        setKeyCallback(cfg::player::SpaceShoot, [this](const sf::Event &, [[maybe_unused]] double timeSinceLastFrame) {
+            const rtc::BoundingBox &boundingBox = this->_ettMgr[_entities["Player"]].getComponent<rtc::BoundingBox>();
+            using namespace std::chrono_literals;
+            auto res = std::chrono::steady_clock::now();
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
+                std::chrono::duration_cast<std::chrono::milliseconds>(res - _lastShoot) > 200ms) {
+                GameFactory::createBullet(_textures.get(Sprite::Bullet), boundingBox.AABB);
+                _lastShoot = std::chrono::steady_clock::now();
+            }
+        });
+    }
+
+    void DemoScene::__unbindPlayerCallbacks() noexcept
+    {
+        ActionTarget::clear();
     }
 }
