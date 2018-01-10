@@ -37,8 +37,10 @@ namespace sfutils
         };
 
     public:
+
         AnimatedSprite(Animation *animation = nullptr, Status status = Playing,
-                       const sf::Time &deltaTime = sf::seconds(0.15f), bool loop = true, int repeat = 0) noexcept;
+                       const sf::Time &deltaTime = sf::seconds(0.15f), bool loop = true, int repeat = 0,
+                       const sf::IntRect& rect = {1,1,1,1}) noexcept;
 
     public:
         void setAnimation(Animation *animation) noexcept;
@@ -72,6 +74,7 @@ namespace sfutils
         int _repeat;
         Status _status;
         size_t _currentFrame;
+        sf::IntRect _rect;
     };
 }
 

@@ -82,7 +82,8 @@ namespace rtype
     {
         using namespace cfg::login;
         for (auto &&cur : logLabel) {
-            const auto &[widgetID, widgetTxt] = cur.second;
+            const auto &
+            [widgetID, widgetTxt] = cur.second;
             _gui[widgetID].setText(widgetTxt);
         }
     }
@@ -265,12 +266,7 @@ namespace rtype
         __checkReturnWidgets(evt.key);
         __checkTabWidgets(evt.key);
 
-        // TODO: remove Temporary Skip
-        if (evt.key == sf::Keyboard::F8) {
-            _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Create);
-        } else if (evt.key == sf::Keyboard::F7) {
-            _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Profil);
-        } else if (evt.key == sf::Keyboard::F1) {
+        if (evt.key == sf::Keyboard::F2) {
             _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Demo);
         }
 

@@ -2,10 +2,12 @@
 // Created by milerius on 22/12/17.
 //
 
+#include <chrono>
+#include <rapidjson/istreamwrapper.h>
+#include <rtype/gutils/event/InsideEvents.hpp>
 #include <rtype/scenes/DemoScene.hpp>
 #include <rtype/config/ProfilConfig.hpp>
 #include <rtype/gui/GUIManager.hpp>
-#include <rapidjson/istreamwrapper.h>
 
 namespace rtype
 {
@@ -31,18 +33,40 @@ namespace rtype
         _boundingBoxFactions.clear();
         _animations.clear();
         _textures.clear();
+        _ettMgr.clear();
     }
 
     void DemoScene::draw() noexcept
     {
+        _ettMgr.for_each<rtc::Sprite>([this](rtype::Entity &ett) {
+            if (this->_debugMode)
+                _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
+            this->_win.draw(ett.getComponent<rtc::Sprite>().sprite);
+        });
+        _ettMgr.for_each<rtc::Animation, rtc::BoundingBox>([this](rtype::Entity &ett) {
+            if (this->_debugMode)
+                _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
+            _win.draw(ett.getComponent<rtc::Animation>().anim);
+        });
     }
 
-    void DemoScene::update([[maybe_unused]] double timeSinceLastFrame) noexcept
+    void DemoScene::update(double timeSinceLastFrame) noexcept
     {
+        sf::Time t1 = sf::seconds(static_cast<float>(timeSinceLastFrame));
+        __inputSystem(timeSinceLastFrame);
+        __bulletSystem(timeSinceLastFrame);
+        __animationSystem(t1);
+        _ettMgr.sweepEntities();
     }
 
-    bool DemoScene::keyPressed([[maybe_unused]] const gutils::evt::KeyPressed &evt) noexcept
+    bool DemoScene::keyPressed(const gutils::evt::KeyPressed &evt) noexcept
     {
+        if (evt.key == sf::Keyboard::F2) {
+            _debugMode = !_debugMode;
+        }
+        else if (evt.key == sf::Keyboard::Escape) {
+            _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Login);
+        }
         return false;
     }
 
@@ -71,6 +95,9 @@ namespace rtype
         auto start = __setGUI();
         if (start) {
             __parseConfig("Bheet");
+            __loadBulletSprite();
+            GameFactory::setEntityManager(&_ettMgr);
+            __createGameObjects();
         }
     }
 
@@ -161,5 +188,83 @@ namespace rtype
         auto str = cfg::spritePath + val.toString() + ".png";
         _textures.load(val, str);
         _log(lg::Debug) << "Loading Image " << val.toString() + ".png" << " successfully loaded." << std::endl;
+    }
+
+    void DemoScene::__createGameObjects() noexcept
+    {
+        GameFactory::createPlayerSpaceShip(_animations.get(Animation::BheetLv1AttackTopDown),
+                                           _boundingBoxFactions["Bheet"],
+                                           sf::Vector2f(200, 200));
+    }
+
+    void DemoScene::__animationSystem(const sf::Time &time) noexcept
+    {
+        _ettMgr.for_each<rtc::Animation, rtc::BoundingBox>([&time](rtype::Entity &ett) {
+            auto &anim = ett.getComponent<rtc::Animation>().anim;
+            anim.update(time);
+        });
+    }
+
+    void DemoScene::__inputSystem(double timeSinceLastFrame) noexcept
+    {
+        auto resetPosition = [](auto &box, const auto &texturePos) {
+            box.AABB.left = texturePos.x + box.relativeAABB.left;
+            box.AABB.top = texturePos.y + box.relativeAABB.top;
+            box.shapeDebug.setPosition(sf::Vector2f{box.AABB.left, box.AABB.top});
+        };
+        _ettMgr.for_each<rtc::Player>([this, &timeSinceLastFrame, &resetPosition](rtype::Entity &ett) {
+            auto &anim = ett.getComponent<rtc::Animation>().anim;
+            auto &boundingBox = ett.getComponent<rtc::BoundingBox>();
+            auto limitX = (cfg::game::width - boundingBox.AABB.width);
+            auto limitY = (cfg::game::height - boundingBox.AABB.height);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && boundingBox.AABB.left <= limitX) {
+                anim.setPosition(static_cast<float>(anim.getPosition().x + (450 * timeSinceLastFrame)),
+                                 anim.getPosition().y);
+                resetPosition(boundingBox, anim.getPosition());
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && boundingBox.AABB.left >= 0) {
+                anim.setPosition(static_cast<float>(anim.getPosition().x - (450 * timeSinceLastFrame)),
+                                 anim.getPosition().y);
+                resetPosition(boundingBox, anim.getPosition());
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && boundingBox.AABB.top <= limitY) {
+                anim.setPosition(anim.getPosition().x,
+                                 static_cast<float>(anim.getPosition().y + (450 * timeSinceLastFrame)));
+                resetPosition(boundingBox, anim.getPosition());
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && boundingBox.AABB.top >= 0) {
+                anim.setPosition(anim.getPosition().x,
+                                 static_cast<float>(anim.getPosition().y - (450 * timeSinceLastFrame)));
+                resetPosition(boundingBox, anim.getPosition());
+            }
+            using namespace std::chrono_literals;
+            auto res = std::chrono::steady_clock::now();
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
+                std::chrono::duration_cast<std::chrono::milliseconds>(res - _lastShoot) > 200ms) {
+                GameFactory::createBullet(_textures.get(Sprite::Bullet), boundingBox.AABB);
+                _lastShoot = std::chrono::steady_clock::now();
+            }
+        });
+    }
+
+    void DemoScene::__loadBulletSprite() noexcept
+    {
+        __loadSprite(Sprite::Bullet);
+    }
+
+    void DemoScene::__bulletSystem(double timeSinceLastFrame) noexcept
+    {
+        _ettMgr.for_each<rtc::Bullet, rtc::Sprite, rtc::BoundingBox>([&timeSinceLastFrame](Entity &ett) {
+            auto &cmp = ett.getComponent<rtc::Sprite>();
+            auto &box = ett.getComponent<rtc::BoundingBox>();
+            cmp.sprite.setPosition(static_cast<float>(box.AABB.left + (600 * timeSinceLastFrame)), box.AABB.top);
+            box.AABB.left = cmp.sprite.getPosition().x;
+            box.AABB.top = cmp.sprite.getPosition().y;
+            box.shapeDebug.setPosition(cmp.sprite.getPosition());
+            if (cmp.sprite.getPosition().x >= cfg::game::width) {
+                ett.mark();
+            }
+        });
     }
 }

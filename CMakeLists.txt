@@ -57,6 +57,7 @@ set(SOURCES_PROJECT Project/main.cpp
         ${RTYPE_ERROR_SOURCES}
         ${RTYPE_GUI_SOURCES}
         ${RTYPE_VIDEO_SOURCES}
+        ${RTYPE_ENTITY_SOURCES}
         )
 
 add_executable(${PROJECT_NAME} ${SOURCES_PROJECT} ${HEADERS_PROJECT})

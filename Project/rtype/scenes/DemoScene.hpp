@@ -6,6 +6,7 @@
 #define RTYPE_DEMOSCENE_HPP
 
 #include <utils/Enums.hpp>
+#include <rtype/entity/GameFactory.hpp>
 #include <rtype/gui/BaseGUI.hpp>
 #include <rtype/config/InGameConfig.hpp>
 #include <rtype/gutils/base/AScene.hpp>
@@ -22,7 +23,8 @@ namespace rtype
              BheetLv1AttackRedressUp,
              BheetLv1AttackRedressDown,
              BheetLv1AttackRollUp,
-             BheetLv1AttackRollDown
+             BheetLv1AttackRollDown,
+             Bullet
         );
 
         ENUM(Animation,
@@ -75,11 +77,20 @@ namespace rtype
                           unsigned int nbColumns,
                           unsigned int nbLines,
                           unsigned int nbAnims);
+        void __createGameObjects() noexcept;
+        void __animationSystem(const sf::Time &time) noexcept;
+        void __inputSystem(double timeSinceLastFrame) noexcept;
+        void __bulletSystem(double timeSinceLastFrame) noexcept;
+        void __loadBulletSprite() noexcept;
+
     private:
         UIGUI _gui;
         sfutils::ResourceManager<sf::Texture, SpriteDemo> _textures;
         sfutils::ResourceManager<sfutils::Animation, AnimDemo> _animations;
         std::unordered_map<std::string, sf::IntRect> _boundingBoxFactions;
+        EntityManager _ettMgr;
+        bool _debugMode{false};
+        std::chrono::time_point<std::chrono::steady_clock> _lastShoot;
     };
 }
 
