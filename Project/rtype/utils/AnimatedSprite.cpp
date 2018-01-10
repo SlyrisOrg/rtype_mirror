@@ -7,13 +7,14 @@ namespace sfutils
     AnimatedSprite::FuncType AnimatedSprite::defaultFunc = []() -> void {};
 
     AnimatedSprite::AnimatedSprite(Animation *animation, Status status, const sf::Time &deltaTime, bool loop,
-                                   int repeat) noexcept :
+                                   int repeat, const sf::IntRect &rect) noexcept :
         onFinished(defaultFunc),
         _animation(nullptr),
         _delta(deltaTime),
         _loop(loop),
         _repeat(repeat),
-        _status(status)
+        _status(status),
+        _rect(rect)
     {
         setAnimation(animation);
     }
@@ -26,6 +27,8 @@ namespace sfutils
             _currentFrame = 0;
             __setFrame(0, true);
             setTexture(*animation->getTexture());
+            if (_rect != sf::IntRect{1, 1, 1, 1})
+                setTextureRect(_rect);
         }
     }
 
@@ -121,7 +124,10 @@ namespace sfutils
     {
         if (_animation) {
             sf::IntRect rect = _animation->getRect(index);
-            setTextureRect(rect);
+            if (_rect != sf::IntRect{1, 1, 1, 1})
+                setTextureRect(_rect);
+            else
+                setTextureRect(rect);
         }
 
         if (resetTime)

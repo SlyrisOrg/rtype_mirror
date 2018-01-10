@@ -10,9 +10,14 @@
 
 namespace rtype
 {
-    using Components = meta::TypeList<components::Sprite, components::BoundingBox>;
+    using Components = meta::TypeList<components::Sprite,
+        components::BoundingBox,
+        components::Animation,
+        components::Player,
+        components::Bullet>;
     using EntityManager = game::EntityManager<Components>;
     using Entity = EntityManager::Entity;
+    namespace rtc = rtype::components;
 }
 
 #endif //RTYPE_ECS_HPP
