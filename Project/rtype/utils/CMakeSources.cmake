@@ -5,6 +5,7 @@ set(RTYPE_UTILS_HEADERS
         ${UTILS}/Animation.hpp
         ${UTILS}/ResourceManager.hpp
         ${UTILS}/QuadTree.hpp
+        ${UTILS}/Action.hpp
         PARENT_SCOPE)
 
 set(RTYPE_UTILS_SOURCES
@@ -15,4 +16,4 @@ set(RTYPE_UTILS_SOURCES
 if (WIN32)
     source_group("Header Files\\Utils" FILES ${RTYPE_UTILS_HEADERS})
     source_group("Source Files\\Utils" FILES ${RTYPE_UTILS_SOURCES})
-endif(WIN32)
+endif (WIN32)
