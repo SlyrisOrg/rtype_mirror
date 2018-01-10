@@ -38,14 +38,28 @@ namespace cfg::profil
                 "exitdesktopbuttonlabel", {TProfilWidget::ExitDesktopButton, "EXIT TO DESKTOP"}
             },
             {
-                "soundslabel", {TProfilWidget::LabelSoundsEffect, "Sounds Effect Volume: "}
+                "soundslabel", {TProfilWidget::LabelSoundsEffect, "Sound Effects Volume: "}
             },
             {
-                "musiclabel", {TProfilWidget::LabelMusic, "Music Volume: "}
+                "discardbuttonlabel", {TProfilWidget::DiscardButton, "DISCARD"}
             },
             {
                 "applybuttonlabel", {TProfilWidget::ApplyButton, "APPLY"}
+            },
+            {
+                "musiccheckboxlabel", {TProfilWidget::MusicCheckBox, "Turn off Music"}
+            },
+            {
+                "soundeffectcheckboxlabel", {TProfilWidget::SoundsEffectCheckBox, "Turn off sound effects"}
+            },
+            {
+                "tabbuttonsoundlabel", {TProfilWidget::TabButtonSounds, "                       Sound"}
+            },
+            {
+                "tabbuttonscreenlabel", {TProfilWidget::TabButtonScreen, "                       Graphical"}
+            },
+            {
+                "tabbuttonlanglabel", {TProfilWidget::TabButtonLang, "                       Language"}
             }
-
         };
 }

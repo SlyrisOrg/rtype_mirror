@@ -22,7 +22,7 @@ namespace cfg::profil
 
     //! Layouts
     static inline constexpr const char *profilLayout = "RTMainScene.layout";
-    static inline constexpr unsigned int nbWidgets = 37;
+    static inline constexpr unsigned int nbWidgets = rtype::ProfilWidgets::size();
 
     //! Profil informations.
     extern std::string level;

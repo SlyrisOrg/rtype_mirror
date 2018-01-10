@@ -46,7 +46,9 @@ namespace rtype
          SoundsEffectSliderProgress,
          MusicSliderProgress,
          fr,
-         en
+         en,
+         DiscardButton,
+         TabButtonScreen
     );
 
     using TProfilWidget = ProfilWidgets::EnumType;

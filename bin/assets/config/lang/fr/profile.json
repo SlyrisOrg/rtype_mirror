@@ -8,8 +8,15 @@
       "optionsbuttonlabel": "OPTIONS",
       "logoutbuttonlabel": "DECONNEXION",
       "exitdesktopbuttonlabel": "QUITTER LE JEU",
-      "soundslabel": "Volume effets sonore : ",
-      "musiclabel": "Volume musique : "
+      "soundslabel": "Volume effets sonores : ",
+      "musiclabel": "Volume musique : ",
+      "applybuttonlabel": "APPLIQUER",
+      "discardbuttonlabel": "ANNULER",
+      "tabbuttonsoundlabel": "                       Musique",
+      "tabbuttonscreenlabel": "                       Graphismes",
+      "tabbuttonlanglabel": "                       Langues",
+      "musiccheckboxlabel": "Desactiver la musique",
+      "soundeffectcheckboxlabel": "Desactiver les effets"
     }
   }
 }

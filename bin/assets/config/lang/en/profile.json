@@ -9,7 +9,14 @@
       "logoutbuttonlabel": "LOG OUT",
       "exitdesktopbuttonlabel": "EXIT TO DESKTOP",
       "soundslabel": "Sounds Effect Volume: ",
-      "musiclabel": "Music Volume: "
+      "musiclabel": "Music Volume: ",
+      "applybuttonlabel": "APPLY",
+      "discardbuttonlabel": "DISCARD",
+      "tabbuttonsoundlabel": "                       Sound",
+      "tabbuttonscreenlabel": "                       Graphical",
+      "tabbuttonlanglabel": "                       Language",
+      "musiccheckboxlabel": "Turn off Music",
+      "soundeffectcheckboxlabel": "Turn off sound effects"
     }
   }
 }
