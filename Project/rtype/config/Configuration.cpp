@@ -12,6 +12,7 @@
 #include <rtype/config/Configuration.hpp>
 #include <rtype/config/ProfilConfig.hpp>
 #include <rtype/config/SpaceshipConfig.hpp>
+#include <rtype/config/PlayerConfig.hpp>
 
 /**
  * @bug Windows standard library have a macro which conflict with rapidjson GetObject.
@@ -137,6 +138,7 @@ namespace rtype
             __getWindowSize(doc);
             currentNbFiles += 1u;
             __parseLangConfig(currentNbFiles);
+            cfg::player::setPlayerInputs();
         }
         catch (const std::runtime_error &error) {
             _log(lg::Error) << error.what() << std::endl;
