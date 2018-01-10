@@ -5,6 +5,7 @@ set(RTYPE_UTILS_HEADERS
         ${UTILS}/Animation.hpp
         ${UTILS}/ResourceManager.hpp
         ${UTILS}/QuadTree.hpp
+        ${UTILS}/Action.hpp
         PARENT_SCOPE)
 
 set(RTYPE_UTILS_SOURCES

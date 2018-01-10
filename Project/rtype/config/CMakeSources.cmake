@@ -13,10 +13,12 @@ set(RTYPE_CONFIG_HEADERS
         ${CONFIG}/QueueConfig.hpp
         ${CONFIG}/LobbyConfig.hpp
         ${CONFIG}/InGameConfig.hpp
+        ${CONFIG}/PlayerConfig.hpp
         PARENT_SCOPE
         )
 
 set(RTYPE_CONFIG_SOURCES
+        ${CONFIG}/PlayerConfig.cpp
         ${CONFIG}/Configuration.cpp
         ${CONFIG}/LoginConfig.cpp
         ${CONFIG}/ErrorConfig.cpp
