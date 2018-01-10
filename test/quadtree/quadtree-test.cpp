@@ -21,13 +21,13 @@ TEST(QuadTree, BasicInsert)
 
     Entity::ID id = em.createEntity();
 
-    em[id].addComponent<BBox>(12, 12, 30, 30);
+    em[id].addComponent<BBox>(12.f, 12.f, 30.f, 30.f);
 
-    rtype::QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 100, 100), em);
+    rtype::QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 100.f, 100.f), em);
 
     ASSERT_TRUE(quad.insert(id));
     QuadTree<EntityManager>::QuadNode *node = quad.getNode(id);
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(node->_AABB.height, node->_AABB.width));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(node->_AABB.height, node->_AABB.width));
     quad.remove(id);
 }
 
@@ -37,9 +37,9 @@ TEST(QuadTree, FailedInsert)
 
     Entity::ID id = em.createEntity();
 
-    em[id].addComponent<BBox>(110, 12, 30, 30);
+    em[id].addComponent<BBox>(110.f, 12.f, 30.f, 30.f);
 
-    QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 100, 100), em);
+    QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 100.f, 100.f), em);
 
     ASSERT_FALSE(quad.insert(id));
 }
@@ -54,12 +54,12 @@ TEST(QuadTree, MultipleInsert)
     Entity::ID id3 = em.createEntity();
     Entity::ID id4 = em.createEntity();
 
-    em[id1].addComponent<BBox>(12, 12, 10, 10);
-    em[id2].addComponent<BBox>(20, 12, 30, 10);
-    em[id3].addComponent<BBox>(31, 12, 10, 10);
-    em[id4].addComponent<BBox>(44, 12, 10, 10);
+    em[id1].addComponent<BBox>(12.f, 12.f, 10.f, 10.f);
+    em[id2].addComponent<BBox>(20.f, 12.f, 30.f, 10.f);
+    em[id3].addComponent<BBox>(31.f, 12.f, 10.f, 10.f);
+    em[id4].addComponent<BBox>(44.f, 12.f, 10.f, 10.f);
 
-    QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 100, 100), em);
+    QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 100.f, 100.f), em);
 
     ASSERT_TRUE(quad.insert(id1));
     ASSERT_TRUE(quad.insert(id2));
@@ -71,10 +71,10 @@ TEST(QuadTree, MultipleInsert)
     QuadTree<EntityManager>::QuadNode *nod3 = quad.getNode(id3);
     QuadTree<EntityManager>::QuadNode *nod4 = quad.getNode(id4);
 
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(nod->_AABB.height, nod->_AABB.width));
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(nod2->_AABB.height, nod2->_AABB.width));
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(nod3->_AABB.height, nod3->_AABB.width));
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(nod4->_AABB.height, nod4->_AABB.width));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(nod->_AABB.height, nod->_AABB.width));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(nod2->_AABB.height, nod2->_AABB.width));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(nod3->_AABB.height, nod3->_AABB.width));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(nod4->_AABB.height, nod4->_AABB.width));
 
     ASSERT_TRUE((std::any_of(nod->_items.begin(), nod->_items.end(), [id2](const auto &a) {
         return a == id2;
@@ -98,14 +98,14 @@ TEST(QuadTree, InsertAndSubDivide)
     Entity::ID id5 = em.createEntity();
     Entity::ID id6 = em.createEntity();
 
-    em[id1].addComponent<BBox>(10, 10, 10, 10);
-    em[id2].addComponent<BBox>(30, 20, 30, 10);
-    em[id3].addComponent<BBox>(10, 40, 10, 10);
-    em[id4].addComponent<BBox>(40, 40, 10, 10);
-    em[id5].addComponent<BBox>(80, 80, 10, 10);
-    em[id6].addComponent<BBox>(40, 10, 10, 10);
+    em[id1].addComponent<BBox>(10.f, 10.f, 10.f, 10.f);
+    em[id2].addComponent<BBox>(30.f, 20.f, 30.f, 10.f);
+    em[id3].addComponent<BBox>(10.f, 40.f, 10.f, 10.f);
+    em[id4].addComponent<BBox>(40.f, 40.f, 10.f, 10.f);
+    em[id5].addComponent<BBox>(80.f, 80.f, 10.f, 10.f);
+    em[id6].addComponent<BBox>(40.f, 10.f, 10.f, 10.f);
 
-    QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 100, 100), em);
+    QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 100.f, 100.f), em);
 
     ASSERT_TRUE(quad.insert(id1));
     ASSERT_TRUE(quad.insert(id2));
@@ -119,16 +119,16 @@ TEST(QuadTree, InsertAndSubDivide)
     QuadTree<EntityManager>::QuadNode *nod4 = quad.getNode(id4);
     QuadTree<EntityManager>::QuadNode *nod5 = quad.getNode(id5);
 
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod5->_AABB.left, nod5->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod5->_AABB.width, nod5->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod5->_AABB.left, nod5->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod5->_AABB.width, nod5->_AABB.height));
 
     ASSERT_TRUE((std::any_of(nod->_items.begin(), nod->_items.end(), [id2](const auto &a) {
         return a == id2;
@@ -152,18 +152,18 @@ TEST(QuadTree, InsertAndSubDivide)
     nod5 = quad.getNode(id5);
     QuadTree<EntityManager>::QuadNode *nod6 = quad.getNode(id6);
 
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 0), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 25), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod5->_AABB.left, nod5->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod5->_AABB.width, nod5->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 0), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 0.f), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 25.f), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod5->_AABB.left, nod5->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod5->_AABB.width, nod5->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 0.f), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
 
     ASSERT_FALSE((std::any_of(nod->_items.begin(), nod->_items.end(), [id2](const auto &a) {
         return a == id2;
@@ -268,15 +268,14 @@ TEST(QuadTree, BasicRemove)
 
     Entity::ID id = em.createEntity();
 
-    em[id].addComponent<BBox>(12, 12, 30, 30);
+    em[id].addComponent<BBox>(12.f, 12.f, 30.f, 30.f);
 
-    QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 100, 100), em);
-
+    QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 100.f, 100.f), em);
     ASSERT_TRUE(quad.insert(id));
 
     QuadTree<EntityManager>::QuadNode *node = quad.getNode(id);
 
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(node->_AABB.height, node->_AABB.width));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(node->_AABB.height, node->_AABB.width));
 
     quad.remove(id);
 
@@ -295,15 +294,15 @@ TEST(QuadTree, RemoveAndUnDivide)
     Entity::ID id6 = em.createEntity();
 
 
-    em[id1].addComponent<BBox>(10, 10, 10, 10);
-    em[id2].addComponent<BBox>(30, 20, 10, 10);
-    em[id3].addComponent<BBox>(10, 40, 10, 10);
-    em[id4].addComponent<BBox>(40, 40, 10, 10);
-    em[id5].addComponent<BBox>(80, 80, 10, 10);
-    em[id6].addComponent<BBox>(40, 10, 10, 10);
+    em[id1].addComponent<BBox>(10.f, 10.f, 10.f, 10.f);
+    em[id2].addComponent<BBox>(30.f, 20.f, 10.f, 10.f);
+    em[id3].addComponent<BBox>(10.f, 40.f, 10.f, 10.f);
+    em[id4].addComponent<BBox>(40.f, 40.f, 10.f, 10.f);
+    em[id5].addComponent<BBox>(80.f, 80.f, 10.f, 10.f);
+    em[id6].addComponent<BBox>(40.f, 10.f, 10.f, 10.f);
 
 
-    QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 100, 100), em);
+    QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 100.f, 100.f), em);
 
     quad.insert(id1);
     quad.insert(id2);
@@ -320,16 +319,16 @@ TEST(QuadTree, RemoveAndUnDivide)
     QuadTree<EntityManager>::QuadNode *nod5 = quad.getNode(id5);
     QuadTree<EntityManager>::QuadNode *nod6 = quad.getNode(id6);
 
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod5->_AABB.left, nod5->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod5->_AABB.width, nod5->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod5->_AABB.left, nod5->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod5->_AABB.width, nod5->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
 
     ASSERT_TRUE((std::any_of(nod2->_items.begin(), nod2->_items.end(), [id3](const auto &a) {
         return a == id3;
@@ -356,14 +355,14 @@ TEST(QuadTree, RemoveAndUnDivideTwice)
     Entity::ID id5 = em.createEntity();
     Entity::ID id6 = em.createEntity();
 
-    em[id1].addComponent<BBox>(10, 10, 10, 10);
-    em[id2].addComponent<BBox>(30, 20, 10, 10);
-    em[id3].addComponent<BBox>(10, 40, 10, 10);
-    em[id4].addComponent<BBox>(40, 40, 10, 10);
-    em[id5].addComponent<BBox>(80, 80, 10, 10);
-    em[id6].addComponent<BBox>(40, 10, 10, 10);
+    em[id1].addComponent<BBox>(10.f, 10.f, 10.f, 10.f);
+    em[id2].addComponent<BBox>(30.f, 20.f, 10.f, 10.f);
+    em[id3].addComponent<BBox>(10.f, 40.f, 10.f, 10.f);
+    em[id4].addComponent<BBox>(40.f, 40.f, 10.f, 10.f);
+    em[id5].addComponent<BBox>(80.f, 80.f, 10.f, 10.f);
+    em[id6].addComponent<BBox>(40.f, 10.f, 10.f, 10.f);
 
-    QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 100, 100), em);
+    QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 100.f, 100.f), em);
 
     quad.insert(id1);
     quad.insert(id2);
@@ -380,16 +379,16 @@ TEST(QuadTree, RemoveAndUnDivideTwice)
     QuadTree<EntityManager>::QuadNode *nod4 = quad.getNode(id4);
     QuadTree<EntityManager>::QuadNode *nod6 = quad.getNode(id6);
 
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 0), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 25), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 0), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 0.f), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 25.f), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 0.f), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
 
     ASSERT_FALSE((std::any_of(nod->_items.begin(), nod->_items.end(), [id2](const auto &a) {
         return a == id2;
@@ -463,14 +462,14 @@ TEST(QuadTree, RemoveAndUnDivideTwice)
     nod4 = quad.getNode(id4);
     nod6 = quad.getNode(id6);
 
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(100, 100), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(100.f, 100.f), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
 
     ASSERT_TRUE((std::any_of(nod2->_items.begin(), nod2->_items.end(), [id3](const auto &a) {
         return a == id3;
@@ -497,14 +496,14 @@ TEST(QuadTree, Move)
     Entity::ID id5 = em.createEntity();
     Entity::ID id6 = em.createEntity();
 
-    em[id1].addComponent<BBox>(10, 10, 10, 10);
-    em[id2].addComponent<BBox>(30, 20, 10, 10);
-    em[id3].addComponent<BBox>(10, 40, 10, 10);
-    em[id4].addComponent<BBox>(40, 40, 10, 10);
-    em[id5].addComponent<BBox>(80, 80, 10, 10);
-    em[id6].addComponent<BBox>(40, 10, 10, 10);
+    em[id1].addComponent<BBox>(10.f, 10.f, 10.f, 10.f);
+    em[id2].addComponent<BBox>(30.f, 20.f, 10.f, 10.f);
+    em[id3].addComponent<BBox>(10.f, 40.f, 10.f, 10.f);
+    em[id4].addComponent<BBox>(40.f, 40.f, 10.f, 10.f);
+    em[id5].addComponent<BBox>(80.f, 80.f, 10.f, 10.f);
+    em[id6].addComponent<BBox>(40.f, 10.f, 10.f, 10.f);
 
-    QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 100, 100), em);
+    QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 100.f, 100.f), em);
 
     quad.insert(id1);
     quad.insert(id2);
@@ -513,7 +512,7 @@ TEST(QuadTree, Move)
     quad.insert(id5);
     quad.insert(id6);
 
-    em[id6].getComponent<BBox>().AABB.top = 35;
+    em[id6].getComponent<BBox>().AABB.top = 35.f;
     ASSERT_TRUE(quad.move(id6));
 
     QuadTree<EntityManager>::QuadNode *nod = quad.getNode(id1);
@@ -538,21 +537,21 @@ TEST(QuadTree, Move)
         return a == id5;
     })));
 
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 0), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 25), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(25, 25), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 0.f), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 25.f), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(25.f, 25.f), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
 
-    em[id1].getComponent<BBox>().AABB.left += 50;
-    em[id2].getComponent<BBox>().AABB.left += 50;
-    em[id3].getComponent<BBox>().AABB.left += 50;
-    em[id6].getComponent<BBox>().AABB.left += 50;
+    em[id1].getComponent<BBox>().AABB.left += 50.f;
+    em[id2].getComponent<BBox>().AABB.left += 50.f;
+    em[id3].getComponent<BBox>().AABB.left += 50.f;
+    em[id6].getComponent<BBox>().AABB.left += 50.f;
     ASSERT_TRUE(quad.move(id1));
     ASSERT_TRUE(quad.move(id2));
     ASSERT_TRUE(quad.move(id3));
@@ -564,16 +563,16 @@ TEST(QuadTree, Move)
     nod4 = quad.getNode(id4);
     nod6 = quad.getNode(id6);
 
-    ASSERT_EQ(sf::Vector2f(50, 0), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(50, 0), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(50, 0), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(0, 0), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
-    ASSERT_EQ(sf::Vector2f(50, 0), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
-    ASSERT_EQ(sf::Vector2f(50, 50), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(50.f, 0.f), sf::Vector2f(nod->_AABB.left, nod->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod->_AABB.width, nod->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(50.f, 0.f), sf::Vector2f(nod2->_AABB.left, nod2->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod2->_AABB.width, nod2->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(50.f, 0.f), sf::Vector2f(nod3->_AABB.left, nod3->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod3->_AABB.width, nod3->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(0.f, 0.f), sf::Vector2f(nod4->_AABB.left, nod4->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod4->_AABB.width, nod4->_AABB.height));
+    ASSERT_EQ(sf::Vector2f(50.f, 0.f), sf::Vector2f(nod6->_AABB.left, nod6->_AABB.top));
+    ASSERT_EQ(sf::Vector2f(50.f, 50.f), sf::Vector2f(nod6->_AABB.width, nod6->_AABB.height));
 }
 
 bool checkCol(std::vector<Entity::ID> &mayCollide, EntityManager &em)
@@ -611,17 +610,17 @@ TEST(QuadTree, UseCase)
     Entity::ID spaceThing5 = em.createEntity();
     Entity::ID spaceThing6 = em.createEntity();
 
-    em[ship1].addComponent<BBox>(60, 30, 10, 10);
-    em[ship2].addComponent<BBox>(165, 90, 10, 10);
+    em[ship1].addComponent<BBox>(60.f, 30.f, 10.f, 10.f);
+    em[ship2].addComponent<BBox>(165.f, 90.f, 10.f, 10.f);
 
-    em[spaceThing1].addComponent<BBox>(145, 20, 5, 5);
-    em[spaceThing2].addComponent<BBox>(130, 10, 5, 5);
-    em[spaceThing3].addComponent<BBox>(180, 10, 5, 5);
-    em[spaceThing4].addComponent<BBox>(190, 30, 5, 5);
-    em[spaceThing5].addComponent<BBox>(180, 40, 5, 5);
-    em[spaceThing6].addComponent<BBox>(70, 130, 5, 5);
+    em[spaceThing1].addComponent<BBox>(145.f, 20.f, 5.f, 5.f);
+    em[spaceThing2].addComponent<BBox>(130.f, 10.f, 5.f, 5.f);
+    em[spaceThing3].addComponent<BBox>(180.f, 10.f, 5.f, 5.f);
+    em[spaceThing4].addComponent<BBox>(190.f, 30.f, 5.f, 5.f);
+    em[spaceThing5].addComponent<BBox>(180.f, 40.f, 5.f, 5.f);
+    em[spaceThing6].addComponent<BBox>(70.f, 130.f, 5.f, 5.f);
 
-    QuadTree<EntityManager> quad(sf::FloatRect(0, 0, 200, 200), em);
+    QuadTree<EntityManager> quad(sf::FloatRect(0.f, 0.f, 200.f, 200.f), em);
 
     ASSERT_TRUE(quad.insert(ship1));
     ASSERT_TRUE(quad.insert(ship2));
@@ -636,8 +635,8 @@ TEST(QuadTree, UseCase)
     // checking only space were moving things have occured,
     // you can't collide if no one moved around you
 
-    em[ship1].getComponent<BBox>().AABB.left += 50;
-    em[ship2].getComponent<BBox>().AABB.top -= 20;
+    em[ship1].getComponent<BBox>().AABB.left += 50.f;
+    em[ship2].getComponent<BBox>().AABB.top -= 20.f;
 
     ASSERT_TRUE(quad.move(ship1)); // moved to an non-empty space but didn't collide
     ASSERT_TRUE(quad.move(ship2)); // moved to an empty space
@@ -646,8 +645,8 @@ TEST(QuadTree, UseCase)
     ASSERT_FALSE(quad.getNode(ship1) == quad.getNode(ship2));
     ASSERT_FALSE(checkCol(quad.getNode(ship2)->_items, em));
 
-    em[ship1].getComponent<BBox>().AABB.left += 50;
-    em[ship2].getComponent<BBox>().AABB.top -= 35;
+    em[ship1].getComponent<BBox>().AABB.left += 50.f;
+    em[ship2].getComponent<BBox>().AABB.top -= 35.f;
 
     ASSERT_TRUE(quad.move(ship1));
     ASSERT_TRUE(quad.move(ship2));
