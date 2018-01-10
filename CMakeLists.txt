@@ -103,6 +103,8 @@ if (WIN32)
                 _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
                 _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
                 WINDOWS_STANDARD_MAIN)
+            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
+            $ENV{SFML_ROOT}/lib/pdb ${CMAKE_SOURCE_DIR}/bin)
     endif ()
     target_compile_options(${PROJECT_NAME} PRIVATE "/MP")
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/wd4715")
