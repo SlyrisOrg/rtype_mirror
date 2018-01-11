@@ -79,7 +79,8 @@ namespace rtype
              ClickSmooth,
              LoginSuccess,
              ComputerError,
-             ChangeFaction);
+             ChangeFaction,
+             Laser4);
 
         //! Animation Enum
         ENUM(Animation,

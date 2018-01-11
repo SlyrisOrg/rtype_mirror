@@ -7,7 +7,7 @@
 
 #include <SFML/Graphics/Texture.hpp>
 #include <rtype/entity/ECS.hpp>
-#include <iostream>
+#include <rtype/config/Configuration.hpp>
 
 namespace rtype
 {
@@ -47,7 +47,8 @@ namespace rtype
             return createSpaceShip(spaceID, std::forward<Args>(args)...);
         }
 
-        static Entity::ID createBullet(sf::Texture &texture, const sf::FloatRect &AABB) noexcept
+        static Entity::ID
+        createBullet(sf::Texture &texture, const sf::FloatRect &AABB, Configuration::SoundEffect eff) noexcept
         {
             Entity::ID bulletID = _ettMgr->createEntity();
             auto &ettMgr = *_ettMgr;
@@ -60,6 +61,7 @@ namespace rtype
                              2.f});
             ettMgr[bulletID].addComponent<rtc::BoundingBox>(ettMgr[bulletID].getComponent<rtc::Sprite>().sprite);
             ettMgr[bulletID].addComponent<rtc::Bullet>();
+            ettMgr[bulletID].addComponent<rtc::SoundEffect>(eff);
             return bulletID;
         }
 

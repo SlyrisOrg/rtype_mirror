@@ -46,8 +46,8 @@ namespace gutils::evt
     struct ResetMusicVolume final : public gutils::InsideEvents
     {
         explicit ResetMusicVolume(rtype::Configuration::Music msc) noexcept :
-        music(rtype::Configuration::musics.get(msc)),
-        musicName(msc.toString())
+            music(rtype::Configuration::musics.get(msc)),
+            musicName(msc.toString())
         {
             showEvents("Reset volume Music"sv);
         }
@@ -112,7 +112,13 @@ namespace gutils::evt
             showEvents("PlaySoundEffect"sv);
         }
 
-        sf::SoundBuffer &buff;
+        PlaySoundEffect(rtype::Configuration::SoundEffect eff, const sf::SoundBuffer &buff,
+                        bool loop = false) noexcept : buff(buff), loop(loop), soundEffectName(eff.toString())
+        {
+            showEvents("PlaySoundEffect"sv);
+        }
+
+        const sf::SoundBuffer &buff;
         bool loop;
         std::string soundEffectName;
     };
@@ -217,7 +223,6 @@ namespace gutils::evt
         }
 
         sf::Vector2i pos;
-
     };
 
     struct MouseButtonPressed final : public gutils::InsideEvents

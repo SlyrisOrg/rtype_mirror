@@ -26,17 +26,17 @@ namespace sfutils
         template <typename ...Args>
         Resource &load(const Identifier &id, Args &&...args)
         {
-            auto ptr = std::make_unique<Resource>();
+            Resource res;
 
-            if (!ptr->loadFromFile(std::forward<Args>(args)...)) {
+            if (!res.loadFromFile(std::forward<Args>(args)...)) {
                 throw std::runtime_error("Impossible to load file");
             }
 
-            if (!_map.emplace(id, std::move(ptr)).second) {
+            if (!_map.emplace(id, std::move(res)).second) {
                 throw std::runtime_error("Impossible to emplace in map. Object already exists?");
             }
 
-            return *_map[id];
+            return _map[id];
         }
 
         bool count(const Identifier &id) const noexcept
@@ -44,9 +44,14 @@ namespace sfutils
             return static_cast<bool>(_map.count(id));
         }
 
-        Resource &get(const Identifier &id) const
+        const Resource &get(const Identifier &id) const
         {
-            return *_map.at(id);
+            return _map.at(id);
+        }
+
+        Resource &get(const Identifier &id)
+        {
+            return _map.at(id);
         }
 
         template <typename ...Args>
@@ -64,7 +69,7 @@ namespace sfutils
         }
 
     private:
-        std::unordered_map<Identifier, std::unique_ptr<Resource>> _map;
+        std::unordered_map<Identifier, Resource> _map;
     };
 
     template <typename Identifier>

@@ -14,7 +14,8 @@ namespace rtype
         components::BoundingBox,
         components::Animation,
         components::Player,
-        components::Bullet>;
+        components::Bullet,
+        components::SoundEffect>;
     using EntityManager = game::EntityManager<Components>;
     using Entity = EntityManager::Entity;
     namespace rtc = rtype::components;

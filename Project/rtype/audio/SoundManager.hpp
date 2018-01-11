@@ -73,7 +73,7 @@ namespace rtype
         void receive(const evt::ResetMusicVolume &evt) noexcept;
 
     private:
-        using SoundQueue = std::deque<sf::Sound>;
+        using SoundQueue = std::deque<std::unique_ptr<sf::Sound>>;
 
     private:
         //! Private members.

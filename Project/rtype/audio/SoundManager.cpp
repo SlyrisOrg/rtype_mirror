@@ -17,19 +17,21 @@ namespace rtype
     //! Public Member functions.
     void rtype::SoundManager::update() noexcept
     {
-        _sndQueue.erase(std::remove_if(_sndQueue.begin(), _sndQueue.end(), [](auto &&cur) {
-            return cur.getStatus() == sf::Sound::Stopped;
-        }), _sndQueue.end());
+        if (!_sndQueue.empty()) {
+            _sndQueue.erase(std::remove_if(_sndQueue.begin(), _sndQueue.end(), [](const auto &cur) {
+                return cur->getStatus() == sf::Sound::Stopped;
+            }), _sndQueue.end());
+        }
     }
 
     //! Callbacks
     void SoundManager::receive(const gutils::evt::PlaySoundEffect &evt) noexcept
     {
-        auto &sound = _sndQueue.emplace_back();
-        sound.setBuffer(evt.buff);
-        sound.setVolume(cfg::game::soundseffectVolume);
-        sound.setLoop(evt.loop);
-        sound.play();
+        auto &sound = _sndQueue.emplace_back(std::make_unique<sf::Sound>());
+        sound->setBuffer(evt.buff);
+        sound->setVolume(cfg::game::soundseffectVolume);
+        sound->setLoop(evt.loop);
+        sound->play();
         _log(lg::Info) << "Playing Sound Effect: " << evt.soundEffectName << ".ogg" << std::endl;
     }
 
