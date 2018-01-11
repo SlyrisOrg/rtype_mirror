@@ -284,7 +284,10 @@ namespace rtype
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
                 std::chrono::duration_cast<std::chrono::milliseconds>(res - _lastShoot) > 200ms) {
-                GameFactory::createBullet(_textures.get(Sprite::Bullet), boundingBox.AABB);
+                auto id = GameFactory::createBullet(_textures.get(Sprite::Bullet), boundingBox.AABB,
+                                                    Configuration::SoundEffect::Laser4);
+                _evtMgr.emit<gutils::evt::PlaySoundEffect>(_ettMgr[id].getComponent<rtc::SoundEffect>().se,
+                                                           _ettMgr[id].getComponent<rtc::SoundEffect>().buff);
                 _lastShoot = std::chrono::steady_clock::now();
             }
         });

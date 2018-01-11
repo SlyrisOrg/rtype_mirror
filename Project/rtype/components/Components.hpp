@@ -6,6 +6,7 @@
 #define RTYPE_COMPONENTS_HPP
 
 #include <SFML/Graphics/Sprite.hpp>
+#include <rtype/config/Configuration.hpp>
 #include <rtype/utils/AnimatedSprite.hpp>
 
 namespace rtype::components
@@ -81,6 +82,16 @@ namespace rtype::components
     struct Bullet
     {
         Bullet() noexcept = default;
+    };
+
+    struct SoundEffect
+    {
+        SoundEffect(Configuration::SoundEffect eff) noexcept : se(eff), buff(Configuration::effects.get(eff))
+        {
+        }
+
+        Configuration::SoundEffect se;
+        sf::SoundBuffer buff;
     };
 }
 
