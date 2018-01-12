@@ -9,11 +9,12 @@
 #include <unordered_map>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <memory>
+#include <rtype/entity/ECS.hpp>
 
 namespace rtype
 {
 
-    template<typename EMng>
+    template <typename EMng = EntityManager>
     class QuadTree
     {
         using EntityID = typename EMng::EntityID;
@@ -32,13 +33,19 @@ namespace rtype
 
         struct QuadNode
         {
-            QuadNode(sf::FloatRect AABB) noexcept : _AABB{AABB}
+            QuadNode(sf::FloatRect AABB) noexcept : _AABB{AABB},
+                                                    _shapeDebug{sf::Vector2f(AABB.width, AABB.height)}
             {
+                _shapeDebug.setFillColor(sf::Color::Transparent);
+                _shapeDebug.setOutlineThickness(-1.0f);
+                _shapeDebug.setOutlineColor(sf::Color::Green);
+                _shapeDebug.setPosition(AABB.left, AABB.top);
             }
 
             std::vector<size_t> _items;
             std::array<std::unique_ptr<QuadNode>, nbChilds> _childs{{nullptr}};
             sf::FloatRect _AABB;
+            sf::RectangleShape _shapeDebug;
         };
 
         QuadTree(sf::FloatRect AABB, EMng &entityMng) noexcept : _root(AABB), _entityMng(entityMng)
@@ -69,6 +76,13 @@ namespace rtype
         }
 
     public:
+        void clear()
+        {
+            _entityMng.template for_each<rtc::BoundingBox>([this](rtype::Entity &ett) {
+                this->remove(ett.getID());
+            });
+        }
+
         bool insert(QuadNode *node, EntityID id) noexcept
         {
             auto &bBox = _entityMng[id].template getComponent<components::BoundingBox>();
@@ -126,7 +140,6 @@ namespace rtype
                 throw std::runtime_error("Bad tree : object is said to be in tree but no more childs to search for");
 #endif
 
-
             sf::FloatRect boundingObj = _itemMap.at(id)->_AABB;
             unsigned int subPos = NorthWest;
 
@@ -178,14 +191,24 @@ namespace rtype
             return move(&_root, id);
         }
 
-        QuadNode *getNode(EntityID id) const
+        const QuadNode *getNode(EntityID id) const
+        {
+            return _itemMap.at(id);
+        }
+
+        QuadNode *getNode(EntityID id)
         {
             return _itemMap.at(id);
         }
 
         QuadNode &getRoot() noexcept
         {
-            return  _root;
+            return _root;
+        }
+
+        const QuadNode &getRoot() const noexcept
+        {
+            return _root;
         }
 
     private:
