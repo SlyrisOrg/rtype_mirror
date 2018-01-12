@@ -31,7 +31,7 @@ namespace rtype
     {
         showLeavingScene();
         _boundingBoxFactions.clear();
-        _animations.clear();
+        _animSystem.clear();
         _textures.clear();
         _ettMgr.clear();
         __unbindPlayerCallbacks();
@@ -45,19 +45,14 @@ namespace rtype
             this->_win.draw(ett.getComponent<rtc::Sprite>().sprite);
         });
 
-        _ettMgr.for_each<rtc::Animation, rtc::BoundingBox>([this](rtype::Entity &ett) {
-            if (this->_debugMode)
-                _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
-            _win.draw(ett.getComponent<rtc::Animation>().anim);
-        });
+        _animSystem.draw();
     }
 
     void DemoScene::update(double timeSinceLastFrame) noexcept
     {
         ActionTarget::processEvents(timeSinceLastFrame);
-        sf::Time t1 = sf::seconds(static_cast<float>(timeSinceLastFrame));
         __bulletSystem(timeSinceLastFrame);
-        __animationSystem(t1);
+        _animSystem.update(timeSinceLastFrame);
         _ettMgr.sweepEntities();
     }
 
@@ -137,15 +132,15 @@ namespace rtype
         const auto &boxCFG = doc["Box"];
         for (const auto &v : animCFG.GetArray()) {
             std::string_view animName = v.GetObject()["name"].GetString();
-            DemoScene::Sprite spriteValue = animName;
+            demo::Sprite spriteValue = animName;
             __loadSprite(spriteValue);
-            DemoScene::Animation animValue = animName;
+            demo::AnimationSystem::Animation animValue = animName;
             sf::Vector2u spriteInfo{v.GetObject()["spriteInfo"].GetObject()["width"].GetUint(),
                                     v.GetObject()["spriteInfo"].GetObject()["height"].GetUint()};
             sf::Vector3<unsigned int> sheetInfo{v.GetObject()["sheetInfo"].GetObject()["rows"].GetUint(),
                                                 v.GetObject()["sheetInfo"].GetObject()["column"].GetUint(),
                                                 v.GetObject()["sheetInfo"].GetObject()["nbSprite"].GetUint()};
-            __loadAnimation(spriteValue, animValue, std::move(spriteInfo), std::move(sheetInfo));
+            _animSystem.loadAnimation(spriteValue, animValue, std::move(spriteInfo), std::move(sheetInfo));
         }
         const auto &res = _boundingBoxFactions.emplace(faction,
                                                        sf::IntRect{
@@ -162,30 +157,7 @@ namespace rtype
                         << " }" << std::endl;
     }
 
-    void DemoScene::__loadAnimation(const Sprite &sprite,
-                                    const Animation &anim,
-                                    [[maybe_unused]] sf::Vector2<unsigned int> &&sprInfo,
-                                    sf::Vector3<unsigned int> &&sheetInfo)
-    {
-        __initFrames(anim, sprite, sheetInfo.y, sheetInfo.x, sheetInfo.z);
-    }
-
-    void DemoScene::__initFrames(const Animation &anim, const Sprite &sprite,
-                                 unsigned int nbColumns,
-                                 unsigned int nbLines,
-                                 unsigned int nbAnims)
-    {
-        auto &text = _animations.load(anim, &_textures.get(sprite));
-        auto end = nbLines - 1;
-        for (unsigned int i = 0; i < end; i++) {
-            text.addFramesLine(nbColumns, nbLines, i, nbColumns);
-        }
-        auto animLastLine = (nbAnims - ((nbLines - 1) * nbColumns));
-        text.addFramesLine(animLastLine, nbLines, nbLines - 1, nbColumns);
-        _log(lg::Debug) << "Loading Animation " << anim.toString() << " successfully loaded." << std::endl;
-    }
-
-    void DemoScene::__loadSprite(const DemoScene::Sprite &val)
+    void DemoScene::__loadSprite(const demo::Sprite &val)
     {
         auto str = cfg::spritePath + val.toString() + ".png";
         _textures.load(val, str);
@@ -194,23 +166,16 @@ namespace rtype
 
     void DemoScene::__createGameObjects() noexcept
     {
-        auto id = GameFactory::createPlayerSpaceShip(_animations.get(Animation::BheetLv1AttackTopDown),
-                                                     _boundingBoxFactions["Bheet"],
-                                                     sf::Vector2f(200, 200));
+        auto id = GameFactory::createPlayerSpaceShip(
+            *_animSystem.get((demo::AnimationSystem::Animation::BheetLv1AttackTopDown)),
+            _boundingBoxFactions["Bheet"],
+            sf::Vector2f(200, 200));
         _playerID = id;
-    }
-
-    void DemoScene::__animationSystem(const sf::Time &time) noexcept
-    {
-        _ettMgr.for_each<rtc::Animation, rtc::BoundingBox>([&time](rtype::Entity &ett) {
-            sfutils::AnimatedSprite &anim = ett.getComponent<rtc::Animation>().anim;
-            anim.update(time);
-        });
     }
 
     void DemoScene::__loadBulletSprite() noexcept
     {
-        __loadSprite(Sprite::Bullet);
+        __loadSprite(demo::Sprite::Bullet);
     }
 
     void DemoScene::__bulletSystem(double timeSinceLastFrame) noexcept
@@ -284,7 +249,7 @@ namespace rtype
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
                 std::chrono::duration_cast<std::chrono::milliseconds>(res - _lastShoot) > 200ms) {
-                auto id = GameFactory::createBullet(_textures.get(Sprite::Bullet), boundingBox.AABB,
+                auto id = GameFactory::createBullet(_textures.get(demo::Sprite::Bullet), boundingBox.AABB,
                                                     Configuration::SoundEffect::Laser4);
                 _evtMgr.emit<gutils::evt::PlaySoundEffect>(_ettMgr[id].getComponent<rtc::SoundEffect>().se,
                                                            _ettMgr[id].getComponent<rtc::SoundEffect>().buff);

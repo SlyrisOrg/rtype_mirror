@@ -27,14 +27,14 @@ namespace rtype
             auto &ettMgr = *_ettMgr;
             auto &animComponent = ettMgr[spaceID].addComponent<rtc::Animation>(&anim,
                                                                                sfutils::AnimatedSprite::Playing,
-                                                                               sf::seconds(0.05f),
-                                                                               false,
-                                                                               0);
+                                                                               sf::seconds(0.04f),
+                                                                               false);
             ettMgr[spaceID].getComponent<rtc::Animation>().anim.setPosition(pos);
             sf::Vector2f position{static_cast<float>(animComponent.anim.getPosition().x + boundingBox.left),
                                   static_cast<float>(animComponent.anim.getPosition().y + boundingBox.top)};
             sf::Vector2f size{static_cast<float>(boundingBox.width), static_cast<float>(boundingBox.height)};
             ettMgr[spaceID].addComponent<rtc::BoundingBox>(position, size, boundingBox);
+            ettMgr[spaceID].addComponent<rtc::Movement>();
             return spaceID;
         }
 
