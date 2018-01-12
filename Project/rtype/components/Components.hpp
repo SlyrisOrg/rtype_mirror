@@ -72,11 +72,22 @@ namespace rtype::components
         }
 
         sfutils::AnimatedSprite anim;
+        int currentAnim;
     };
 
     struct Player
     {
-        Player() noexcept = default;
+        using Next = int;
+        using Prev = int;
+        using Cur = int;
+        using TransitionMap = std::unordered_map<Cur, std::pair<Prev, Next>>;
+
+        Player(TransitionMap _map) noexcept : map(std::move(_map))
+        {
+
+        };
+
+        TransitionMap map;
     };
 
     struct Bullet
@@ -92,6 +103,20 @@ namespace rtype::components
 
         Configuration::SoundEffect se;
         sf::SoundBuffer buff;
+    };
+
+    enum Direction
+    {
+        None,
+        North,
+        South,
+        West,
+        East,
+    };
+
+    struct Movement
+    {
+        Direction dir{Direction::None};
     };
 }
 
