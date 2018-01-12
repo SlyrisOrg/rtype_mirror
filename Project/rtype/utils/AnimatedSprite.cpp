@@ -1,4 +1,5 @@
 #include <cassert>
+#include <log/Logger.hpp>
 #include <rtype/utils/AnimatedSprite.hpp>
 #include <rtype/utils/Animation.hpp>
 
@@ -19,13 +20,14 @@ namespace sfutils
         setAnimation(animation);
     }
 
-    void AnimatedSprite::setAnimation(Animation *animation) noexcept
+    void AnimatedSprite::setAnimation(Animation *animation, size_t index) noexcept
     {
         if (_animation != animation) {
+            _log(logging::Debug) << "Animatio size: -> " << animation->size() << std::endl;
             _animation = animation;
             _elapsed = sf::Time::Zero;
             _currentFrame = 0;
-            __setFrame(0, true);
+            setFrame(index);
             setTexture(*animation->getTexture());
             if (_rect != sf::IntRect{1, 1, 1, 1})
                 setTextureRect(_rect);
@@ -102,9 +104,9 @@ namespace sfutils
             _elapsed += deltaTime;
             if (_elapsed > _delta) {
                 _elapsed -= _delta;
-                if (_currentFrame + 1 < _animation->size())
+                if (_currentFrame + 1 < _animation->size()) {
                     ++_currentFrame;
-                else {
+                } else {
                     if (_loop)
                         _currentFrame = 0;
                     if (!_loop) {
@@ -132,5 +134,10 @@ namespace sfutils
 
         if (resetTime)
             _elapsed = sf::Time::Zero;
+    }
+
+    size_t AnimatedSprite::getCurrentFrame() const noexcept
+    {
+        return _currentFrame;
     }
 }

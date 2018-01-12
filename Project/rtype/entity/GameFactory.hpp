@@ -27,28 +27,29 @@ namespace rtype
             auto &ettMgr = *_ettMgr;
             auto &animComponent = ettMgr[spaceID].addComponent<rtc::Animation>(&anim,
                                                                                sfutils::AnimatedSprite::Playing,
-                                                                               sf::seconds(0.05f),
-                                                                               false,
-                                                                               0);
+                                                                               sf::seconds(0.015f),
+                                                                               false);
             ettMgr[spaceID].getComponent<rtc::Animation>().anim.setPosition(pos);
             sf::Vector2f position{static_cast<float>(animComponent.anim.getPosition().x + boundingBox.left),
                                   static_cast<float>(animComponent.anim.getPosition().y + boundingBox.top)};
             sf::Vector2f size{static_cast<float>(boundingBox.width), static_cast<float>(boundingBox.height)};
             ettMgr[spaceID].addComponent<rtc::BoundingBox>(position, size, boundingBox);
+            ettMgr[spaceID].addComponent<rtc::Movement>();
             return spaceID;
         }
 
-        template <typename ...Args>
-        static Entity::ID createPlayerSpaceShip(Args &&...args) noexcept
+        template <typename Map, typename ...Args>
+        static Entity::ID createPlayerSpaceShip(Map transitionMap, Args &&...args) noexcept
         {
             Entity::ID spaceID = _ettMgr->createEntity();
             auto &ettMgr = *_ettMgr;
-            ettMgr[spaceID].addComponent<rtc::Player>();
+            ettMgr[spaceID].addComponent<rtc::Player>(transitionMap);
             return createSpaceShip(spaceID, std::forward<Args>(args)...);
         }
 
-        static Entity::ID
-        createBullet(sf::Texture &texture, const sf::FloatRect &AABB, Configuration::SoundEffect eff) noexcept
+        static Entity::ID createBullet(sf::Texture &texture,
+                                       const sf::FloatRect &AABB,
+                                       Configuration::SoundEffect eff) noexcept
         {
             Entity::ID bulletID = _ettMgr->createEntity();
             auto &ettMgr = *_ettMgr;
