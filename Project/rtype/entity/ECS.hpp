@@ -15,7 +15,8 @@ namespace rtype
         components::Animation,
         components::Player,
         components::Bullet,
-        components::SoundEffect>;
+        components::SoundEffect,
+        components::Movement>;
     using EntityManager = game::EntityManager<Components>;
     using Entity = EntityManager::Entity;
     namespace rtc = rtype::components;

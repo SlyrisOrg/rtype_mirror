@@ -6,6 +6,7 @@
 #include <ostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include <log/Logger.hpp>
 
 namespace sfutils
 {
@@ -42,9 +43,8 @@ namespace sfutils
                        const sf::IntRect &rect = {1, 1, 1, 1}) noexcept;
 
     public:
-        void setAnimation(Animation *animation) noexcept;
+        void setAnimation(Animation *animation, size_t index = 0) noexcept;
         Animation *getAnimation() const noexcept;
-
         void setFrameTime(sf::Time deltaTime) noexcept;
         sf::Time getFrameTime() const noexcept;
 
@@ -61,11 +61,13 @@ namespace sfutils
 
         Status getStatus() const noexcept;
         void setFrame(size_t index) noexcept;
+        size_t getCurrentFrame() const noexcept;
 
         FuncType onFinished;
 
     private:
         void __setFrame(size_t index, bool resetTime) noexcept;
+        logging::Logger _log{"animatedsprite", logging::Debug};
         Animation *_animation;
         sf::Time _delta;
         sf::Time _elapsed;
@@ -73,6 +75,8 @@ namespace sfutils
         int _repeat;
         Status _status;
         size_t _currentFrame;
+
+    private:
         sf::IntRect _rect;
     };
 }

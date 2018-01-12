@@ -93,6 +93,20 @@ namespace rtype::components
         Configuration::SoundEffect se;
         sf::SoundBuffer buff;
     };
+
+    enum Direction
+    {
+        None,
+        North,
+        South,
+        West,
+        East,
+    };
+
+    struct Movement
+    {
+        Direction dir{Direction::None};
+    };
 }
 
 #endif //RTYPE_COMPONENTS_HPP
