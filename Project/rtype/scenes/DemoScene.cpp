@@ -39,9 +39,14 @@ namespace rtype
 
     void DemoScene::draw() noexcept
     {
+        if (this->_debugMode) {
+            _win.draw(_quadTree.getRoot()._shapeDebug);
+        }
         _ettMgr.for_each<rtc::Sprite>([this](rtype::Entity &ett) {
-            if (this->_debugMode)
+            if (this->_debugMode) {
                 _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
+                _win.draw(_quadTree.getNode(ett.getID())->_shapeDebug);
+            }
             this->_win.draw(ett.getComponent<rtc::Sprite>().sprite);
         });
 
@@ -216,6 +221,7 @@ namespace rtype
                                                          (demo::AnimationSystem::Animation::BheetLv1AttackTopDown)),
                                                      _boundingBoxFactions["Bheet"],
                                                      sf::Vector2f(200, 200));
+        _quadTree.insert(id);
         _playerID = id;
         _animSystem.setPlayerID(_playerID);
         _ettMgr[_playerID].getComponent<rtc::Animation>().currentAnim = as::Animation::BheetLv1AttackTopDown;
@@ -228,14 +234,16 @@ namespace rtype
 
     void DemoScene::__bulletSystem(double timeSinceLastFrame) noexcept
     {
-        _ettMgr.for_each<rtc::Bullet, rtc::Sprite, rtc::BoundingBox>([&timeSinceLastFrame](Entity &ett) {
+        _ettMgr.for_each<rtc::Bullet, rtc::Sprite, rtc::BoundingBox>([this, &timeSinceLastFrame](Entity &ett) {
             auto &cmp = ett.getComponent<rtc::Sprite>();
             auto &box = ett.getComponent<rtc::BoundingBox>();
             cmp.sprite.setPosition(static_cast<float>(box.AABB.left + (600 * timeSinceLastFrame)), box.AABB.top);
             box.AABB.left = cmp.sprite.getPosition().x;
             box.AABB.top = cmp.sprite.getPosition().y;
             box.shapeDebug.setPosition(cmp.sprite.getPosition());
+            _quadTree.move(ett.getID());
             if (cmp.sprite.getPosition().x >= cfg::game::width) {
+                _quadTree.remove(ett.getID());
                 ett.mark();
             }
         });
@@ -257,6 +265,7 @@ namespace rtype
                 anim.setPosition(static_cast<float>(anim.getPosition().x + (450 * timeSinceLastFrame)),
                                  anim.getPosition().y);
                 resetPosition(box, anim.getPosition());
+                _quadTree.move(_playerID);
             }
         });
 
@@ -267,6 +276,7 @@ namespace rtype
                 anim.setPosition(static_cast<float>(anim.getPosition().x - (450 * timeSinceLastFrame)),
                                  anim.getPosition().y);
             resetPosition(box, anim.getPosition());
+            _quadTree.move(_playerID);
         });
 
         setKeyCallback(cfg::player::Up, [this, &resetPosition](const sf::Event &, double timeSinceLastFrame) {
@@ -276,6 +286,7 @@ namespace rtype
                 anim.setPosition(anim.getPosition().x,
                                  static_cast<float>(anim.getPosition().y - (450 * timeSinceLastFrame)));
                 resetPosition(box, anim.getPosition());
+                _quadTree.move(_playerID);
             }
         });
 
@@ -287,6 +298,7 @@ namespace rtype
                 anim.setPosition(anim.getPosition().x,
                                  static_cast<float>(anim.getPosition().y + (450 * timeSinceLastFrame)));
                 resetPosition(box, anim.getPosition());
+                _quadTree.move(_playerID);
             }
         });
 
@@ -299,6 +311,7 @@ namespace rtype
                 std::chrono::duration_cast<std::chrono::milliseconds>(res - _lastShoot) > 200ms) {
                 auto id = GameFactory::createBullet(_textures.get(demo::Sprite::Bullet), boundingBox.AABB,
                                                     Configuration::SoundEffect::Laser4);
+                this->_quadTree.insert(id);
                 _evtMgr.emit<gutils::evt::PlaySoundEffect>(_ettMgr[id].getComponent<rtc::SoundEffect>().se,
                                                            _ettMgr[id].getComponent<rtc::SoundEffect>().buff);
                 _lastShoot = std::chrono::steady_clock::now();
