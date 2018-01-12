@@ -59,6 +59,23 @@ namespace rtype::components
             shapeDebug.setPosition(AABB.left, AABB.top);
         }
 
+        const sf::Vector2f &getPosition() const noexcept
+        {
+            return shapeDebug.getPosition();
+        }
+
+        void setPosition(const sf::Vector2f &position) noexcept
+        {
+            AABB.left = position.x;
+            AABB.top = position.y;
+            shapeDebug.setPosition(AABB.left, AABB.top);
+        }
+
+        void setPosition(float x, float y) noexcept
+        {
+            setPosition(sf::Vector2f(x, y));
+        }
+
         sf::FloatRect AABB;
         sf::RectangleShape shapeDebug;
         const sf::FloatRect relativeAABB;
