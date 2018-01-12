@@ -30,13 +30,13 @@ struct Lul
 
 using Components = meta::TypeList<Box, Lol, Lul>;
 
-using EntityManager = game::EntityManager<Components>;
-using Entity = EntityManager::Entity;
+using EntityManagerTest = game::EntityManager<Components>;
+using EntityTest = EntityManagerTest::Entity;
 
 TEST(ECS, EntityManager)
 {
-    EntityManager em;
-    Entity::ID id = em.createEntity();
+    EntityManagerTest em;
+    EntityTest::ID id = em.createEntity();
 
     ASSERT_FALSE(em[id].hasComponent<Box>());
     ASSERT_FALSE(em[id].hasComponent<Lol>());
@@ -74,7 +74,7 @@ TEST(ECS, EntityManager)
 
 TEST(ECS, SimpleForEach)
 {
-    EntityManager em;
+    EntityManagerTest em;
 
     for (size_t i = 0; i < 10; ++i) {
         auto id = em.createEntity();
@@ -95,7 +95,7 @@ TEST(ECS, SimpleForEach)
 
 TEST(ECS, MultipleForEach)
 {
-    EntityManager em;
+    EntityManagerTest em;
 
     for (size_t i = 0; i < 10; ++i) {
         auto id = em.createEntity();
@@ -117,7 +117,7 @@ TEST(ECS, MultipleForEach)
 
 TEST(ECS, Sweeping)
 {
-    EntityManager em;
+    EntityManagerTest em;
 
     for (size_t i = 0; i < 10; ++i) {
         auto id = em.createEntity();
@@ -183,8 +183,8 @@ TEST(ECS, CustomAllocator)
 
 TEST(ECS, StructuredBinding)
 {
-    EntityManager em;
-    Entity::ID id = em.createEntity();
+    EntityManagerTest em;
+    EntityTest::ID id = em.createEntity();
 
     em[id].addComponent<Box>(1, 2, 3, 4);
     em[id].addComponent<Lol>();
