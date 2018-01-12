@@ -13,6 +13,7 @@
 #include <rtype/config/PlayerConfig.hpp>
 #include <rtype/gutils/base/AScene.hpp>
 #include <rtype/utils/Action.hpp>
+#include <rtype/utils/QuadTree.hpp>
 
 namespace rtype
 {
@@ -49,8 +50,9 @@ namespace rtype
 
         public:
             AnimationSystem(sf::RenderWindow &win, EntityManager &ettMgr, bool &debugMode,
-                            sfutils::ResourceManager<sf::Texture, demo::SpriteT> &res) noexcept :
-                _win(win), _ettMgr(ettMgr), _debugMode(debugMode), _textures(res)
+                            sfutils::ResourceManager<sf::Texture, demo::SpriteT> &res,
+                            const QuadTree<EntityManager> &quadTree) noexcept :
+                _win(win), _ettMgr(ettMgr), _debugMode(debugMode), _textures(res), _quadTree(quadTree)
             {
             }
 
@@ -76,7 +78,7 @@ namespace rtype
                     sfutils::AnimatedSprite &anim = ett.getComponent<rtc::Animation>().anim;
                     anim.update(time);
                 });
-                auto [movement, animation] = _ettMgr[_playerID].getComponents<rtc::Movement, rtc::Animation>();
+                auto[movement, animation] = _ettMgr[_playerID].getComponents<rtc::Movement, rtc::Animation>();
                 if (animation.anim.getStatus() == sfutils::AnimatedSprite::Stopped &&
                     (static_cast<AnimT>(animation.currentAnim) == Animation::BheetLv1AttackRedressUp ||
                      (static_cast<AnimT>(animation.currentAnim) == Animation::BheetLv1AttackRedressDown))) {
@@ -89,8 +91,10 @@ namespace rtype
             void draw() noexcept
             {
                 _ettMgr.for_each<rtc::Animation>([this](rtype::Entity &ett) {
-                    if (this->_debugMode)
+                    if (this->_debugMode) {
                         _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
+                        _win.draw(_quadTree.getNode(ett.getID())->_shapeDebug);
+                    }
                     _win.draw(ett.getComponent<rtc::Animation>().anim);
                 });
             }
@@ -109,7 +113,7 @@ namespace rtype
 
             void changePlayerAnim() noexcept
             {
-                auto [movement, animation, player] = _ettMgr[_playerID].getComponents<rtc::Movement, rtc::Animation,
+                auto[movement, animation, player] = _ettMgr[_playerID].getComponents<rtc::Movement, rtc::Animation,
                     rtc::Player>();
                 rtc::Direction dir = movement.dir;
                 auto curAnim = static_cast<AnimT>(animation.currentAnim);
@@ -169,6 +173,7 @@ namespace rtype
             sfutils::ResourceManager<sf::Texture, SpriteT> &_textures;
             sfutils::ResourceManager<sfutils::Animation, AnimT> _animations;
             Entity::ID _playerID;
+            const QuadTree<EntityManager> &_quadTree;
         };
     }
 
@@ -217,7 +222,8 @@ namespace rtype
         std::unordered_map<std::string, sf::IntRect> _boundingBoxFactions;
         bool _debugMode{false};
         EntityManager _ettMgr;
-        demo::AnimationSystem _animSystem{_win, _ettMgr, _debugMode, _textures};
+        QuadTree<EntityManager> _quadTree{sf::FloatRect(0.f, 0.f, 1920, 1080), _ettMgr};
+        demo::AnimationSystem _animSystem{_win, _ettMgr, _debugMode, _textures, _quadTree};
         std::chrono::time_point<std::chrono::steady_clock> _lastShoot;
         Entity::ID _playerID;
     };
