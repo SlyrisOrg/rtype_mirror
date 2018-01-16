@@ -71,7 +71,8 @@ namespace rtype
              AbandonedFacilitiesInstrumentalAmb,
              SpaceshipBridgeInstrumentalAmb,
              MarketInstrumentalAmb,
-             DarkVoidAmb);
+             DarkVoidAmb,
+             CitadelInstrumentalAmb);
 
         //! SoundEffect Enum
         ENUM(SoundEffect,

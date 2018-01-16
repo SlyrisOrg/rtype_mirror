@@ -30,8 +30,10 @@ namespace rtype
                                                                                sf::seconds(0.015f),
                                                                                false);
             ettMgr[spaceID].getComponent<rtc::Animation>().anim.setPosition(pos);
-            sf::Vector2f position{static_cast<float>(animComponent.anim.getPosition().x + boundingBox.left),
-                                  static_cast<float>(animComponent.anim.getPosition().y + boundingBox.top)};
+            sf::Vector2f position{
+                static_cast<float>(animComponent.anim.getPosition().x + boundingBox.left),
+                static_cast<float>(animComponent.anim.getPosition().y + boundingBox.top)
+            };
             sf::Vector2f size{static_cast<float>(boundingBox.width), static_cast<float>(boundingBox.height)};
             ettMgr[spaceID].addComponent<rtc::BoundingBox>(position, size, boundingBox);
             ettMgr[spaceID].addComponent<rtc::Movement>();
@@ -56,14 +58,34 @@ namespace rtype
             auto &ett = ettMgr[bulletID];
             sf::Sprite &sprite = ett.addComponent<rtc::Sprite>(texture).sprite;
             sprite.setPosition(
-                sf::Vector2f{AABB.left + AABB.width,
-                             AABB.top + AABB.height / 2.f -
-                             ettMgr[bulletID].getComponent<rtc::Sprite>().sprite.getGlobalBounds().height /
-                             2.f});
+                sf::Vector2f{
+                    AABB.left + AABB.width,
+                    AABB.top + AABB.height / 2.f -
+                    ettMgr[bulletID].getComponent<rtc::Sprite>().sprite.getGlobalBounds().height /
+                    2.f
+                });
             ettMgr[bulletID].addComponent<rtc::BoundingBox>(ettMgr[bulletID].getComponent<rtc::Sprite>().sprite);
             ettMgr[bulletID].addComponent<rtc::Bullet>();
             ettMgr[bulletID].addComponent<rtc::SoundEffect>(eff);
             return bulletID;
+        }
+
+        static Entity::ID createStar(sf::Texture &texture,
+                                     const sf::Vector2f &pos,
+                                     [[maybe_unused]] float speed,
+                                     float scale,
+                                     bool move,
+                                     unsigned int textureID) noexcept
+        {
+            Entity::ID starID = _ettMgr->createEntity();
+            auto &ettMgr = *_ettMgr;
+            ettMgr[starID].addComponent<rtc::Star>(textureID);
+            sf::Sprite &sprite = ettMgr[starID].addComponent<rtc::Sprite>(texture).sprite;
+            sprite.setPosition(pos);
+            sprite.scale(scale, scale);
+            if (move)
+                ettMgr[starID].addComponent<rtc::Speed>(speed);
+            return starID;
         }
 
     private:
