@@ -82,7 +82,8 @@ namespace rtype
     {
         using namespace cfg::login;
         for (auto &&cur : logLabel) {
-            const auto &[widgetID, widgetTxt] = cur.second;
+            const auto &
+            [widgetID, widgetTxt] = cur.second;
             _gui[widgetID].setText(widgetTxt);
         }
     }
@@ -105,13 +106,16 @@ namespace rtype
     bool LoginScene::__setGUI() noexcept
     {
         using namespace cfg::login;
-        return GUIManager::setGUI<LoginWidgets, 17>(loginLayout, _gui, _log);
+        return GUIManager::setGUI<LoginWidgets, LoginWidgets::size()>(loginLayout, _gui, _log);
     }
 
     void LoginScene::__configure() noexcept
     {
+        _win.setView(_win.getDefaultView());
         auto start = __setGUI();
         if (start) {
+            _fading = true;
+            _gui.sheet->setAlpha(0);
             CEGUI::System::getSingletonPtr()->getDefaultGUIContext().getMouseCursor().show();
             __subscribeEvents();
             _gui[LoginWidgets::LogButton].setWantsMultiClickEvents(false);
@@ -126,10 +130,14 @@ namespace rtype
 
     void LoginScene::__checkResume(const sf::Keyboard::Key &key) noexcept
     {
-        if (key == sf::Keyboard::Escape && !_pause) {
+        if (key == sf::Keyboard::Escape && !_pause && !_fading) {
             pause();
         } else if (key == sf::Keyboard::Escape && _pause) {
             resume();
+        }
+        if (key == sf::Keyboard::Escape && _fading) {
+            _gui.sheet->setAlpha(1);
+            _fading = !_fading;
         }
     }
 
@@ -256,6 +264,9 @@ namespace rtype
 
     void LoginScene::update([[maybe_unused]] double timeSinceLastFrame) noexcept
     {
+        if (_gui.sheet->getAlpha() < 1) {
+            _gui.sheet->setAlpha(static_cast<float>(_gui.sheet->getAlpha() + (0.2f * timeSinceLastFrame)));
+        }
         //TODO: for_each game object update
     }
 

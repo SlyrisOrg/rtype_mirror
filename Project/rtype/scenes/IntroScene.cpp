@@ -32,6 +32,9 @@ namespace rtype
 
     void IntroScene::update([[maybe_unused]] double timeSinceLastFrame) noexcept
     {
+        sf::View view = _win.getView();
+        view.zoom(0.9995f);
+        _win.setView(view);
     }
 
     bool IntroScene::keyPressed(const gutils::evt::KeyPressed &evt) noexcept
