@@ -135,6 +135,24 @@ namespace rtype::components
     {
         Direction dir{Direction::None};
     };
+
+    struct Speed
+    {
+        explicit Speed(float _speed) noexcept : speed(_speed)
+        {            
+        }
+
+        float speed;
+    };
+
+    struct Star
+    {
+        Star(unsigned int _textureID) noexcept : textureID(_textureID)
+        {   
+        }
+
+        unsigned int textureID;
+    };
 }
 
 #endif //RTYPE_COMPONENTS_HPP
