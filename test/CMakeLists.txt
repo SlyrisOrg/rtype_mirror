@@ -56,6 +56,11 @@ macro(add_test_core NAME_TEST NAME_EXECUTABLE SOURCE)
     message(STATUS "${NAME_TEST} ${NAME_EXECUTABLE} ${SOURCE}")
     add_executable(${NAME_EXECUTABLE} ${SOURCE})
     target_link_libraries(${NAME_EXECUTABLE} gtest gtest_main)
+if(WIN32)
+    add_custom_command(TARGET ${NAME_EXECUTABLE} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE} ${CMAKE_SOURCE_DIR}/bin)
+endif()
     add_test(NAME ${NAME_TEST} COMMAND $<TARGET_FILE:${NAME_EXECUTABLE}>)
 endmacro()
 
