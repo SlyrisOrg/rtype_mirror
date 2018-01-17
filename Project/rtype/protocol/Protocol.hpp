@@ -11,22 +11,24 @@
 #include <array>
 #include <utils/Endian.hpp>
 #include <utils/Span.hpp>
+#include <meta/List.hpp>
+#include <serialization/Serialization.hpp>
 
-template <typename Packets>
-class Proto
+namespace proto
 {
-public:
-    template <typename T>
-    static inline constexpr size_t getID() noexcept
+    namespace details
     {
-        return meta::list::Position<Packets, T>();
+        template <typename Packets, typename T>
+        static inline constexpr size_t getID() noexcept
+        {
+            return meta::list::Position<Packets, T>();
+        }
     }
 
     using Buffer = std::vector<std::byte>;
     using BufferSpan = utils::Span<std::byte>;
 
-    using Packet = meta::list::Convert<meta::list::PushFront<Packets, std::monostate>, std::variant>;
-
+    template <typename Packets>
     class Formatter
     {
     private:
@@ -50,7 +52,7 @@ public:
         template <typename Object>
         void __startObject([[maybe_unused]] size_t depth) noexcept
         {
-            __addValue(getID<Object>());
+            __addValue(details::getID<Packets, Object>());
         }
 
         void __finishObject([[maybe_unused]] size_t depth) noexcept
@@ -109,6 +111,7 @@ public:
         }
     };
 
+    template <typename Packets>
     class Unformatter
     {
     public:
@@ -120,6 +123,8 @@ public:
                 return "Not enough data to unserialize";
             }
         };
+
+        using Packet = meta::list::Convert<meta::list::PushFront<Packets, std::monostate>, std::variant>;
 
     private:
         template <typename T>
@@ -169,6 +174,11 @@ public:
             return _unserializers[packetID](data);
         }
 
+        size_t unserializeSize(BufferSpan data)
+        {
+            return __unserialize<size_t>(data);
+        }
+
     private:
         template <typename T>
         static Packet __unserializePacket(BufferSpan data)
@@ -189,7 +199,8 @@ public:
             return {std::move(ret)};
         }
 
-        using PacketUnserializerArray = std::array<std::function<Packet(BufferSpan)>, meta::list::Length<Packets>::value>;
+        using PacketUnserializerArray = std::array<std::function<Packet(
+            BufferSpan)>, meta::list::Length<Packets>::value>;
 
         template <typename ...Types>
         static inline constexpr PacketUnserializerArray makeArray(meta::TypeList<Types...>) noexcept

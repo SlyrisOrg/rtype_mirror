@@ -37,24 +37,24 @@ namespace packets
 }
 
 using Packets = meta::TypeList<packets::Disconnect, packets::Lala>;
-
-using proto = Proto<Packets>;
+using Formatter = proto::Formatter<Packets>;
+using Unformatter = proto::Unformatter<Packets>;
 
 TEST(Protocol, IDs)
 {
-    ASSERT_EQ(proto::getID<packets::Disconnect>(), 0u);
+    ASSERT_EQ((proto::details::getID<Packets, packets::Disconnect>()), 0u);
 }
 
 TEST(Protocol, Disconnect)
 {
-    proto::Formatter fmt;
+    Formatter fmt;
     packets::Disconnect d{1, "Quit"};
 
     fmt.serialize(d);
     auto buf = fmt.extract();
     ASSERT_EQ(buf.size(), 8 + 4 + 8 + 4);
 
-    proto::Unformatter ufmt;
+    Unformatter ufmt;
     auto packetVariant = ufmt.unserialize(buf);
     ASSERT_TRUE(std::holds_alternative<packets::Disconnect>(packetVariant));
     const packets::Disconnect &ref = std::get<packets::Disconnect>(packetVariant);
@@ -64,14 +64,14 @@ TEST(Protocol, Disconnect)
 
 TEST(Protocol, Lala)
 {
-    proto::Formatter fmt;
+    Formatter fmt;
     packets::Lala d{123, 3.14f};
 
     fmt.serialize(d);
     auto buf = fmt.extract();
     ASSERT_EQ(buf.size(), 8 + 4 + 4);
 
-    proto::Unformatter ufmt;
+    Unformatter ufmt;
     auto packetVariant = ufmt.unserialize(buf);
     ASSERT_TRUE(std::holds_alternative<packets::Lala>(packetVariant));
     const packets::Lala &ref = std::get<packets::Lala>(packetVariant);
