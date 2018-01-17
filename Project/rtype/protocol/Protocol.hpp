@@ -11,10 +11,17 @@
 #include <array>
 #include <utils/Endian.hpp>
 #include <utils/Span.hpp>
-#include <protocol/Packets.hpp>
 
-namespace proto
+template <typename Packets>
+class Proto
 {
+public:
+    template <typename T>
+    static inline constexpr size_t getID() noexcept
+    {
+        return meta::list::Position<Packets, T>();
+    }
+
     using Buffer = std::vector<std::byte>;
     using BufferSpan = utils::Span<std::byte>;
 
@@ -185,13 +192,13 @@ namespace proto
         using PacketUnserializerArray = std::array<std::function<Packet(BufferSpan)>, meta::list::Length<Packets>::value>;
 
         template <typename ...Types>
-        static inline PacketUnserializerArray makeArray(meta::TypeList<Types...>) noexcept
+        static inline constexpr PacketUnserializerArray makeArray(meta::TypeList<Types...>) noexcept
         {
-            return {__unserializePacket<Types>...};
+            return {{__unserializePacket<Types>...}};
         }
 
         const PacketUnserializerArray _unserializers = makeArray(Packets{});
     };
-}
+};
 
 #endif //RTYPE_PROTO_PROTOCOL_HPP
