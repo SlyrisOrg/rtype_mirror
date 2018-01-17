@@ -105,13 +105,16 @@ namespace rtype
     bool LoginScene::__setGUI() noexcept
     {
         using namespace cfg::login;
-        return GUIManager::setGUI<LoginWidgets, 17>(loginLayout, _gui, _log);
+        return GUIManager::setGUI<LoginWidgets, LoginWidgets::size()>(loginLayout, _gui, _log);
     }
 
     void LoginScene::__configure() noexcept
     {
+        _win.setView(_win.getDefaultView());
         auto start = __setGUI();
         if (start) {
+            _fading = true;
+            _gui.sheet->setAlpha(0);
             CEGUI::System::getSingletonPtr()->getDefaultGUIContext().getMouseCursor().show();
             __subscribeEvents();
             _gui[LoginWidgets::LogButton].setWantsMultiClickEvents(false);
@@ -126,7 +129,7 @@ namespace rtype
 
     void LoginScene::__checkResume(const sf::Keyboard::Key &key) noexcept
     {
-        if (key == sf::Keyboard::Escape && !_pause) {
+        if (key == sf::Keyboard::Escape && !_pause && !_fading) {
             pause();
         } else if (key == sf::Keyboard::Escape && _pause) {
             resume();
@@ -254,9 +257,13 @@ namespace rtype
         _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::BattleExtInstrumentalAmb);
     }
 
-    void LoginScene::update([[maybe_unused]] double timeSinceLastFrame) noexcept
+    void LoginScene::update(double timeSinceLastFrame) noexcept
     {
-        //TODO: for_each game object update
+        if (_gui.sheet->getAlpha() < 1) {
+            _gui.sheet->setAlpha(static_cast<float>(_gui.sheet->getAlpha() + (0.2f * timeSinceLastFrame)));
+        }
+        else
+            _fading = false;
     }
 
     bool LoginScene::keyPressed(const gutils::evt::KeyPressed &evt) noexcept
@@ -264,7 +271,7 @@ namespace rtype
         __checkResume(evt.key);
         __checkReturnWidgets(evt.key);
         __checkTabWidgets(evt.key);
-
+        _gui.sheet->setAlpha(1);
         if (evt.key == sf::Keyboard::F2) {
             _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Demo);
         }
@@ -279,11 +286,13 @@ namespace rtype
 
     bool LoginScene::mouseMoved([[maybe_unused]] const gutils::evt::MouseMoved &evt) noexcept
     {
+        _gui.sheet->setAlpha(1);
         return true;
     }
 
     bool LoginScene::mousePressed([[maybe_unused]] const gutils::evt::MouseButtonPressed &evt) noexcept
     {
+        _gui.sheet->setAlpha(1);
         return true;
     }
 

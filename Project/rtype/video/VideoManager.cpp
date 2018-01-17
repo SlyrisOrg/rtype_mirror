@@ -21,8 +21,10 @@ namespace rtype
 {
     void VideoManager::draw() noexcept
     {
-        if (_active)
+        if (_active) {
             _window.draw(*_movie);
+            _window.draw(_fade);
+        }
     }
 }
 
@@ -57,6 +59,7 @@ namespace rtype
     void VideoManager::__start() noexcept
     {
         _window.setVerticalSyncEnabled(true);
+        _fade.setFillColor(sf::Color::Transparent);
         _active = true;
         _movie->fit(0.f, 0.f, static_cast<float>(cfg::game::width), static_cast<float>(cfg::game::height));
         sf::Time time;
@@ -76,6 +79,12 @@ namespace rtype
     void VideoManager::update() noexcept
     {
         if (_active) {
+            auto duration = _movie->getDuration().asSeconds();
+            auto now = _movie->getPlayingOffset().asSeconds();
+            if (duration - now < 3.2f && _fade.getFillColor().a < 255) {
+                _fade.setFillColor(sf::Color(0, 0, 0, static_cast<sf::Uint8>(_fade.getFillColor().a + 1)));
+            }
+
             if (_movie->getStatus() == sfe::Status::Stopped) {
                 __end();
             }
