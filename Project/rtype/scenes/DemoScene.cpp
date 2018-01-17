@@ -3,7 +3,6 @@
 //
 
 #include <chrono>
-#include <rapidjson/istreamwrapper.h>
 #include <rtype/gutils/event/InsideEvents.hpp>
 #include <rtype/scenes/DemoScene.hpp>
 #include <rtype/config/ProfilConfig.hpp>
@@ -36,6 +35,7 @@ namespace rtype
         _quadTree.clear();
         _ettMgr.clear();
         __unbindPlayerCallbacks();
+        _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::CitadelInstrumentalAmb);
     }
 
     void DemoScene::draw() noexcept
@@ -44,7 +44,7 @@ namespace rtype
             _win.draw(_quadTree.getRoot()._shapeDebug);
         }
         _ettMgr.for_each<rtc::Sprite>([this](rtype::Entity &ett) {
-            if (this->_debugMode) {
+            if (this->_debugMode && ett.hasComponent<rtc::BoundingBox>()) {
                 _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
                 try {
                     _win.draw(_quadTree.getNode(ett.getID())->_shapeDebug);
@@ -63,6 +63,7 @@ namespace rtype
     {
         ActionTarget::processEvents(timeSinceLastFrame);
         __bulletSystem(timeSinceLastFrame);
+        _starfieldSystem.update(timeSinceLastFrame);
         _animSystem.update(timeSinceLastFrame);
         _ettMgr.sweepEntities();
     }
@@ -125,8 +126,11 @@ namespace rtype
             __parseConfig("Bheet");
             GameFactory::setEntityManager(&_ettMgr);
             __loadBulletSprite();
+            __loadFlareSprite();
+            _starfieldSystem.configure();
             __createGameObjects();
             __setPlayerCallbacks();
+            _evtMgr.emit<gutils::evt::PlayMusic>(Configuration::Music::CitadelInstrumentalAmb, true);
         }
     }
 
@@ -231,6 +235,14 @@ namespace rtype
         _playerID = id;
         _animSystem.setPlayerID(_playerID);
         _ettMgr[_playerID].getComponent<rtc::Animation>().currentAnim = as::Animation::BheetLv1AttackTopDown;
+    }
+
+    void DemoScene::__loadFlareSprite() noexcept
+    {
+        __loadSprite(demo::Sprite::Flare01);
+        __loadSprite(demo::Sprite::Flare02);
+        __loadSprite(demo::Sprite::Flare03);
+        __loadSprite(demo::Sprite::Flare04);
     }
 
     void DemoScene::__loadBulletSprite() noexcept

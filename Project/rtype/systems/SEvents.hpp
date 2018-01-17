@@ -75,10 +75,12 @@ namespace rtype
                     case sf::Event::MouseWheelScrolled:
                         break;
                     case sf::Event::MouseButtonPressed:
+                        _evtMgr.emit<evt::MouseButtonPressed>(event.mouseButton);
                         break;
                     case sf::Event::MouseButtonReleased:
                         break;
                     case sf::Event::MouseMoved:
+                        _evtMgr.emit<evt::MouseMoved>(event.mouseMove);
                         break;
                     case sf::Event::MouseEntered:
                         break;

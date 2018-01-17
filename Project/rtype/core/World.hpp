@@ -34,6 +34,8 @@ namespace rtype
             win.setPosition(sf::Vector2i((sf::VideoMode::getDesktopMode().width / 2) - cfg::game::width / 2,
                                          (sf::VideoMode::getDesktopMode().height / 2) - cfg::game::height / 2));
 #endif
+            win.setVerticalSyncEnabled(true);
+            win.setFramerateLimit(60);
         }
 
     protected:
