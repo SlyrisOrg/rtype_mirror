@@ -31,7 +31,7 @@ namespace rtype
         ~LoginScene() noexcept = default;
 
     private:
-        using LoginGui = BaseGUI<17>;
+        using LoginGui = BaseGUI<LoginWidgets::size()>;
 
     private:
         //! Private member functions.
@@ -75,6 +75,7 @@ namespace rtype
 
     private:
         bool _pause{false};
+        bool _fading{false};
         LoginGui _gui;
     };
 }

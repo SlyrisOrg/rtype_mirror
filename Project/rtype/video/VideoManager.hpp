@@ -27,6 +27,7 @@ namespace rtype
     private:
         bool _active{false};
         std::string _movieName{""};
+        sf::RectangleShape _fade{sf::Vector2f{1920.f, 1080.f}};
         sfe::Movie *_movie;
         Scene _sceneToGoAfterVideo;
         gutils::EventManager &_evtMgr;
