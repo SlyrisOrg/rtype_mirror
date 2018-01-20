@@ -6,6 +6,7 @@ set(RTYPE_UTILS_HEADERS
         ${UTILS}/ResourceManager.hpp
         ${UTILS}/QuadTree.hpp
         ${UTILS}/Action.hpp
+        ${UTILS}/DemoUtils.hpp
         PARENT_SCOPE)
 
 set(RTYPE_UTILS_SOURCES
