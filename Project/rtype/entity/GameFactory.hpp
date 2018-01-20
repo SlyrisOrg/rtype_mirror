@@ -5,9 +5,11 @@
 #ifndef RTYPE_GAMEFACTORY_HPP
 #define RTYPE_GAMEFACTORY_HPP
 
+#include <random>
 #include <SFML/Graphics/Texture.hpp>
 #include <rtype/entity/ECS.hpp>
 #include <rtype/config/Configuration.hpp>
+#include <rtype/utils/DemoUtils.hpp>
 
 namespace rtype
 {
@@ -44,6 +46,7 @@ namespace rtype
             Entity::ID spaceID = _ettMgr->createEntity();
             auto &ettMgr = *_ettMgr;
             ettMgr[spaceID].addComponent<rtc::Player>(transitionMap);
+            ettMgr[spaceID].addComponent<rtc::GameFieldLayer>();
             return createSpaceShip(spaceID, std::forward<Args>(args)...);
         }
 
@@ -61,25 +64,53 @@ namespace rtype
             ettMgr[bulletID].addComponent<rtc::BoundingBox>(ettMgr[bulletID].getComponent<rtc::Sprite>().sprite);
             ettMgr[bulletID].addComponent<rtc::Bullet>();
             ettMgr[bulletID].addComponent<rtc::SoundEffect>(eff);
+            ettMgr[bulletID].addComponent<rtc::GameFieldLayer>();
             return bulletID;
         }
 
-        static Entity::ID createStar(sf::Texture &texture,
-                                     const sf::Vector2f &pos,
-                                     [[maybe_unused]] float speed,
-                                     float scale,
-                                     bool move,
-                                     unsigned int textureID) noexcept
+        static Entity::ID createFieldItem(sf::Texture &texture,
+                                          const sf::Vector2f &pos,
+                                          float speed,
+                                          float scale,
+                                          [[maybe_unused]] char alpha,
+                                          rtc::LayerType layer,
+                                          demo::field::SubField *subField,
+                                          unsigned int ItemPackIndex) noexcept
         {
-            Entity::ID starID = _ettMgr->createEntity();
+            Entity ::ID itemID = _ettMgr->createEntity();
             auto &ettMgr = *_ettMgr;
-            ettMgr[starID].addComponent<rtc::Star>(textureID);
-            sf::Sprite &sprite = ettMgr[starID].addComponent<rtc::Sprite>(texture).sprite;
+            ettMgr[itemID].addComponent<rtc::FieldItem>(subField, ItemPackIndex);
+            sf::Sprite &sprite = ettMgr[itemID].addComponent<rtc::Sprite>(texture).sprite;
             sprite.setPosition(pos);
             sprite.scale(scale, scale);
-            if (move)
-                ettMgr[starID].addComponent<rtc::Speed>(speed);
-            return starID;
+            ettMgr[itemID].addComponent<rtc::Speed>(speed);
+            switch(layer)
+            {
+                case rtc::LayerType::StarField :
+                    ettMgr[itemID].addComponent<rtc::StarFieldLayer>();
+                    break;
+                case rtc::LayerType::Fog1 :
+                    ettMgr[itemID].addComponent<rtc::Fog1Layer>();
+                    break;
+                case rtc::LayerType::Planet1 :
+                    ettMgr[itemID].addComponent<rtc::Planet1Layer>();
+                    break;
+                case rtc::LayerType::Fog2 :
+                    ettMgr[itemID].addComponent<rtc::Fog2Layer>();
+                    break;
+                case rtc::LayerType::Planet2 :
+                    ettMgr[itemID].addComponent<rtc::Planet2Layer>();
+                    break;
+                case rtc::LayerType::GameField :
+                    ettMgr[itemID].addComponent<rtc::GameFieldLayer>();
+                    break;
+                case rtc::LayerType::Fog3 :
+                    ettMgr[itemID].addComponent<rtc::Fog3Layer>();
+                    break;
+                default:
+                    ettMgr[itemID].addComponent<rtc::StarFieldLayer>();
+            }
+            return itemID;
         }
 
     private:

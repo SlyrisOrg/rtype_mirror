@@ -18,7 +18,14 @@ namespace rtype
         components::SoundEffect,
         components::Movement,
         components::Speed,
-        components::Star>;
+        components::Layer<components::LayerType::StarField>,
+        components::Layer<components::LayerType::Fog1>,
+        components::Layer<components::LayerType::Planet1>,
+        components::Layer<components::LayerType::Fog2>,
+        components::Layer<components::LayerType::Planet2>,
+        components::Layer<components::LayerType::GameField>,
+        components::Layer<components::LayerType::Fog3>,
+        components::FieldItem>;
     using EntityManager = game::EntityManager<Components>;
     using Entity = EntityManager::Entity;
     namespace rtc = rtype::components;
