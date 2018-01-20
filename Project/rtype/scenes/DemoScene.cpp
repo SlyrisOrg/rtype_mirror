@@ -43,7 +43,8 @@ namespace rtype
         if (this->_debugMode) {
             _win.draw(_quadTree.getRoot()._shapeDebug);
         }
-        _ettMgr.for_each<rtc::Sprite>([this](rtype::Entity &ett) {
+
+        auto spriteDrawer = [this](rtype::Entity &ett) {
             if (this->_debugMode && ett.hasComponent<rtc::BoundingBox>()) {
                 _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
                 try {
@@ -54,16 +55,49 @@ namespace rtype
                 }
             }
             this->_win.draw(ett.getComponent<rtc::Sprite>().sprite);
-        });
+        };
 
-        _animSystem.draw();
+        auto animDrawer = [this](rtype::Entity &ett) {
+            if (this->_debugMode) {
+                _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
+                try {
+                    _win.draw(_quadTree.getNode(ett.getID())->_shapeDebug);
+                }
+                catch (const std::out_of_range &error) {
+                    _log(lg::Error) << error.what() << std::endl;
+                }
+            }
+            _win.draw(ett.getComponent<rtc::Animation>().anim);
+        };
+
+        _ettMgr.for_each<rtc::Sprite, rtc::StarFieldLayer>(spriteDrawer);
+        _ettMgr.for_each<rtc::Animation, rtc::StarFieldLayer>(animDrawer);
+
+        _ettMgr.for_each<rtc::Sprite, rtc::Fog3Layer>(spriteDrawer);
+        _ettMgr.for_each<rtc::Animation, rtc::Fog3Layer>(animDrawer);
+
+        _ettMgr.for_each<rtc::Sprite, rtc::Planet2Layer>(spriteDrawer);
+        _ettMgr.for_each<rtc::Animation, rtc::Planet2Layer>(animDrawer);
+
+        _ettMgr.for_each<rtc::Sprite, rtc::Fog2Layer>(spriteDrawer);
+        _ettMgr.for_each<rtc::Animation, rtc::Fog2Layer>(animDrawer);
+
+        _ettMgr.for_each<rtc::Sprite, rtc::Planet1Layer>(spriteDrawer);
+        _ettMgr.for_each<rtc::Animation, rtc::Planet1Layer>(animDrawer);
+
+        _ettMgr.for_each<rtc::Sprite, rtc::GameFieldLayer>(spriteDrawer);
+        _ettMgr.for_each<rtc::Animation, rtc::GameFieldLayer>(animDrawer);
+
+        _ettMgr.for_each<rtc::Sprite, rtc::Fog1Layer>(spriteDrawer);
+        _ettMgr.for_each<rtc::Animation, rtc::Fog1Layer>(animDrawer);
+
     }
 
     void DemoScene::update(double timeSinceLastFrame) noexcept
     {
         ActionTarget::processEvents(timeSinceLastFrame);
         __bulletSystem(timeSinceLastFrame);
-        _starfieldSystem.update(timeSinceLastFrame);
+        _fieldSystem.update(timeSinceLastFrame);
         _animSystem.update(timeSinceLastFrame);
         _ettMgr.sweepEntities();
     }
@@ -126,8 +160,11 @@ namespace rtype
             __parseConfig("Bheet");
             GameFactory::setEntityManager(&_ettMgr);
             __loadBulletSprite();
-            __loadFlareSprite();
-            _starfieldSystem.configure();
+            __loadStarSprite();
+            __loadFogSprite();
+            __loadPlanetSprite();
+            //_starfieldSystem.configure();
+            _fieldSystem.configure();
             __createGameObjects();
             __setPlayerCallbacks();
             _evtMgr.emit<gutils::evt::PlayMusic>(Configuration::Music::CitadelInstrumentalAmb, true);
@@ -237,12 +274,96 @@ namespace rtype
         _ettMgr[_playerID].getComponent<rtc::Animation>().currentAnim = as::Animation::BheetLv1AttackTopDown;
     }
 
-    void DemoScene::__loadFlareSprite() noexcept
+    void DemoScene::__loadPlanetSprite() noexcept
     {
-        __loadSprite(demo::Sprite::Flare01);
-        __loadSprite(demo::Sprite::Flare02);
-        __loadSprite(demo::Sprite::Flare03);
-        __loadSprite(demo::Sprite::Flare04);
+        __loadSprite(demo::Sprite::BluePlanet1);
+        __loadSprite(demo::Sprite::BluePlanet2);
+        __loadSprite(demo::Sprite::BluePlanet3);
+        __loadSprite(demo::Sprite::BluePlanet4);
+        __loadSprite(demo::Sprite::BluePlanet5);
+        __loadSprite(demo::Sprite::BluePlanet6);
+        __loadSprite(demo::Sprite::BluePlanet7);
+        __loadSprite(demo::Sprite::BluePlanet8);
+        __loadSprite(demo::Sprite::BluePlanet9);
+        __loadSprite(demo::Sprite::BluePlanet10);
+        __loadSprite(demo::Sprite::BluePlanet11);
+        __loadSprite(demo::Sprite::BluePlanet12);
+        __loadSprite(demo::Sprite::BluePlanet13);
+        __loadSprite(demo::Sprite::BluePlanet14);
+        __loadSprite(demo::Sprite::BluePlanet15);
+        __loadSprite(demo::Sprite::BluePlanet16);
+        __loadSprite(demo::Sprite::BluePlanet17);
+        __loadSprite(demo::Sprite::BluePlanet18);
+        __loadSprite(demo::Sprite::BluePlanet19);
+        __loadSprite(demo::Sprite::RedPlanet1);
+        __loadSprite(demo::Sprite::RedPlanet2);
+        __loadSprite(demo::Sprite::RedPlanet3);
+        __loadSprite(demo::Sprite::RedPlanet4);
+        __loadSprite(demo::Sprite::RedPlanet5);
+        __loadSprite(demo::Sprite::RedPlanet6);
+        __loadSprite(demo::Sprite::RedPlanet7);
+        __loadSprite(demo::Sprite::RedPlanet8);
+        __loadSprite(demo::Sprite::RedPlanet9);
+        __loadSprite(demo::Sprite::RedPlanet10);
+        __loadSprite(demo::Sprite::RedPlanet11);
+        __loadSprite(demo::Sprite::RedPlanet12);
+        __loadSprite(demo::Sprite::RedPlanet13);
+        __loadSprite(demo::Sprite::RedPlanet14);
+        __loadSprite(demo::Sprite::RedPlanet15);
+        __loadSprite(demo::Sprite::RedPlanet16);
+        __loadSprite(demo::Sprite::RedPlanet17);
+        __loadSprite(demo::Sprite::RedPlanet18);
+        __loadSprite(demo::Sprite::RedPlanet19);
+        __loadSprite(demo::Sprite::GreenPlanet1);
+        __loadSprite(demo::Sprite::GreenPlanet2);
+        __loadSprite(demo::Sprite::GreenPlanet3);
+        __loadSprite(demo::Sprite::GreenPlanet4);
+        __loadSprite(demo::Sprite::GreenPlanet5);
+        __loadSprite(demo::Sprite::GreenPlanet6);
+        __loadSprite(demo::Sprite::GreenPlanet7);
+        __loadSprite(demo::Sprite::GreenPlanet8);
+        __loadSprite(demo::Sprite::GreenPlanet9);
+        __loadSprite(demo::Sprite::GreenPlanet10);
+        __loadSprite(demo::Sprite::GreenPlanet11);
+        __loadSprite(demo::Sprite::GreenPlanet12);
+        __loadSprite(demo::Sprite::GreenPlanet13);
+        __loadSprite(demo::Sprite::GreenPlanet14);
+    }
+    
+    void DemoScene::__loadStarSprite() noexcept
+    {
+        __loadSprite(demo::Sprite::WhiteStar1);
+        __loadSprite(demo::Sprite::WhiteStar2);
+        __loadSprite(demo::Sprite::GreenStar1);
+        __loadSprite(demo::Sprite::GreenStar2);
+        __loadSprite(demo::Sprite::GreenStar3);
+        __loadSprite(demo::Sprite::GreenStar4);
+        __loadSprite(demo::Sprite::GreenStar5);
+        __loadSprite(demo::Sprite::BlueStar1);
+        __loadSprite(demo::Sprite::BlueStar2);
+        __loadSprite(demo::Sprite::BlueStar3);
+        __loadSprite(demo::Sprite::BlueStar4);
+        __loadSprite(demo::Sprite::BlueStar5);
+        __loadSprite(demo::Sprite::BlueStar6);
+        __loadSprite(demo::Sprite::BlueStar7);
+        __loadSprite(demo::Sprite::RedStar1);
+        __loadSprite(demo::Sprite::RedStar2);
+        __loadSprite(demo::Sprite::RedStar3);
+        __loadSprite(demo::Sprite::RedStar4);
+        __loadSprite(demo::Sprite::RedStar5);
+        __loadSprite(demo::Sprite::RedStar6);
+        __loadSprite(demo::Sprite::RedStar7);
+    }
+
+    void DemoScene::__loadFogSprite() noexcept
+    {
+        __loadSprite(demo::Sprite::GreenFog1);
+        __loadSprite(demo::Sprite::GreenFog2);
+        __loadSprite(demo::Sprite::RedFog1);
+        __loadSprite(demo::Sprite::RedFog2);
+        __loadSprite(demo::Sprite::BlueFog1);
+        __loadSprite(demo::Sprite::BlueFog2);
+        __loadSprite(demo::Sprite::BlueFog3);
     }
 
     void DemoScene::__loadBulletSprite() noexcept
@@ -255,7 +376,7 @@ namespace rtype
         _ettMgr.for_each<rtc::Bullet, rtc::Sprite, rtc::BoundingBox>([this, &timeSinceLastFrame](Entity &ett) {
             auto &cmp = ett.getComponent<rtc::Sprite>();
             auto &box = ett.getComponent<rtc::BoundingBox>();
-            box.setPosition(static_cast<float>(box.AABB.left + (600 * timeSinceLastFrame)), box.AABB.top);
+            box.setPosition(static_cast<float>(box.AABB.left + (1100 * timeSinceLastFrame)), box.AABB.top);
             cmp.sprite.setPosition(box.getPosition());
             _quadTree.move(ett.getID());
             if (box.getPosition().x >= cfg::game::width) {
@@ -272,7 +393,7 @@ namespace rtype
             sfutils::AnimatedSprite &anim = animation.anim;
             auto limitX = (cfg::game::width - box.AABB.width);
             if (box.AABB.left <= limitX) {
-                box.setPosition(static_cast<float>(box.getPosition().x + (450 * timeSinceLastFrame)),
+                box.setPosition(static_cast<float>(box.getPosition().x + (700 * timeSinceLastFrame)),
                                 box.getPosition().y);
                 anim.setPosition(box.getPosition().x - box.relativeAABB.left,
                                  box.getPosition().y - box.relativeAABB.top);
@@ -284,7 +405,7 @@ namespace rtype
             auto[box, animation] = this->_ettMgr[_playerID].getComponents<rtc::BoundingBox, rtc::Animation>();
             sfutils::AnimatedSprite &anim = animation.anim;
             if (box.AABB.left >= 0) {
-                box.setPosition(static_cast<float>(box.getPosition().x - (450 * timeSinceLastFrame)),
+                box.setPosition(static_cast<float>(box.getPosition().x - (700 * timeSinceLastFrame)),
                                 box.getPosition().y);
                 anim.setPosition(box.getPosition().x - box.relativeAABB.left,
                                  box.getPosition().y - box.relativeAABB.top);
@@ -297,7 +418,7 @@ namespace rtype
             sfutils::AnimatedSprite &anim = animation.anim;
             if (box.AABB.top >= 0) {
                 box.setPosition(box.getPosition().x,
-                                static_cast<float>(box.getPosition().y - (450 * timeSinceLastFrame)));
+                                static_cast<float>(box.getPosition().y - (700 * timeSinceLastFrame)));
                 anim.setPosition(box.getPosition().x - box.relativeAABB.left,
                                  box.getPosition().y - box.relativeAABB.top);
                 _quadTree.move(_playerID);
@@ -310,7 +431,7 @@ namespace rtype
             auto limitY = (cfg::game::height - box.AABB.height);
             if (box.AABB.top <= limitY) {
                 box.setPosition(box.getPosition().x,
-                                static_cast<float>(box.getPosition().y + (450 * timeSinceLastFrame)));
+                                static_cast<float>(box.getPosition().y + (700 * timeSinceLastFrame)));
                 anim.setPosition(box.getPosition().x - box.relativeAABB.left,
                                  box.getPosition().y - box.relativeAABB.top);
                 _quadTree.move(_playerID);
