@@ -16,26 +16,13 @@
 #include <rtype/gutils/base/AScene.hpp>
 #include <rtype/utils/Action.hpp>
 #include <rtype/utils/QuadTree.hpp>
+#include <rtype/utils/DemoUtils.hpp>
+#include <rtype/systems/FieldSystem.hpp>
 
 namespace rtype
 {
     namespace demo
     {
-        ENUM(Sprite,
-             BheetLv1AttackTopDown,
-             BheetLv1AttackTurnUp,
-             BheetLv1AttackTurnDown,
-             BheetLv1AttackRedressUp,
-             BheetLv1AttackRedressDown,
-             BheetLv1AttackRollUp,
-             BheetLv1AttackRollDown,
-             Bullet,
-             Flare01,
-             Flare02,
-             Flare03,
-             Flare04);
-
-        using SpriteT = demo::Sprite::EnumType;
 
         class StarfieldSystem
         {
@@ -89,7 +76,7 @@ namespace rtype
             {
                 using namespace std::string_literals;
                 try {
-                    auto path = cfg::configPath + "starfield/starfield.json"s;
+                    auto path = cfg::configPath + "field/starfield.json"s;
                     rapidjson::Document doc;
                     std::ifstream ifs(path);
                     rapidjson::IStreamWrapper isw(ifs);
@@ -214,6 +201,7 @@ namespace rtype
                 }
             }
 
+            /*
             void draw() noexcept
             {
                 _ettMgr.for_each<rtc::Animation>([this](rtype::Entity &ett) {
@@ -229,6 +217,7 @@ namespace rtype
                     _win.draw(ett.getComponent<rtc::Animation>().anim);
                 });
             }
+             */
 
             void loadAnimation(const Sprite &sprite, const Animation &anim,
                                [[maybe_unused]] sf::Vector2<unsigned int> &&sprInfo,
@@ -244,8 +233,8 @@ namespace rtype
 
             void changePlayerAnim() noexcept
             {
-                auto[movement, animation, player] = _ettMgr[_playerID].getComponents<rtc::Movement, rtc::Animation,
-                    rtc::Player>();
+                auto[movement, player] = _ettMgr[_playerID].getComponents<rtc::Movement, rtc::Player>();
+                auto& animation = _ettMgr[_playerID].getComponent<rtc::Animation>();
                 rtc::Direction dir = movement.dir;
                 auto curAnim = static_cast<AnimT>(animation.currentAnim);
                 size_t currentFrame = animation.anim.getCurrentFrame();
@@ -345,7 +334,9 @@ namespace rtype
         void __createGameObjects() noexcept;
         void __bulletSystem(double timeSinceLastFrame) noexcept;
         void __loadBulletSprite() noexcept;
-        void __loadFlareSprite() noexcept;
+        void __loadFogSprite() noexcept;
+        void __loadStarSprite() noexcept;
+        void __loadPlanetSprite() noexcept;
         void __setPlayerCallbacks() noexcept;
         void __unbindPlayerCallbacks() noexcept;
     private:
@@ -357,6 +348,7 @@ namespace rtype
         QuadTree<EntityManager> _quadTree{sf::FloatRect(0.f, 0.f, 1920, 1080), _ettMgr};
         demo::AnimationSystem _animSystem{_win, _ettMgr, _debugMode, _textures, _quadTree};
         demo::StarfieldSystem _starfieldSystem{_win, _ettMgr, _textures, _evtMgr};
+        demo::field::FieldSystem _fieldSystem{_ettMgr, _textures, _evtMgr};
         std::chrono::time_point<std::chrono::steady_clock> _lastShoot;
         Entity::ID _playerID;
     };
