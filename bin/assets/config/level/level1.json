@@ -1,0 +1,28 @@
+{
+  "actions": [
+    {
+      "music": "CitadelInstrumentalAmb"
+    },
+    {
+      "spawn": {
+        "id": "Monster01"
+      }
+    },
+    {
+      "wait": 400
+    },
+    {
+      "spawn": {
+        "id": "Monster02"
+      }
+    },
+    {
+      "waitkillall": null
+    },
+    {
+      "spawn": {
+        "id": "Boss01"
+      }
+    }
+  ]
+}
