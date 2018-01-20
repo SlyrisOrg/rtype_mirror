@@ -1,0 +1,249 @@
+{
+  "Speed" :
+  {
+    "Global" : 650.0,
+    "StarField" : 2.0,
+    "Fog1" : 1.6,
+    "Planet1" : 0.9,
+    "Fog2" : 0.95,
+    "Planet2" : 0.45,
+    "GameField" : 0.0,
+    "Fog3" : 0.25
+  },
+
+  "Field": [
+	{
+      "Name" : "Fog",
+      "Sprites": {
+        "Green" : ["GreenFog1", "GreenFog2"],
+        "Blue"  : ["BlueFog1", "BlueFog2", "BlueFog3"],
+        "Red"   : ["RedFog1", "RedFog2"]
+      },
+
+      "Anim": {
+        "Green" : [],
+        "Blue"  : [],
+        "Red"   : []
+      },
+
+      "posSubstract" : 810,
+      "posXDistribution"  : [ 0.0, 6060.0 ],
+      "posYDistribution"  : [ 0.0, 1320.0 ],
+
+      "Layer" : {
+        "StarField": [],
+        "Planet1": [],
+        "Fog1": [
+          {
+            "nbItem": 1,
+            "speedDistribution": [1.0, 1.0],
+            "scaleDistribution": [1.2, 2.4],
+            "alpha": 200,
+            "respawnPos" : [800.0, 2000.0]
+          }
+        ],
+        "Planet2": [],
+        "Fog2": [
+          {
+            "nbItem": 3,
+            "speedDistribution": [1.0, 1.0],
+            "scaleDistribution": [1.5, 3.0],
+            "alpha": 150,
+            "respawnPos" : [1920.0, 5760.0]
+          }
+        ],
+        "Fog3": [
+          {
+            "nbItem": 2,
+            "speedDistribution": [1.0, 1.0],
+            "scaleDistribution": [2.0, 3.2],
+            "alpha": 100,
+            "respawnPos" : [1920.0, 5760.0]
+          }
+        ]
+      }
+    },
+
+    {
+      "Name" : "Planet1",
+      "Sprites": {
+        "Green" : ["GreenPlanet9", "GreenPlanet10", "GreenPlanet11", "GreenPlanet12", "GreenPlanet13", "GreenPlanet14"],
+        "Blue"  : ["BluePlanet14", "BluePlanet15", "BluePlanet16", "BluePlanet17", "BluePlanet18", "BluePlanet19"],
+        "Red"   : ["RedPlanet14", "RedPlanet15", "RedPlanet16", "RedPlanet17", "RedPlanet18", "RedPlanet19"]
+      },
+
+      "Anim": {
+        "Green" : [],
+        "Blue"  : [],
+        "Red"   : []
+      },
+
+      "posSubstract" : 1010,
+      "posXDistribution"  : [ 6000.0, 17060.0 ],
+      "posYDistribution"  : [ 0.0, 500.0 ],
+
+      "Layer" : {
+        "StarField": [],
+        "Planet1": [
+          {
+            "nbItem": 1,
+            "speedDistribution": [0.6, 0.95],
+            "scaleDistribution": [1.5, 2.5],
+            "alpha": 200,
+            "respawnPos" : [7500.0, 17500.0]
+          }
+        ],
+        "Fog1": [],
+        "Planet2": [
+          {
+            "nbItem": 1,
+            "speedDistribution": [0.4, 0.8],
+            "scaleDistribution": [2.7, 3.2],
+            "alpha": 200,
+            "respawnPos" : [6000.0, 14000.0]
+          }
+        ],
+        "Fog2": [],
+        "Fog3": []
+      }
+    },
+
+    {
+      "Name" : "Planet2",
+      "Sprites": {
+        "Green" : ["GreenPlanet1", "GreenPlanet2", "GreenPlanet3", "GreenPlanet4", "GreenPlanet5", "GreenPlanet6",
+          "GreenPlanet7", "GreenPlanet8"],
+        "Blue"  : ["BluePlanet1", "BluePlanet2", "BluePlanet3", "BluePlanet4", "BluePlanet5", "BluePlanet6",
+          "BluePlanet7", "BluePlanet8", "BluePlanet9", "BluePlanet10", "BluePlanet11", "BluePlanet12", "BluePlanet13"],
+        "Red"   : ["RedPlanet1", "RedPlanet2", "RedPlanet3", "RedPlanet4", "RedPlanet5", "RedPlanet6",
+          "RedPlanet7", "RedPlanet8", "RedPlanet9", "RedPlanet10", "RedPlanet11", "RedPlanet12", "RedPlanet13"]
+      },
+
+      "Anim": {
+        "Green" : [],
+        "Blue"  : [],
+        "Red"   : []
+      },
+
+      "posSubstract" : 200,
+      "posXDistribution"  : [ 7000.0, 18060.0 ],
+      "posYDistribution"  : [ 100.0, 1050.0 ],
+
+      "Layer" : {
+        "StarField": [],
+        "Planet1": [],
+        "Fog1": [],
+        "Planet2": [
+          {
+            "nbItem": 1,
+            "speedDistribution": [0.4, 1.1],
+            "scaleDistribution": [3.0, 4.5],
+            "alpha": 200,
+            "respawnPos" : [4000.0, 12500.0]
+          }
+        ],
+        "Fog2": [],
+        "Fog3": []
+      }
+    },
+
+    {
+      "Name" : "Star",
+      "Sprites": {
+        "Green" : ["GreenStar1", "GreenStar2", "GreenStar3", "GreenStar4", "GreenStar5",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2"],
+        "Blue"  : ["BlueStar1", "BlueStar2", "BlueStar3", "BlueStar4", "BlueStar5", "BlueStar6", "BlueStar7",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2"],
+        "Red"   : ["RedStar1", "RedStar2", "RedStar3", "RedStar4", "RedStar5", "RedStar6", "RedStar7",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1", "WhiteStar1",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2",
+          "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2", "WhiteStar2"]
+      },
+
+      "Anim": {
+        "Green" : [],
+        "Blue"  : [],
+        "Red"   : []
+      },
+
+      "posSubstract" : 10,
+      "posXDistribution"  : [ 0.0, 1920.0 ],
+      "posYDistribution"  : [ 0.0, 1080.0 ],
+
+      "Layer" : {
+        "StarField" : [
+          {
+            "nbItem": 85,
+            "speedDistribution"  : [ 0.1, 1.3 ],
+            "scaleDistribution" : [ 0.08, 0.12 ],
+            "alpha" : 255,
+            "respawnPos" : [0.0, 100.0]
+          },
+          {
+            "nbItem": 25,
+            "speedDistribution"  : [ 0.8, 1.4 ],
+            "scaleDistribution" : [ 0.18, 0.22 ],
+            "alpha" : 255,
+            "respawnPos" : [0.0, 100.0]
+          },
+          {
+            "nbItem": 25,
+            "speedDistribution"  : [ 0.2, 0.9 ],
+            "scaleDistribution" : [ 0.14, 0.16 ],
+            "alpha" : 255,
+            "respawnPos" : [0.0, 100.0]
+          },
+          {
+            "nbItem": 12,
+            "speedDistribution"  : [ 0.1, 1.0 ],
+            "scaleDistribution" : [ 0.15, 0.19 ],
+            "alpha" : 255,
+            "respawnPos" : [0.0, 100.0]
+          }
+        ],
+        "Planet1" : [],
+        "Fog1" : [],
+        "Planet2" : [],
+        "Fog2" : [],
+        "Fog3" : []
+      }
+    }
+  ]
+}
