@@ -8,6 +8,12 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <rtype/config/Configuration.hpp>
 #include <rtype/utils/AnimatedSprite.hpp>
+#include <rtype/utils/DemoUtils.hpp>
+
+namespace rtype::demo::field
+{
+    class SubField;
+}
 
 namespace rtype::components
 {
@@ -153,6 +159,45 @@ namespace rtype::components
 
         unsigned int textureID;
     };
+
+    static constexpr const size_t nbLayer = 7;
+
+    enum LayerType
+    {
+        StarField,
+        Fog1,
+        Planet1,
+        Fog2,
+        Planet2,
+        GameField,
+        Fog3,
+    };
+
+    template<LayerType layer>
+    struct Layer
+    {
+
+    };
+
+    struct FieldItem
+    {
+        explicit FieldItem(demo::field::SubField *sub, unsigned int itemPckIdx) noexcept
+                : subField(sub), itemPackIdx(itemPckIdx)
+        {
+
+        }
+
+        demo::field::SubField *subField;
+        unsigned int itemPackIdx;
+    };
+
+    using StarFieldLayer = Layer<StarField>;
+    using Fog1Layer = Layer<Fog1>;
+    using Planet1Layer = Layer<Planet1>;
+    using Fog2Layer = Layer<Fog2>;
+    using Planet2Layer = Layer<Planet2>;
+    using GameFieldLayer = Layer<GameField>;
+    using Fog3Layer = Layer<Fog3>;
 }
 
 #endif //RTYPE_COMPONENTS_HPP

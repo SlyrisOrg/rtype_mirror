@@ -1,0 +1,130 @@
+{
+  "Speed" :
+  {
+    "Global" : 100.0,
+    "StarField" : 5.0,
+    "Fog1" : 4.0,
+    "Planet1" : 3.0,
+    "Fog2" : 2.0,
+    "Planet2" : 1.0,
+    "GameField" : 0.0,
+    "Fog3" : 0.1
+  },
+
+  "Field": [
+	{
+      "Name" : "Fog",
+      "Sprites": {
+        "Green" : ["GreenFog1", "GreenFog2"],
+        "Blue"  : ["BlueFog1", "BlueFog2", "BlueFog3"],
+        "Red"   : ["RedFog1", "RedFog2"]
+      },
+
+      "Anim": {
+        "Green" : [],
+        "Blue"  : [],
+        "Red"   : []
+      },
+
+      "posSubstract" : 100,
+      "posXDistribution"  : [ 0.0, 2120.0 ],
+      "posYDistribution"  : [ 0.0, 1280.0 ],
+
+      "Layer" : {
+        "StarField": [],
+        "Planet1": [],
+        "Fog1": [
+          {
+            "nbItem": 2,
+            "speedDistribution": [1.0, 1.0],
+            "scaleDistribution": [0.3, 3.0],
+            "alpha": 200,
+            "respawnPos" : [0.0, 500.0]
+          }
+        ],
+        "Planet2": [],
+        "Fog2": [
+          {
+            "nbItem": 1,
+            "speedDistribution": [
+              1.0,
+              1.0
+            ],
+            "scaleDistribution": [
+              0.5,
+              3.0
+            ],
+            "alpha": 150,
+            "respawnPos" : [1920.0, 5760.0]
+          }
+        ],
+        "Fog3": [
+          {
+            "nbItem": 1,
+            "speedDistribution": [1.0, 1.0],
+            "scaleDistribution": [2.0, 5.0],
+            "alpha": 100,
+            "respawnPos" : [1920.0, 5760.0]
+          }
+        ]
+      }
+    },
+
+    {
+	    "Name" : "Star",
+	    "Sprites": {
+		  "Green" : [],
+		  "Blue"  : [],
+		  "Red"   : []
+	    },
+
+	    "Anim": {
+		  "Green" : [],
+		  "Blue"  : [],
+		  "Red"   : []
+	    },
+
+        "posSubstract" : 0,
+	    "posXDistribution"  : [ 0.0, 1920.0 ],
+	    "posYDistribution"  : [ 0.0, 1080.0 ],
+
+	    "Layer" : {
+          "StarField" : [
+            {
+              "nbItem": 125,
+              "speedDistribution"  : [ 1.0, 1.0 ],
+              "scaleDistribution" : [ 0.1, 0.1 ],
+              "alpha" : 255,
+              "respawnPos" : [0.0, 100.0]
+            },
+            {
+              "nbItem": 20,
+              "speedDistribution"  : [ 1.0, 1.0 ],
+              "scaleDistribution" : [ 0.2, 0.2 ],
+              "alpha" : 255,
+              "respawnPos" : [0.0, 100.0]
+            },
+            {
+              "nbItem": 35,
+              "speedDistribution"  : [ 1.0, 1.0 ],
+              "scaleDistribution" : [ 0.15, 0.15 ],
+              "alpha" : 255,
+              "respawnPos" : [0.0, 100.0]
+            },
+            {
+              "nbItem": 15,
+              "speedDistribution"  : [ 1.0, 1.0 ],
+              "scaleDistribution" : [ 0.17, 0.17 ],
+              "alpha" : 255,
+              "respawnPos" : [0.0, 100.0]
+            }
+          ],
+		  "Planet1" : [],
+		  "Fog1" : [],
+		  "Planet2" : [],
+		  "Fog2" : [],
+		  "Fog3" : []
+	    }
+	}
+  ]
+}
