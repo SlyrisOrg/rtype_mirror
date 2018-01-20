@@ -14,6 +14,7 @@ include(${CMAKE_CONFIG_PATH}/include.cmake)
 STANDARD_COMPILATION_SETTINGS()
 RTYPE_CONFIG()
 find_package(Lua 5.3)
+find_package(Boost COMPONENTS system filesystem REQUIRED)
 
 add_subdirectory(Project/rtype/core)
 add_subdirectory(Project/rtype/scenes)
@@ -29,6 +30,7 @@ add_subdirectory(Project/rtype/video)
 add_subdirectory(Project/rtype/protocol)
 add_subdirectory(Project/rtype/entity)
 add_subdirectory(Project/rtype/components)
+add_subdirectory(Project/rtype/scenario)
 
 set(HEADERS_PROJECT
         ${RTYPE_CORE_HEADERS}
@@ -45,6 +47,7 @@ set(HEADERS_PROJECT
         ${RTYPE_ENTITY_HEADERS}
         ${RTYPE_VIDEO_HEADERS}
         ${RTYPE_COMPONENTS_HEADERS}
+        ${RTYPE_SCENARIO_HEADERS}
         )
 
 set(SOURCES_PROJECT Project/main.cpp
@@ -73,7 +76,7 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC core-utils core-log core-net core-serialization
-        PRIVATE ${SFML_LIBRARIES} ${LIBS_CEGUI} cpprestsdk::cpprest ${SFEMOVIE_LIBRARIES})
+        PRIVATE ${SFML_LIBRARIES} ${LIBS_CEGUI} cpprestsdk::cpprest ${SFEMOVIE_LIBRARIES} Boost::boost)
 
 if (UNIX)
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-unused-function")
