@@ -28,6 +28,7 @@ add_subdirectory(Project/rtype/gutils)
 add_subdirectory(Project/rtype/gui)
 add_subdirectory(Project/rtype/video)
 add_subdirectory(Project/rtype/protocol)
+add_subdirectory(Project/rtype/netproto)
 add_subdirectory(Project/rtype/entity)
 add_subdirectory(Project/rtype/components)
 add_subdirectory(Project/rtype/scenario)
@@ -44,6 +45,7 @@ set(HEADERS_PROJECT
         ${RTYPE_GUTILS_HEADERS}
         ${RTYPE_GUI_HEADERS}
         ${RTYPE_PROTO_HEADERS}
+        ${RTYPE_NETPROTO_HEADERS}
         ${RTYPE_ENTITY_HEADERS}
         ${RTYPE_VIDEO_HEADERS}
         ${RTYPE_COMPONENTS_HEADERS}
