@@ -48,7 +48,16 @@ namespace rtype
          fr,
          en,
          DiscardButton,
-         TabButtonScreen
+         TabButtonScreen,
+         ModeWindow,
+         ModeOptionsHead,
+         ModeOptionsRealHead,
+         ModeOptionsCloseButton,
+         ModeLocalCheck,
+         ModeTwoCheck,
+         ModeThreeCheck,
+         ModeFourCheck,
+         ModeOkButton
     );
 
     using TProfilWidget = ProfilWidgets::EnumType;

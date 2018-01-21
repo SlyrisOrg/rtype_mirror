@@ -5,6 +5,7 @@
 #ifndef RTYPE_PROTO_PROTOCOL_HPP
 #define RTYPE_PROTO_PROTOCOL_HPP
 
+#include <iostream>
 #include <cstring>
 #include <variant>
 #include <functional>
@@ -93,10 +94,12 @@ namespace proto
             _bytes.insert(_bytes.begin(), toAdd.begin(), toAdd.end());
         }
 
-        template <typename T, typename std::enable_if_t<serialization::is_serializable_v<T>, bool> = true>
+        template <typename T, typename std::enable_if_t<serialization::is_serializable_v<T> || std::is_enum_v<T>, bool> = true>
         void serialize(const T &t, [[maybe_unused]] size_t depth = 0) noexcept
         {
-            if constexpr (serialization::is_basic_v<T>) {
+            if constexpr (std::is_enum_v<T>) {
+                serialize(static_cast<int>(t), depth);
+            } else if constexpr (serialization::is_basic_v<T>) {
                 __addValue(t);
             } else {
                 auto visitor = [&](auto &&k, auto &&valMemberPtr) {

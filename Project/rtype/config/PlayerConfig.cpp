@@ -7,4 +7,5 @@
 namespace cfg::player
 {
     rtype::ActionMap<int> playerInputs;
+    matchmaking::Mode mode{matchmaking::Mode::Solo};
 }
