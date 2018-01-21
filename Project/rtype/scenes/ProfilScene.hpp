@@ -49,6 +49,7 @@ namespace rtype
         void __logOut() noexcept;
         void __optionsWindow() noexcept;
         void __closeOptionsWindow() noexcept;
+        void __closeModeWindow() noexcept;
         void __subscribeEvents() noexcept;
         void __setText() noexcept;
         bool __setGUI() noexcept;
@@ -57,8 +58,33 @@ namespace rtype
         void __cancelMainMenuWindow() noexcept;
         void __checkResume(const sf::Keyboard::Key &key) noexcept;
         void __mainMenuWindow() noexcept;
-        void __goingToQueue() noexcept;
+        void __modeWindow() noexcept;
         void __getData() const noexcept;
+        void __checkModeLocal() noexcept;
+        void __checkModeTwo() noexcept;
+        void __checkModeThree() noexcept;
+        void __checkModeFour() noexcept;
+        void __goingToQueue() noexcept;
+
+        template <typename ToggleButton>
+        void __disableToggleButton(ToggleButton &toDisable) noexcept
+        {
+            toDisable.setSelected(false);
+        }
+
+        template <typename ToggleButton, typename ...Args>
+        void __disableToggleButton(ToggleButton &toDisable, Args&& ...otherBox) noexcept
+        {
+            toDisable.setSelected(false);
+            __disableToggleButton(std::forward<Args>(otherBox)...);
+        }
+
+        template <typename ...Args>
+        void __internalDisableToggleButton(CEGUI::ToggleButton &boxSelected, Args&& ...otherBox) noexcept
+        {
+            boxSelected.setSelected(true);
+            __disableToggleButton(std::forward<Args>(otherBox)...);
+        }
 
     private:
         ProfilGui _gui;
