@@ -5,6 +5,7 @@
 #ifndef RTYPE_PLAYERCONFIG_HPP
 #define RTYPE_PLAYERCONFIG_HPP
 
+#include <rtype/protocol/MatchMaking.hpp>
 #include <rtype/utils/Action.hpp>
 
 namespace cfg::player
@@ -17,6 +18,8 @@ namespace cfg::player
         Down,
         SpaceShoot,
     };
+
+    extern matchmaking::Mode mode;
 
     extern rtype::ActionMap<int> playerInputs;
 
