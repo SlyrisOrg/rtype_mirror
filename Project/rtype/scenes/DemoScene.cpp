@@ -90,7 +90,6 @@ namespace rtype
 
         _ettMgr.for_each<rtc::Sprite, rtc::Fog1Layer>(spriteDrawer);
         _ettMgr.for_each<rtc::Animation, rtc::Fog1Layer>(animDrawer);
-
     }
 
     void DemoScene::update(double timeSinceLastFrame) noexcept
@@ -159,6 +158,7 @@ namespace rtype
         if (start) {
             __parseConfig("Bheet");
             GameFactory::setEntityManager(&_ettMgr);
+            _registerAdditionalLuaFunctions();
             __loadBulletSprite();
             __loadStarSprite();
             __loadFogSprite();
@@ -166,6 +166,7 @@ namespace rtype
             _fieldSystem.configure();
             __createGameObjects();
             __setPlayerCallbacks();
+            _luaMgr.loadAll();
             _evtMgr.emit<gutils::evt::PlayMusic>(Configuration::Music::CitadelInstrumentalAmb, true);
         }
     }
@@ -388,53 +389,19 @@ namespace rtype
     void DemoScene::__setPlayerCallbacks() noexcept
     {
         setKeyCallback(cfg::player::Right, [this](const sf::Event &, double timeSinceLastFrame) {
-            auto[box, animation] = this->_ettMgr[_playerID].getComponents<rtc::BoundingBox, rtc::Animation>();
-            sfutils::AnimatedSprite &anim = animation.anim;
-            auto limitX = (cfg::game::width - box.AABB.width);
-            if (box.AABB.left <= limitX) {
-                box.setPosition(static_cast<float>(box.getPosition().x + (700 * timeSinceLastFrame)),
-                                box.getPosition().y);
-                anim.setPosition(box.getPosition().x - box.relativeAABB.left,
-                                 box.getPosition().y - box.relativeAABB.top);
-                _quadTree.move(_playerID);
-            }
+            _luaMgr.executeFunction("moveRight", _playerID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Left, [this](const sf::Event &, double timeSinceLastFrame) {
-            auto[box, animation] = this->_ettMgr[_playerID].getComponents<rtc::BoundingBox, rtc::Animation>();
-            sfutils::AnimatedSprite &anim = animation.anim;
-            if (box.AABB.left >= 0) {
-                box.setPosition(static_cast<float>(box.getPosition().x - (700 * timeSinceLastFrame)),
-                                box.getPosition().y);
-                anim.setPosition(box.getPosition().x - box.relativeAABB.left,
-                                 box.getPosition().y - box.relativeAABB.top);
-                _quadTree.move(_playerID);
-            }
+            _luaMgr.executeFunction("moveLeft", _playerID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Up, [this](const sf::Event &, double timeSinceLastFrame) {
-            auto[box, animation] = this->_ettMgr[_playerID].getComponents<rtc::BoundingBox, rtc::Animation>();
-            sfutils::AnimatedSprite &anim = animation.anim;
-            if (box.AABB.top >= 0) {
-                box.setPosition(box.getPosition().x,
-                                static_cast<float>(box.getPosition().y - (700 * timeSinceLastFrame)));
-                anim.setPosition(box.getPosition().x - box.relativeAABB.left,
-                                 box.getPosition().y - box.relativeAABB.top);
-                _quadTree.move(_playerID);
-            }
+            _luaMgr.executeFunction("moveUp", _playerID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Down, [this](const sf::Event &, double timeSinceLastFrame) {
-            auto[box, animation] = this->_ettMgr[_playerID].getComponents<rtc::BoundingBox, rtc::Animation>();
-            sfutils::AnimatedSprite &anim = animation.anim;
-            auto limitY = (cfg::game::height - box.AABB.height);
-            if (box.AABB.top <= limitY) {
-                box.setPosition(box.getPosition().x,
-                                static_cast<float>(box.getPosition().y + (700 * timeSinceLastFrame)));
-                anim.setPosition(box.getPosition().x - box.relativeAABB.left,
-                                 box.getPosition().y - box.relativeAABB.top);
-                _quadTree.move(_playerID);
-            }
+            _luaMgr.executeFunction("moveDown", _playerID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::SpaceShoot, [this](const sf::Event &, [[maybe_unused]] double timeSinceLastFrame) {
@@ -457,5 +424,10 @@ namespace rtype
     void DemoScene::__unbindPlayerCallbacks() noexcept
     {
         ActionTarget::clear();
+    }
+
+    void DemoScene::_registerAdditionalLuaFunctions() noexcept
+    {
+        _luaMgr["quadMove"] = [this](Entity::ID id) { this->_quadTree.move(id); };
     }
 }
