@@ -13,6 +13,7 @@
 #include <rtype/gui/BaseGUI.hpp>
 #include <rtype/config/InGameConfig.hpp>
 #include <rtype/config/PlayerConfig.hpp>
+#include <rtype/lua/LuaManager.hpp>
 #include <rtype/gutils/base/AScene.hpp>
 #include <rtype/utils/Action.hpp>
 #include <rtype/utils/QuadTree.hpp>
@@ -197,12 +198,14 @@ namespace rtype
         void __loadPlanetSprite() noexcept;
         void __setPlayerCallbacks() noexcept;
         void __unbindPlayerCallbacks() noexcept;
+        void _registerAdditionalLuaFunctions() noexcept;
 
         UIGUI _gui;
         sfutils::ResourceManager<sf::Texture, demo::SpriteT> _textures;
         std::unordered_map<std::string, sf::IntRect> _boundingBoxFactions;
         bool _debugMode{false};
         EntityManager _ettMgr;
+        rtype::lua::LuaManager _luaMgr{_ettMgr, fs::current_path() /=  "assets/scripts/"};
         QuadTree<EntityManager> _quadTree{sf::FloatRect(0.f, 0.f, 1920, 1080), _ettMgr};
         demo::AnimationSystem _animSystem{_win, _ettMgr, _debugMode, _textures, _quadTree};
         demo::field::FieldSystem _fieldSystem{_ettMgr, _textures, _evtMgr};
