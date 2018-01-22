@@ -9087,7 +9087,7 @@ namespace stack {
 
 		template <typename Handler>
 		static optional<V> get_empty(std::false_type, lua_State* L, int index, Handler&& handler, record& tracking) {
-			typedef std::variant_alternative_t<0, V> T;
+			//typedef std::variant_alternative_t<0, V> T;
 			// This should never be reached...
 			// please check your code and understand what you did to bring yourself here
 			handler(L, index, type::poly, type_of(L, index), "this variant code should never be reached: if it has, you have done something so terribly wrong");
