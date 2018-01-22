@@ -12,6 +12,7 @@
 #include <utils/StringHelpers.hpp>
 #include <rtype/config/Configuration.hpp>
 #include <rtype/scenes/EnumScenes.hpp>
+#include <rtype/protocol/MatchMaking.hpp>
 
 namespace gutils
 {
@@ -41,6 +42,24 @@ namespace gutils::evt
         {
             showEvents("FullScreen");
         }
+    };
+
+    struct JoinQueue final : public gutils::InsideEvents
+    {
+        JoinQueue() noexcept
+        {
+            showEvents("JoinQueue");
+        }
+    };
+
+    struct AddPlayerQueue final : public gutils::InsideEvents
+    {
+        AddPlayerQueue(const matchmaking::PlayerInfo &&_info) noexcept : info(std::move(_info))
+        {
+
+        }
+
+        matchmaking::PlayerInfo info;
     };
 
     struct ResetMusicVolume final : public gutils::InsideEvents
@@ -149,6 +168,17 @@ namespace gutils::evt
     struct ChangeScene final : public gutils::InsideEvents
     {
         explicit ChangeScene(rtype::Scene scene) noexcept :
+            sceneName(scene)
+        {
+            showEvents("ChangeScene"sv);
+        }
+
+        rtype::Scene sceneName;
+    };
+
+    struct RemoveScene final : public gutils::InsideEvents
+    {
+        explicit RemoveScene(rtype::Scene scene) noexcept :
             sceneName(scene)
         {
             showEvents("ChangeScene"sv);

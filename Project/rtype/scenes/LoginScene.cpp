@@ -113,6 +113,9 @@ namespace rtype
         _win.setView(_win.getDefaultView());
         auto start = __setGUI();
         if (start) {
+            Configuration::videos.clear();
+            _evtMgr.emit<gutils::evt::RemoveScene>(Scene::Intro);
+            _evtMgr.emit<gutils::evt::RemoveScene>(Scene::Loading);
             _fading = true;
             _gui.sheet->setAlpha(0);
             CEGUI::System::getSingletonPtr()->getDefaultGUIContext().getMouseCursor().show();
@@ -261,8 +264,7 @@ namespace rtype
     {
         if (_gui.sheet->getAlpha() < 1) {
             _gui.sheet->setAlpha(static_cast<float>(_gui.sheet->getAlpha() + (0.2f * timeSinceLastFrame)));
-        }
-        else
+        } else
             _fading = false;
     }
 
