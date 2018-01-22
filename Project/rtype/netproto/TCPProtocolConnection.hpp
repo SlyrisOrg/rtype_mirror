@@ -78,6 +78,15 @@ public:
         return _sock.async_write_some(asio::buffer(buf.data(), buf.size()), std::forward<Functor>(f));
     }
 
+    template <typename PacketT>
+    auto write(const PacketT &toSend, boost::system::error_code &ec)
+    {
+        _fmt.serialize(toSend);
+        _fmt.prefixSize();
+        auto buf = _fmt.extract();
+        return _sock.write_some(asio::buffer(buf.data(), buf.size()), ec);
+    }
+
     size_t available() const noexcept
     {
         return _read.size();

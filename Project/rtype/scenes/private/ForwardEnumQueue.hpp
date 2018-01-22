@@ -11,14 +11,25 @@ namespace rtype
 {
     ENUM(QueueWidgets,
          TimerBar,
-         DiscardButton,
-         Timer,
-         BorderFour,
+         BorderOne,
          BorderTwo,
+         BorderThree,
+         BorderFour,
          PlayerOneButton,
          PlayerTwoButton,
          PlayerThreeButton,
-         PlayerFourButton
+         PlayerFourButton,
+         LabelPlayerOne,
+         LabelPlayerTwo,
+         LabelPlayerThree,
+         LabelPlayerFour,
+         LabelPlayerOneNickname,
+         LabelPlayerTwoNickname,
+         LabelPlayerThreeNickname,
+         LabelPlayerFourNickname,
+         DiscardButton,
+         Timer,
+         TimerText
     );
 }
 
