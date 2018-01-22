@@ -53,6 +53,8 @@
 #elif defined __clang__
 #elif defined _MSC_VER
 #pragma warning( push )
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+#define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
 #pragma warning( disable : 4324 ) // structure was padded due to alignment specifier
 #pragma warning( disable : 4503 ) // decorated name horse shit
 #pragma warning( disable : 4702 ) // unreachable code
@@ -9087,7 +9089,7 @@ namespace stack {
 
 		template <typename Handler>
 		static optional<V> get_empty(std::false_type, lua_State* L, int index, Handler&& handler, record& tracking) {
-			typedef std::variant_alternative_t<0, V> T;
+			//typedef std::variant_alternative_t<0, V> T;
 			// This should never be reached...
 			// please check your code and understand what you did to bring yourself here
 			handler(L, index, type::poly, type_of(L, index), "this variant code should never be reached: if it has, you have done something so terribly wrong");
