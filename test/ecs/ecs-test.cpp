@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include <entity/EntityManager.hpp>
+#include <rtype/entity/EntityManager.hpp>
 
 struct Box
 {
@@ -188,7 +188,7 @@ TEST(ECS, StructuredBinding)
 
     em[id].addComponent<Box>(1, 2, 3, 4);
     em[id].addComponent<Lol>();
-    auto [box, lol] = em[id].getComponents<Box, Lol>();
+    auto[box, lol] = em[id].getComponents<Box, Lol>();
     box.x = 200;
     ASSERT_EQ(em[id].getComponent<Box>().x, 200);
     ASSERT_EQ(&lol, &em[id].getComponent<Lol>());
