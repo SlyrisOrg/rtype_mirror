@@ -23,6 +23,7 @@ add_subdirectory(Project/rtype/utils)
 add_subdirectory(Project/rtype/config)
 add_subdirectory(Project/rtype/audio)
 add_subdirectory(Project/rtype/api)
+add_subdirectory(Project/rtype/lua)
 add_subdirectory(Project/rtype/error)
 add_subdirectory(Project/rtype/gutils)
 add_subdirectory(Project/rtype/gui)
@@ -44,6 +45,7 @@ set(HEADERS_PROJECT
         ${RTYPE_ERROR_HEADERS}
         ${RTYPE_GUTILS_HEADERS}
         ${RTYPE_GUI_HEADERS}
+        ${RTYPE_LUA_HEADERS}
         ${RTYPE_PROTO_HEADERS}
         ${RTYPE_NETPROTO_HEADERS}
         ${RTYPE_ENTITY_HEADERS}
@@ -75,11 +77,12 @@ target_include_directories(${PROJECT_NAME}
         $ENV{SFEMOVIE_ROOT}/include
         ${CMAKE_SOURCE_DIR}/vendor/rapidjson/include
         ${CMAKE_SOURCE_DIR}/vendor/sol2
+        ${LUA_INCLUDE_DIR}
         )
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC core-utils core-log core-net core-serialization core-meta
-        PRIVATE ${SFML_LIBRARIES} ${LIBS_CEGUI} cpprestsdk::cpprest ${SFEMOVIE_LIBRARIES} Boost::boost)
+        PRIVATE ${SFML_LIBRARIES} ${LIBS_CEGUI} cpprestsdk::cpprest ${SFEMOVIE_LIBRARIES} ${LUA_LIBRARIES} Boost::boost Boost::filesystem)
 
 if (UNIX)
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-unused-function")
