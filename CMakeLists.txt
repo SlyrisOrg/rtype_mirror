@@ -6,6 +6,14 @@ include(CTest)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(BUILD_CORE_TESTS OFF CACHE BOOL "disable core tests" FORCE)
+
+if (WIN32)
+    add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
+    if (CMAKE_BUILD_TYPE MATCHES Debug)
+        set(BOOST_LIBRARYDIR $ENV{BOOST_ROOT}/debug/lib)
+    endif()
+endif(WIN32)
+
 add_subdirectory(vendor/core)
 
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/vendor/core/cmake-utils/Module)
@@ -23,6 +31,7 @@ add_subdirectory(Project/rtype/utils)
 add_subdirectory(Project/rtype/config)
 add_subdirectory(Project/rtype/audio)
 add_subdirectory(Project/rtype/api)
+add_subdirectory(Project/rtype/lua)
 add_subdirectory(Project/rtype/error)
 add_subdirectory(Project/rtype/gutils)
 add_subdirectory(Project/rtype/gui)
@@ -44,6 +53,7 @@ set(HEADERS_PROJECT
         ${RTYPE_ERROR_HEADERS}
         ${RTYPE_GUTILS_HEADERS}
         ${RTYPE_GUI_HEADERS}
+        ${RTYPE_LUA_HEADERS}
         ${RTYPE_PROTO_HEADERS}
         ${RTYPE_NETPROTO_HEADERS}
         ${RTYPE_ENTITY_HEADERS}
@@ -75,11 +85,12 @@ target_include_directories(${PROJECT_NAME}
         $ENV{SFEMOVIE_ROOT}/include
         ${CMAKE_SOURCE_DIR}/vendor/rapidjson/include
         ${CMAKE_SOURCE_DIR}/vendor/sol2
+        ${LUA_INCLUDE_DIR}
         )
 
 target_link_libraries(${PROJECT_NAME}
         PUBLIC core-utils core-log core-net core-serialization core-meta
-        PRIVATE ${SFML_LIBRARIES} ${LIBS_CEGUI} cpprestsdk::cpprest ${SFEMOVIE_LIBRARIES} Boost::boost)
+        PRIVATE ${SFML_LIBRARIES} ${LIBS_CEGUI} cpprestsdk::cpprest ${SFEMOVIE_LIBRARIES} ${LUA_LIBRARIES} Boost::boost Boost::filesystem)
 
 if (UNIX)
     target_compile_options(${PROJECT_NAME} PRIVATE "-Wno-unused-function")
@@ -104,6 +115,7 @@ if (WIN32)
                 _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
                 WIN32_LEAN_AND_MEAN
                 LOGGER_DISABLE_ALL)
+        file(COPY $ENV{LUA_DIR}/bin/lua.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     elseif (CMAKE_BUILD_TYPE MATCHES Debug)
         set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
         target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -113,6 +125,7 @@ if (WIN32)
                 WINDOWS_STANDARD_MAIN)
             add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
             $ENV{SFML_ROOT}/lib/pdb ${CMAKE_SOURCE_DIR}/bin)
+        file(COPY $ENV{LUA_DIR}/debug/bin/lua.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endif ()
     target_compile_options(${PROJECT_NAME} PRIVATE "/MP")
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "/wd4715")

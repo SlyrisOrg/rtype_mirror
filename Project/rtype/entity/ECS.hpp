@@ -25,7 +25,8 @@ namespace rtype
         components::Layer<components::LayerType::Planet2>,
         components::Layer<components::LayerType::GameField>,
         components::Layer<components::LayerType::Fog3>,
-        components::FieldItem>;
+        components::FieldItem,
+        components::Lua>;
     using EntityManager = game::EntityManager<Components>;
     using Entity = EntityManager::Entity;
     namespace rtc = rtype::components;
