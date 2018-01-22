@@ -74,6 +74,7 @@ target_include_directories(${PROJECT_NAME}
         ${SFML_INCLUDE_DIR}
         $ENV{SFEMOVIE_ROOT}/include
         ${CMAKE_SOURCE_DIR}/vendor/rapidjson/include
+        ${CMAKE_SOURCE_DIR}/vendor/sol2
         )
 
 target_link_libraries(${PROJECT_NAME}
