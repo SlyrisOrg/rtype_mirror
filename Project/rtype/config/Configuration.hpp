@@ -81,7 +81,8 @@ namespace rtype
              LoginSuccess,
              ComputerError,
              ChangeFaction,
-             Laser4);
+             Laser4,
+             JoinSuccess);
 
         //! Animation Enum
         ENUM(Animation,

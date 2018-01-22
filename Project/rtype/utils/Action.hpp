@@ -114,7 +114,7 @@ namespace rtype
     };
 
     template <typename T = Action::Type>
-    class ActionTarget : private utils::NonCopyable
+    class ActionTarget : private ::utils::NonCopyable
     {
     public:
 
