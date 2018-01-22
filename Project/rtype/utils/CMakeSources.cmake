@@ -7,6 +7,7 @@ set(RTYPE_UTILS_HEADERS
         ${UTILS}/QuadTree.hpp
         ${UTILS}/Action.hpp
         ${UTILS}/DemoUtils.hpp
+        ${UTILS}/Timer.hpp
         PARENT_SCOPE)
 
 set(RTYPE_UTILS_SOURCES

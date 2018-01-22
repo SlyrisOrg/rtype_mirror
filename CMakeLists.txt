@@ -77,7 +77,7 @@ target_include_directories(${PROJECT_NAME}
         )
 
 target_link_libraries(${PROJECT_NAME}
-        PUBLIC core-utils core-log core-net core-serialization
+        PUBLIC core-utils core-log core-net core-serialization core-meta
         PRIVATE ${SFML_LIBRARIES} ${LIBS_CEGUI} cpprestsdk::cpprest ${SFEMOVIE_LIBRARIES} Boost::boost)
 
 if (UNIX)
@@ -101,12 +101,14 @@ if (WIN32)
         target_compile_definitions(${PROJECT_NAME} PRIVATE
                 _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
                 _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+                WIN32_LEAN_AND_MEAN
                 LOGGER_DISABLE_ALL)
     elseif (CMAKE_BUILD_TYPE MATCHES Debug)
         set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
         target_compile_definitions(${PROJECT_NAME} PRIVATE
                 _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
                 _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+                WIN32_LEAN_AND_MEAN
                 WINDOWS_STANDARD_MAIN)
             add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
             $ENV{SFML_ROOT}/lib/pdb ${CMAKE_SOURCE_DIR}/bin)
