@@ -26,6 +26,7 @@ namespace rtype
             _evtMgr.subscribe<gutils::evt::MouseButtonPressed>(*this);
             _evtMgr.subscribe<gutils::evt::EnterScene>(*this);
             _evtMgr.subscribe<gutils::evt::ChangeScene>(*this);
+            _evtMgr.subscribe<gutils::evt::RemoveScene>(*this);
         }
 
         ~SceneManager() noexcept = default;
@@ -36,6 +37,11 @@ namespace rtype
         void receive(const gutils::evt::ChangeScene &event) noexcept
         {
             popAllAndPushOneScene(get(event.sceneName));
+        }
+
+        void receive(const gutils::evt::RemoveScene &event) noexcept
+        {
+            _scenesMap.erase(event.sceneName);
         }
 
         void receive(const gutils::evt::EnterScene &event) noexcept
