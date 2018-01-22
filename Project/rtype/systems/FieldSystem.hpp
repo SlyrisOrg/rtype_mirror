@@ -225,6 +225,7 @@ namespace rtype::demo::field
             for (auto &sub : _subFields) {
                 unsigned int j = 0;
                 for (auto [nbItem, speed, scale, alpha, layer, respawn] : sub->getItems()) {
+                    (void)(respawn);
                     for (unsigned int i = 0; i < nbItem; ++i) {
                         std::vector<SpriteT> &sprite = sub->sprites(_parallax.color[_mt() % 2]);
                         GameFactory::createFieldItem(_textures.get(sprite[_mt() % sprite.size()]),
@@ -258,6 +259,7 @@ namespace rtype::demo::field
                     SubField *sub = ett.getComponent<rtc::FieldItem>().subField;
                     unsigned int itemPckIdx = ett.getComponent<rtc::FieldItem>().itemPackIdx;
                     auto [nbItem, speed, scale, alpha, layer, respawn] = sub->getItems()[itemPckIdx];
+                    (void)(nbItem);
                     std::vector<SpriteT> &sprite = sub->sprites(_parallax.color[_mt() % 2]);
                     GameFactory::createFieldItem(_textures.get(sprite[_mt() % sprite.size()]),
                                                  sf::Vector2f(1921.0 + respawn(_mt), sub->getDistY()(_mt) - sub->getPosSub()),

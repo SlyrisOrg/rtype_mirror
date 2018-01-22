@@ -5,10 +5,12 @@
 #ifndef RTYPE_COMPONENTS_HPP
 #define RTYPE_COMPONENTS_HPP
 
+#include <sol/sol.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <rtype/config/Configuration.hpp>
 #include <rtype/utils/AnimatedSprite.hpp>
 #include <rtype/utils/DemoUtils.hpp>
+#include <meta/Reflection.hpp>
 
 namespace rtype::demo::field
 {
@@ -17,12 +19,36 @@ namespace rtype::demo::field
 
 namespace rtype::components
 {
+    struct Lua
+    {
+        explicit Lua(std::string _scriptName, std::string _selfName) noexcept : scriptName(std::move(_scriptName)),
+                                                                                selfName(std::move(_selfName))
+        {
+        }
+
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(Lua);
+        std::string scriptName;
+        std::string selfName;
+    };
+
     struct Sprite
     {
         template <typename ...Args>
         Sprite(Args &&...args) : sprite(std::forward<Args>(args)...)
         {
         }
+
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(Sprite);
 
         sf::Sprite sprite;
     };
@@ -45,7 +71,11 @@ namespace rtype::components
                     const sf::IntRect &relative = sf::IntRect{1, 1, 1, 1}) noexcept :
             AABB(position, size),
             shapeDebug(sf::Vector2f(AABB.width, AABB.height)),
-            relativeAABB(relative)
+            relativeAABB(relative),
+            _pos{{position.x, position.y}},
+            _relativePos{{relativeAABB.left, relativeAABB.top}},
+            _size{{AABB.width, AABB.height}},
+            _relativeSize{{relativeAABB.width, relativeAABB.left}}
         {
             shapeDebug.setFillColor(sf::Color(0, 0, 0, 0));
             shapeDebug.setOutlineThickness(1.0f);
@@ -57,7 +87,11 @@ namespace rtype::components
                     const sf::IntRect &relative = {1, 1, 1, 1}) noexcept :
             AABB(x, y, width, height),
             shapeDebug(sf::Vector2f(AABB.width, AABB.height)),
-            relativeAABB(relative)
+            relativeAABB(relative),
+            _pos{{x, y}},
+            _relativePos{{relativeAABB.left, relativeAABB.top}},
+            _size{{AABB.width, AABB.height}},
+            _relativeSize{{relativeAABB.width, relativeAABB.left}}
         {
             shapeDebug.setFillColor(sf::Color(0, 0, 0, 0));
             shapeDebug.setOutlineThickness(1.0f);
@@ -70,11 +104,28 @@ namespace rtype::components
             return shapeDebug.getPosition();
         }
 
+        const std::array<float, 2> &getPos() const noexcept
+        {
+            return std::ref(_pos);
+        }
+
+        const std::array<float, 2> &getRelativePos() const noexcept
+        {
+            return std::ref(_relativePos);
+        }
+
+        const std::array<float, 2> &getSize() const noexcept
+        {
+            return std::ref(_size);
+        }
+
         void setPosition(const sf::Vector2f &position) noexcept
         {
             AABB.left = position.x;
             AABB.top = position.y;
             shapeDebug.setPosition(AABB.left, AABB.top);
+            _pos[0] = position.x;
+            _pos[1] = position.y;
         }
 
         void setPosition(float x, float y) noexcept
@@ -82,9 +133,24 @@ namespace rtype::components
             setPosition(sf::Vector2f(x, y));
         }
 
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap(reflect_member(&BoundingBox::getPosition),
+                                 "setPosition", sol::resolve<void(float, float)>(&BoundingBox::setPosition),
+                                 reflect_member(&BoundingBox::getPos),
+                                 reflect_member(&BoundingBox::getRelativePos),
+                                 reflect_member(&BoundingBox::getSize));
+        }
+
+        reflect_class(BoundingBox);
+
         sf::FloatRect AABB;
         sf::RectangleShape shapeDebug;
         const sf::FloatRect relativeAABB;
+        std::array<float, 2> _pos;
+        std::array<float, 2> _relativePos;
+        std::array<float, 2> _size;
+        std::array<float, 2> _relativeSize;
     };
 
     struct Animation
@@ -93,6 +159,18 @@ namespace rtype::components
         Animation(Args &&...args) noexcept : anim(std::forward<Args>(args)...)
         {
         }
+
+        void setPosition(float x, float y) noexcept
+        {
+            anim.setPosition(x, y);
+        }
+
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap(reflect_member(&Animation::setPosition));
+        }
+
+        reflect_class(Animation);
 
         sfutils::AnimatedSprite anim;
         int currentAnim;
@@ -110,12 +188,26 @@ namespace rtype::components
         {
         }
 
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(Player);
+
         TransitionMap map;
     };
 
     struct Bullet
     {
         Bullet() noexcept = default;
+
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(Bullet);
     };
 
     struct SoundEffect
@@ -123,6 +215,13 @@ namespace rtype::components
         SoundEffect(Configuration::SoundEffect eff) noexcept : se(eff), buff(Configuration::effects.get(eff))
         {
         }
+
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(SoundEffect);
 
         Configuration::SoundEffect se;
         sf::SoundBuffer buff;
@@ -139,14 +238,28 @@ namespace rtype::components
 
     struct Movement
     {
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(Movement);
+
         Direction dir{Direction::None};
     };
 
     struct Speed
     {
         explicit Speed(float _speed) noexcept : speed(_speed)
-        {            
+        {
         }
+
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(Speed);
 
         float speed;
     };
@@ -164,19 +277,30 @@ namespace rtype::components
         Fog3,
     };
 
-    template<LayerType layer>
+    template <LayerType layer>
     struct Layer
     {
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
 
+        reflect_class(Layer<layer>);
     };
 
     struct FieldItem
     {
         explicit FieldItem(demo::field::SubField *sub, unsigned int itemPckIdx) noexcept
-                : subField(sub), itemPackIdx(itemPckIdx)
+            : subField(sub), itemPackIdx(itemPckIdx)
         {
-
         }
+
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(FieldItem);
 
         demo::field::SubField *subField;
         unsigned int itemPackIdx;
