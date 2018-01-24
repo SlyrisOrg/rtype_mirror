@@ -236,6 +236,8 @@ namespace rtype::demo::field
                     ++j;
                 }
             }
+
+            _log(lg::Debug) << "\n---------------\nnb Field Item : " << gneugneu << "\n---------------\n" << std::endl;
         }
 
         void update(double timeSinceLastFrame) noexcept {
@@ -269,6 +271,11 @@ namespace rtype::demo::field
                     sprite.getPosition().y);
                 }
             });
+        }
+
+        void clear() noexcept
+        {
+            _subFields.clear();
         }
 
     private:
