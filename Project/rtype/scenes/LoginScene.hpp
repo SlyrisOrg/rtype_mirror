@@ -2,8 +2,8 @@
 // Created by roman sztergbaum on 17/09/2017.
 //
 
-#ifndef RTYPE_GAMESCENE_HPP
-#define RTYPE_GAMESCENE_HPP
+#ifndef RTYPE_LOGINSCENE_HPP
+#define RTYPE_LOGINSCENE_HPP
 
 #include <iomanip>
 #include <SFML/Window/Keyboard.hpp>
@@ -80,4 +80,4 @@ namespace rtype
     };
 }
 
-#endif //RTYPE_GAMESCENE_HPP
+#endif //RTYPE_LOGINSCENE_HPP

@@ -36,6 +36,24 @@ namespace gutils::evt
 {
     using namespace std::string_view_literals;
 
+    struct GameHostPort final : public gutils::InsideEvents
+    {
+        explicit GameHostPort(unsigned short _hostGamePort) : hostGamePort(_hostGamePort)
+        {
+
+        }
+
+        unsigned short hostGamePort;
+    };
+
+    struct CountdownEnd final : public gutils::InsideEvents
+    {
+        CountdownEnd() noexcept
+        {
+            showEvents("CountdownEnd");
+        }
+    };
+
     struct FullScreen final : public gutils::InsideEvents
     {
         FullScreen() noexcept
@@ -56,7 +74,6 @@ namespace gutils::evt
     {
         explicit AddPlayerQueue(matchmaking::PlayerInfo &&_info) noexcept : info(std::move(_info))
         {
-
         }
 
         matchmaking::PlayerInfo info;

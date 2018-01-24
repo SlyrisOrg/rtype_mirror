@@ -10,17 +10,26 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/bind.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <rtype/protocol/Protocol.hpp>
 
 namespace asio = boost::asio;
 using tcp = asio::ip::tcp;
 
 template <typename Packets>
-class TCPProtocolConnection
+class TCPProtocolConnection : public boost::enable_shared_from_this<TCPProtocolConnection<Packets>>
 {
     static constexpr const size_t chunkSize = 2;
+    using ThisType = TCPProtocolConnection<Packets>;
+    using Shared = boost::enable_shared_from_this<ThisType>;
 
 public:
+    template <typename ...Args>
+    static auto makeShared(Args &&...args) noexcept(noexcept(true))
+    {
+        return boost::shared_ptr<ThisType>(new ThisType(std::forward<Args>(args)...));
+    }
+
     using Unformatter = proto::Unformatter<Packets>;
     using Formatter = proto::Formatter<Packets>;
     using Packet = typename Unformatter::Packet;
@@ -56,7 +65,7 @@ private:
     {
         _buff.resize(_used + chunkSize);
         _sock.async_receive(asio::buffer(_buff.data() + _used, chunkSize),
-                            boost::bind(&TCPProtocolConnection::_handleRead, this,
+                            boost::bind(&TCPProtocolConnection::_handleRead, Shared::shared_from_this(),
                                         asio::placeholders::bytes_transferred,
                                         asio::placeholders::error));
     }
