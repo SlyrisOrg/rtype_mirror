@@ -33,6 +33,7 @@ namespace rtype
         _animSystem.clear();
         _textures.clear();
         _quadTree.clear();
+        _fieldSystem.clear();
         _ettMgr.clear();
         __unbindPlayerCallbacks();
         _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::CitadelInstrumentalAmb);
