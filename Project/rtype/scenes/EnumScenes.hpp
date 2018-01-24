@@ -19,6 +19,7 @@ namespace rtype
         Queue = 5,
         Lobby = 6,
         Demo = 7,
+        Game = 8,
     };
 }
 

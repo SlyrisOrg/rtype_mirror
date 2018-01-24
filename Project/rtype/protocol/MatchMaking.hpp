@@ -65,9 +65,28 @@ namespace matchmaking
         }
     };
 
+    struct GameHostInfo
+    {
+        unsigned short port;
+
+        static constexpr auto serializableFields() noexcept
+        {
+            return meta::makeMap(reflect_member(&GameHostInfo::port));
+        }
+    };
+
     using PlayerInfo = rtype::Player;
 
-    using Packets = meta::TypeList<Authenticate, QueueJoin, QueueLeave, QueueStarted, MatchFound, PlayerInfo>;
+    using Packets = meta::TypeList
+        <
+            Authenticate,
+            QueueJoin,
+            QueueLeave,
+            QueueStarted,
+            MatchFound,
+            PlayerInfo,
+            GameHostInfo
+        >;
 }
 
 #endif //RTYPE_SERVER_MATCHMAKING_HPP
