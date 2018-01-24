@@ -6,6 +6,7 @@
 #define RTYPE_QUEUESCENE_HPP
 
 #include <functional>
+#include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <rtype/gutils/base/AScene.hpp>
@@ -19,9 +20,10 @@ namespace asio = boost::asio;
 namespace sys = boost::system;
 using tcp = asio::ip::tcp;
 
+using namespace std::chrono_literals;
+
 namespace rtype
 {
-
     class TCPClient
     {
     private:
@@ -47,6 +49,24 @@ namespace rtype
                                               boost::asio::placeholders::error));
         }
 
+        void processGameInfo(const boost::system::error_code &error)
+        {
+            if (!error) {
+                {
+                    std::scoped_lock<std::mutex> lock{_mutex};
+                    _log(lg::Debug) << "Read GameInfo packet" << std::endl;
+                }
+                auto packet = _protoConnect->pop();
+                if (std::holds_alternative<matchmaking::GameHostInfo>(packet)) {
+                    unsigned short port = std::get<matchmaking::GameHostInfo>(packet).port;
+                    {
+                        std::scoped_lock<std::mutex> lock{_mutex};
+                        _evtMgr.emit<gutils::evt::GameHostPort>(port);
+                    }
+                }
+            }
+        }
+
         void processPlayer(const boost::system::error_code &error)
         {
             if (!error) {
@@ -56,6 +76,10 @@ namespace rtype
                     _evtMgr.emit<gutils::evt::AddPlayerQueue>(std::move(player));
                     if (--_need > 0) {
                         _protoConnect->asyncRead(boost::bind(&TCPClient::processPlayer,
+                                                             this,
+                                                             boost::asio::placeholders::error));
+                    } else {
+                        _protoConnect->asyncRead(boost::bind(&TCPClient::processGameInfo,
                                                              this,
                                                              boost::asio::placeholders::error));
                     }
@@ -125,7 +149,7 @@ namespace rtype
                     std::scoped_lock<std::mutex> lock{_mutex};
                     _log(lg::Info) << "Connect Success" << std::endl;
                 }
-                _protoConnect = std::make_unique<TCPProtoConnect>(std::move(_socket));
+                _protoConnect = TCPProtoConnect::makeShared(std::move(_socket));
                 matchmaking::Authenticate auth{cfg::game::tokenSession};
                 _protoConnect->asyncWrite(auth, boost::bind(&TCPClient::sendJWTCB,
                                                             this,
@@ -141,7 +165,7 @@ namespace rtype
         tcp::socket _socket;
         logging::Logger &_log;
         std::mutex &_mutex;
-        std::unique_ptr<TCPProtoConnect> _protoConnect{nullptr};
+        boost::shared_ptr<TCPProtoConnect> _protoConnect{nullptr};
         gutils::EventManager &_evtMgr;
         int _need{static_cast<int>(cfg::player::mode)};
     };
@@ -154,6 +178,7 @@ namespace rtype
         {
             _evtMgr.subscribe<gutils::evt::JoinQueue>(*this);
             _evtMgr.subscribe<gutils::evt::AddPlayerQueue>(*this);
+            _evtMgr.subscribe<gutils::evt::CountdownEnd>(*this);
         }
 
     private:
@@ -185,10 +210,12 @@ namespace rtype
         bool mouseReleased(const gutils::evt::MouseButtonReleased &evt) noexcept final;
         void receive(const gutils::evt::JoinQueue &evt) noexcept;
         void receive(const gutils::evt::AddPlayerQueue &evt) noexcept;
+        void receive(const gutils::evt::CountdownEnd &evt) noexcept;
 
     private:
         std::vector<rtype::MultiAnim> _anims;
         rtype::utils::StopWatch _stopWatch;
+        rtype::utils::CountDown _countDown{_evtMgr, 10s};
         QueueGui _gui;
         std::vector<sf::Sprite> _bordersBg;
         std::mutex _mutex;

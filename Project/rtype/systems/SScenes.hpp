@@ -14,6 +14,7 @@
 #include <rtype/scenes/LoadingScene.hpp>
 #include <rtype/scenes/QueueScene.hpp>
 #include <rtype/scenes/LobbyScene.hpp>
+#include <rtype/scenes/GameScene.hpp>
 #include <rtype/scenes/DemoScene.hpp>
 
 namespace rtype
@@ -33,6 +34,7 @@ namespace rtype
             _sceneMgr.add<QueueScene>(Scene::Queue, _evtMgr, "QueueScene", win);
             _sceneMgr.add<LobbyScene>(Scene::Lobby, _evtMgr, "LobbyScene", win);
             _sceneMgr.add<DemoScene>(Scene::Demo, _evtMgr, "DemoScene", win);
+            _sceneMgr.add<GameScene>(Scene::Game, _evtMgr, "GameScene", win);
         }
 
         void update(double deltaTime) noexcept override
