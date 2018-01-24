@@ -271,6 +271,11 @@ namespace rtype::demo::field
             });
         }
 
+        void clear() noexcept
+        {
+            _subFields.clear();
+        }
+
     private:
         EntityManager &_ettMgr;
         sfutils::ResourceManager<sf::Texture, SpriteT> &_textures;
