@@ -24,10 +24,13 @@ namespace rtype::utils
             _run = false;
         }
 
-        std::string elaspedStr()
+        bool isRunning() noexcept
         {
-            if (!_run)
-                return _lastTime;
+            return _run;
+        }
+
+        std::string elaspedStr() noexcept
+        {
             std::string out;
             long sec = std::chrono::duration_cast<std::chrono::seconds>
                 (std::chrono::system_clock::now() - _start).count();
@@ -52,6 +55,63 @@ namespace rtype::utils
         std::chrono::time_point<std::chrono::system_clock> _start;
         std::string _lastTime;
         bool _run{false};
+    };
+
+    class CountDown
+    {
+    public:
+        CountDown(gutils::EventManager &evtMgr, std::chrono::seconds duration) noexcept :
+            _evtMgr(evtMgr),
+            _duration(std::move(duration))
+        {
+        }
+
+        bool isRunning() const noexcept
+        {
+            return _run;
+        }
+
+        void start() noexcept
+        {
+            _run = true;
+            _start = std::chrono::system_clock::now();
+        }
+
+        void stop() noexcept
+        {
+            _run = false;
+        }
+
+        void reset() noexcept
+        {
+            _duration = _originalDuration;
+        }
+
+        void update() noexcept
+        {
+            using namespace std::chrono_literals;
+            auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - _start);
+            if (elapsed == 1s) {
+                _start = std::chrono::system_clock::now();
+            }
+            _duration -= elapsed;
+            if (_duration <= 0s) {
+                stop();
+                _evtMgr.emit<gutils::evt::CountdownEnd>();
+            }
+        }
+
+        long getDuration() const noexcept
+        {
+            return _duration.count();
+        }
+
+    private:
+        bool _run{false};
+        gutils::EventManager &_evtMgr;
+        std::chrono::seconds _duration;
+        std::chrono::seconds _originalDuration{_duration};
+        std::chrono::time_point<std::chrono::system_clock> _start;
     };
 }
 
