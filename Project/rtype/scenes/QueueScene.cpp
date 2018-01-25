@@ -42,6 +42,8 @@ namespace rtype
 
     void QueueScene::leave() noexcept
     {
+        _io->stop();
+        _networkThread.join();
         _bordersBg.clear();
         _anims.clear();
         _current = 1;
@@ -61,7 +63,13 @@ namespace rtype
         for (auto &&curAnimArray : _anims) {
             curAnimArray.update(t1);
         }
-        _gui[QueueWidgets::TimerText].setText(_stopWatch.elaspedStr());
+        if (_stopWatch.isRunning()) {
+            _gui[QueueWidgets::TimerText].setText(_stopWatch.elapsedStr());
+        }
+        if (_countDown.isRunning()) {
+            _countDown.update();
+            _gui[QueueWidgets::TimerText].setText("Game Start: " + std::to_string(_countDown.getDuration()));
+        }
     }
 
     void QueueScene::receive(const gutils::evt::AddPlayerQueue &evt) noexcept
@@ -106,6 +114,10 @@ namespace rtype
             for (auto &&curAnim : _anims) {
                 curAnim.curAnim.setFrame(0);
             }
+            _stopWatch.stop();
+            _countDown.start();
+            _gui[QueueWidgets::TimerText].setProperty("Font", "LaconicLight-18");
+            _gui[QueueWidgets::TimerText].setText("Game Start: 10");
         }
     }
 
@@ -158,6 +170,7 @@ namespace rtype
         if (start) {
             _required = cfg::player::mode + 1;
             __resetUi();
+            _countDown.reset();
             __queueMusicStart();
             __subscribeEvents();
             __initTextures();
@@ -184,8 +197,6 @@ namespace rtype
 
     void QueueScene::__goBackToProfil() noexcept
     {
-        _io->stop();
-        _networkThread.join();
         _evtMgr.emit<gutils::evt::PlaySoundEffect>(Configuration::SoundEffect::ClickSmooth);
         _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Profil);
     }
@@ -284,6 +295,12 @@ namespace rtype
             TCPClient client{*_io, endpoint, log, _mutex, _evtMgr};
             _io->run();
         });
+    }
+
+    void QueueScene::receive([[maybe_unused]] const gutils::evt::CountdownEnd &evt) noexcept
+    {
+        _log(lg::Info) << "Starting main game..." << std::endl;
+        _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Game);
     }
 }
 
