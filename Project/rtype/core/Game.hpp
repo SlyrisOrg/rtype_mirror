@@ -27,14 +27,14 @@ namespace rtype
     private:
         void __initSystems();
         void __launch() noexcept;
-        void __update(const sf::Time &time) noexcept;
-        void __sysUpdate(const sf::Time &time) noexcept;
+        void __update(const sf::Time& time) noexcept;
+        void __sysUpdate(const sf::Time& time) noexcept;
         void __sysDraw() noexcept;
         void __render() noexcept;
 
     private:
         bool _isRunning{false};
-        logging::Logger _log{"RType", logging::Info};
+        logging::Logger _log{"RType", logging::Debug};
     };
 }
 
