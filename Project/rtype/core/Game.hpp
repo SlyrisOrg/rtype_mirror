@@ -34,7 +34,7 @@ namespace rtype
 
     private:
         bool _isRunning{false};
-        logging::Logger _log{"RType", logging::Info};
+        logging::Logger _log{"RType", logging::Debug};
     };
 }
 
