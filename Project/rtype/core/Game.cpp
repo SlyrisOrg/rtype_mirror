@@ -63,18 +63,20 @@ namespace rtype
     void Game::__launch() noexcept
     {
         sf::Clock clock;
-        sf::Time timeSinceLastUpdate;
+        sf::Time timeSinceLastUpdate = sf::Time::Zero;
         sf::Time TimePerFrame = sf::seconds(1.f / 60.f);
 
         while (!_isRunning) {
             _systemMgr[Sys::Event].update(TimePerFrame.asSeconds());
-            timeSinceLastUpdate = clock.restart();
+            bool repaint = false;
+            timeSinceLastUpdate += clock.restart();
             while (timeSinceLastUpdate > TimePerFrame) {
                 timeSinceLastUpdate -= TimePerFrame;
+                repaint = true;
                 __update(TimePerFrame);
             }
-            __update(timeSinceLastUpdate);
-            __render();
+            if (repaint)
+                __render();
         }
     }
 
