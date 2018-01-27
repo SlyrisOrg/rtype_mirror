@@ -291,7 +291,7 @@ namespace rtype
                 }
                 _io->stop();
             });
-            tcp::endpoint endpoint{asio::ip::address::from_string("127.0.0.1"), 31337};
+            tcp::endpoint endpoint{asio::ip::address::from_string("192.168.0.31"), 31337};
             TCPClient client{*_io, endpoint, log, _mutex, _evtMgr};
             _io->run();
         });

@@ -7,6 +7,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(BUILD_CORE_TESTS OFF CACHE BOOL "disable core tests" FORCE)
 
+add_definitions(-DLOGGER_THREAD_SAFE)
 if (WIN32)
     add_definitions(-D_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS)
     if (CMAKE_BUILD_TYPE MATCHES Debug)

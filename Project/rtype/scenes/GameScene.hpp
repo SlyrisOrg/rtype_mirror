@@ -6,6 +6,9 @@
 #define RTYPE_GAMESCENE_HPP
 
 #include <rtype/gutils/base/AScene.hpp>
+#include <rtype/netproto/ClientIOThread.hpp>
+#include <rtype/config/InGameConfig.hpp>
+#include <rtype/gui/BaseGUI.hpp>
 
 namespace rtype
 {
@@ -35,7 +38,16 @@ namespace rtype
         void receive(const gutils::evt::GameHostPort &hostPort) noexcept;
 
     private:
+        bool _setGUI() noexcept;
+        void _configure();
+        void _configureNetwork();
+
+    private:
+        using UIGUI = BaseGUI<cfg::play::nbWidgets>;
+        UIGUI _gui;
         unsigned short _remoteGamePort{0};
+        std::unique_ptr<net::ClientIOThread> _ioThread{nullptr};
+
     };
 }
 
