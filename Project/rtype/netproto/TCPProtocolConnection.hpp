@@ -11,7 +11,9 @@
 #include <boost/asio/placeholders.hpp>
 #include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/make_shared.hpp>
 #include <rtype/protocol/Protocol.hpp>
+#include <rtype/netproto/WeakCallback.hpp>
 
 namespace asio = boost::asio;
 using tcp = asio::ip::tcp;
@@ -27,7 +29,7 @@ public:
     template <typename ...Args>
     static auto makeShared(Args &&...args) noexcept
     {
-        return boost::shared_ptr<ThisType>(new ThisType(std::forward<Args>(args)...));
+        return boost::make_shared<ThisType>(std::forward<Args>(args)...);
     }
 
     using Unformatter = proto::Unformatter<Packets>;
@@ -64,10 +66,13 @@ private:
     void _doRead() noexcept
     {
         _buff.resize(_used + chunkSize);
+
+        boost::weak_ptr<ThisType> weakPtr(Shared::shared_from_this());
         _sock.async_receive(asio::buffer(_buff.data() + _used, chunkSize),
-                            boost::bind(&TCPProtocolConnection::_handleRead, Shared::shared_from_this(),
-                                        asio::placeholders::bytes_transferred,
-                                        asio::placeholders::error));
+                            utils::makeWeakCallback(Shared::shared_from_this(),
+                                                    boost::bind(&TCPProtocolConnection::_handleRead, this,
+                                                                asio::placeholders::bytes_transferred,
+                                                                asio::placeholders::error)));
     }
 
 public:
