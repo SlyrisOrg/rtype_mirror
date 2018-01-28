@@ -9,6 +9,7 @@ set(RTYPE_SCENES_HEADERS
         ${SCENES}/CreateScene.hpp
         ${SCENES}/LoadingScene.hpp
         ${SCENES}/QueueScene.hpp
+        ${SCENES}/GameScene.hpp
         ${SCENES}/LobbyScene.hpp
         ${SCENES}/SceneManager.hpp
         ${SCENES}/private/GameSettings.hpp
@@ -30,6 +31,7 @@ set(RTYPE_SCENES_SOURCES
         ${SCENES}/IntroScene.cpp
         ${SCENES}/QueueScene.cpp
         ${SCENES}/LobbyScene.cpp
+        ${SCENES}/GameScene.cpp
         PARENT_SCOPE
         )
 

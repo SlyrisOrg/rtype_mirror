@@ -7,6 +7,7 @@
 #include <rapidjson/istreamwrapper.h>
 #include <rtype/config/ProfilConfig.hpp>
 #include <rtype/entity/GameFactory.hpp>
+#include <rtype/config/PlayerConfig.hpp>
 
 namespace rtype
 {
@@ -83,6 +84,8 @@ namespace rtype
     void GameScene::leave() noexcept
     {
         showLeavingScene();
+        _log(lg::Debug) << "NbPacketsReceive: " << nbPacketsReceive << std::endl;
+        _log(lg::Debug) << "NbPacketsSend: " << nbPacketsSend << std::endl;
         _boundingBoxFactions.clear();
         _ettMgr.clear();
         _animations.clear();
@@ -92,8 +95,9 @@ namespace rtype
         _ioThread.release();
     }
 
-    void GameScene::update([[maybe_unused]] double timeSinceLastFrame) noexcept
+    void GameScene::update(double timeSinceLastFrame) noexcept
     {
+        ActionTarget::processEvents(timeSinceLastFrame);
         auto show = [](auto &&v, auto &&log) {
             using Decayed = std::decay_t<decltype(v)>;
             if constexpr (!std::is_same_v<std::monostate, Decayed>) {
@@ -109,6 +113,10 @@ namespace rtype
             }, [this, &show](game::CreatePlayer &createPacket) {
                 show(createPacket, _log);
                 _createPlayer(createPacket);
+            }, [this, &show](game::SetPosition &positionPacket) {
+                show(positionPacket, _log);
+                nbPacketsReceive++;
+                _moveEntity(positionPacket.pos, positionPacket.ettName);
             }, [this, &show](auto &&v) {
                 show(v, _log);
             });
@@ -177,7 +185,7 @@ namespace rtype
     bool GameScene::_setGUI() noexcept
     {
         using namespace cfg::play;
-        return GUIManager::setGUI<UIWidgets, nbWidgets>(UILayout, _gui, _log);
+        return GUIManager::setGUI<ui::UIWidgets, nbWidgets>(UILayout, _gui, _log);
     }
 
     void GameScene::_configureNetwork()
@@ -273,21 +281,32 @@ namespace rtype
 
     void GameScene::_createPlayer(const game::CreatePlayer &createPacket) noexcept
     {
-        const auto &map = _factionTransitionMap[createPacket.factionName];
-        ig::AnimT val;
-        if (createPacket.factionName == "Bheet")
-            val = ig::Animation::BheetLv1AttackTopDown;
-        else if (createPacket.factionName == "Kooy")
-            val = ig::Animation::KooyLv1AttackTopDown;
-        else
-            val = ig::Animation::BheetLv1AttackTopDown;
-        size_t id = GameFactory::createPlayerSpaceShip(map,
-                                                       _animations.get(val),
-                                                       _boundingBoxFactions[createPacket.factionName],
-                                                       createPacket.pos);
-        _quadTree.insert(id);
-        _entities.emplace(createPacket.factionName, id);
-        _ettMgr[id].getComponent<rtc::Animation>().currentAnim = val;
+        static std::vector<game::CreatePlayer > _players;
+        _players.push_back(createPacket);
+        if (_players.size() == cfg::player::mode + 1) {
+            for (auto &&cur : _players) {
+                const auto &map = _factionTransitionMap[cur.factionName];
+                ig::AnimT val;
+                if (cur.factionName == "Bheet")
+                    val = ig::Animation::BheetLv1AttackTopDown;
+                else if (cur.factionName == "Kooy")
+                    val = ig::Animation::KooyLv1AttackTopDown;
+                else
+                    val = ig::Animation::BheetLv1AttackTopDown;
+                size_t id = GameFactory::createPlayerSpaceShip(map,
+                                                               _animations.get(val),
+                                                               _boundingBoxFactions[cur.factionName],
+                                                               cur.pos,
+                                                               rtype::components::Stat{1,1,1,1,1});
+                _quadTree.insert(id);
+                _log(lg::Debug) << "createNickname: " << cur.nickName << std::endl;
+                _entities.emplace(cur.nickName, id);
+                _ettMgr[id].getComponent<rtc::Animation>().currentAnim = val;
+                if (cur.nickName == cfg::profil::nickname)
+                    _setPlayerCallbacks();
+            }
+            _players.clear();
+        }
     }
 
     void GameScene::_loadAllSprites()
@@ -373,5 +392,46 @@ namespace rtype
         _loadSprite(ig::Sprite::BlueFog2);
         _loadSprite(ig::Sprite::BlueFog3);
         _loadSprite(ig::Sprite::Bullet);
+    }
+
+    void GameScene::_setPlayerCallbacks() noexcept
+    {
+        setKeyCallback(cfg::player::Right, [this](const sf::Event &, double timeSinceLastFrame) {
+            this->_ioThread->sendPacket(game::Move{game::Move::Direction::Right, cfg::profil::nickname,
+                                                   static_cast<float>(timeSinceLastFrame)});
+            nbPacketsSend++;
+           auto[box, animation] = this->_ettMgr[_entities[cfg::profil::nickname]].getComponents<rtc::BoundingBox, rtc::Animation>();
+            sfutils::AnimatedSprite &anim = animation.anim;
+            auto limitX = (cfg::game::width - box.AABB.width);
+            if (box.AABB.left <= limitX) {
+                box.setPosition(static_cast<float>(box.getPosition().x + (450 * timeSinceLastFrame)),
+                                box.getPosition().y);
+                anim.setPosition(box.getPosition().x - box.relativeAABB.left,
+                                 box.getPosition().y - box.relativeAABB.top);
+                _quadTree.move(_entities[cfg::profil::nickname]);
+            }
+        });
+
+        setKeyCallback(cfg::player::Left, [this](const sf::Event &, double timeSinceLastFrame) {
+        });
+
+        setKeyCallback(cfg::player::Up, [this](const sf::Event &, double timeSinceLastFrame) {
+        });
+
+        setKeyCallback(cfg::player::Down, [this](const sf::Event &, double timeSinceLastFrame) {
+        });
+    }
+
+    void GameScene::_moveEntity(const sf::Vector2f &pos, const std::string &ettName)
+    {
+        auto[box, animation] = this->_ettMgr[_entities[ettName]].getComponents<rtc::BoundingBox, rtc::Animation>();
+        sfutils::AnimatedSprite &anim = animation.anim;
+        auto limitX = (cfg::game::width - box.AABB.width);
+        if (box.AABB.left <= limitX) {
+            box.setPosition(pos);
+            anim.setPosition(pos.x - box.relativeAABB.left,
+                             pos.y - box.relativeAABB.top);
+            _quadTree.move(_entities[cfg::profil::nickname]);
+        }
     }
 }

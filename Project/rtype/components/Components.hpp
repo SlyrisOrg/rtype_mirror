@@ -149,7 +149,7 @@ namespace rtype::components
             setPosition(sf::Vector2f(x, y));
         }
 
-        static constexpr auto memberMap() noexcept
+        static auto memberMap() noexcept
         {
             return meta::makeMap(reflect_member(&BoundingBox::getPosition),
                                  "setPosition", sol::resolve<void(float, float)>(&BoundingBox::setPosition),

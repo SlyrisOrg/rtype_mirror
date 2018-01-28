@@ -13,14 +13,17 @@
 #include <rtype/utils/QuadTree.hpp>
 #include <rtype/scenes/private/ForwardGameSceneUtils.hpp>
 #include <rtype/systems/GameFieldSystem.hpp>
+#include <rtype/utils/Action.hpp>
+#include <rtype/config/PlayerConfig.hpp>
 
 namespace rtype
 {
-    class GameScene final : public gutils::AScene
+    class GameScene final : public gutils::AScene, public rtype::ActionTarget<int>
     {
     public:
         template <typename ...Args>
-        GameScene(Args &&...args) noexcept : gutils::AScene(std::forward<Args>(args)...)
+        GameScene(Args &&...args) noexcept : gutils::AScene(std::forward<Args>(args)...),
+                                             ActionTarget(cfg::player::playerInputs)
         {
             _evtMgr.subscribe<gutils::evt::GameHostPort>(*this);
         }
@@ -42,6 +45,7 @@ namespace rtype
         void receive(const gutils::evt::GameHostPort &hostPort) noexcept;
 
     private:
+        void _setPlayerCallbacks() noexcept;
         void _loadAllSprites();
         bool _setGUI() noexcept;
         void _configure();
@@ -58,6 +62,7 @@ namespace rtype
                          unsigned int nbLines,
                          unsigned int nbAnims);
         void _createPlayer(const game::CreatePlayer &createPacket) noexcept;
+        void _moveEntity(const sf::Vector2f& pos, const std::string &ettName);
     private:
         using UIGUI = BaseGUI<cfg::play::nbWidgets>;
         UIGUI _gui;
@@ -151,6 +156,8 @@ namespace rtype
         std::unordered_map<std::string, sf::IntRect> _boundingBoxFactions;
         std::unordered_map<std::string, Entity::ID> _entities;
         ig::FieldSystem _fieldSystem{_ettMgr, _textures, _evtMgr};
+        unsigned long nbPacketsSend{0};
+        unsigned long nbPacketsReceive{0};
     };
 }
 
