@@ -11,6 +11,7 @@ set(RTYPE_SYSTEMS_HEADERS
         ${SYSTEMS}/SAudio.hpp
         ${SYSTEMS}/GameFieldSystem.hpp
         ${SYSTEMS}/FieldSystem.hpp
+        ${SYSTEMS}/CollisionSystem.hpp
         PARENT_SCOPE)
 
 if (WIN32)

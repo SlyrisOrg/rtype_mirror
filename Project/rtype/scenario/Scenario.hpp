@@ -9,27 +9,36 @@
 #include <rapidjson/istreamwrapper.h>
 #include <log/Logger.hpp>
 #include <rtype/gutils/manager/EventManager.hpp>
-#include <rtype/scenario/Action.hpp>
+#include <rtype/entity/EntityManager.hpp>
+#include <rtype/scenario/ScenarioAction.hpp>
+#include <rtype/entity/ECS.hpp>
+#include <rtype/lua/LuaManager.hpp>
+#include <rtype/utils/DemoUtils.hpp>
+
 
 namespace scenario
 {
-    class Scenario
+    class ScenarioSystem
     {
     private:
         using ParsingCB = std::function<void(const rapidjson::Document &document)>;
         using ParsingMap = std::unordered_map<std::string, ParsingCB>;
 
     public:
-        explicit Scenario(const std::string &path, gutils::EventManager &evtMgr) noexcept : _evtMgr(evtMgr)
+        explicit ScenarioSystem(rtype::EntityManager &ettMgr,
+                                gutils::EventManager &evtMgr,
+                                rtype::lua::LuaManager &lua,
+                                sfutils::ResourceManager<sf::Texture, rtype::demo::SpriteT> &textures) noexcept
+                : _ettMgr(ettMgr), _evtMgr(evtMgr), _lua(lua),_textures(textures)
         {
             _parsingMap = std::unordered_map<std::string, ParsingCB>
                 {
-                    {"music",       std::bind(&Scenario::_parseMusic, this, std::placeholders::_1)},
-                    {"spawn",       std::bind(&Scenario::_parseSpawn, this, std::placeholders::_1)},
-                    {"wait",        std::bind(&Scenario::_parseWait, this, std::placeholders::_1)},
-                    {"waitkillall", std::bind(&Scenario::_parseWaitKillAll, this, std::placeholders::_1)},
+                    {"music",       std::bind(&ScenarioSystem::_parseMusic, this, std::placeholders::_1)},
+                    {"stopMusic",   std::bind(&ScenarioSystem::_parseStopMusic, this, std::placeholders::_1)},
+                    {"spawn",       std::bind(&ScenarioSystem::_parseSpawn, this, std::placeholders::_1)},
+                    {"wait",        std::bind(&ScenarioSystem::_parseWait, this, std::placeholders::_1)},
+                    {"waitKillAll", std::bind(&ScenarioSystem::_parseWaitKillAll, this, std::placeholders::_1)},
                 };
-            _parseScenario(path);
         }
 
         void _parseMusic(const rapidjson::Document &document)
@@ -37,28 +46,58 @@ namespace scenario
             std::string_view musicStr = std::string_view(document.GetObject()["music"].GetString());
             _log(logging::Debug) << "add music -> " << musicStr << std::endl;
             rtype::Configuration::Music music = musicStr;
-            action.add<scenario::Music>(music);
+            _action.add<scenario::Music>(music, _evtMgr);
+        }
+
+        void _parseStopMusic(const rapidjson::Document &document)
+        {
+            std::string_view musicStr = std::string_view(document.GetObject()["stopMusic"].GetString());
+            _log(logging::Debug) << "stop music -> " << musicStr << std::endl;
+            rtype::Configuration::Music music = musicStr;
+            _action.add<scenario::StopMusic>(music, _evtMgr);
         }
 
         void _parseSpawn(const rapidjson::Document &document)
         {
             const auto &spawnOBJ = document.GetObject()["spawn"].GetObject();
             std::string ID = spawnOBJ["id"].GetString();
+            std::string texture = spawnOBJ["texture"].GetString();
+            std::string script = spawnOBJ["IA"].GetString();
+            float scale = spawnOBJ["scale"].GetFloat();
+            float startY = spawnOBJ["startY"].GetFloat();
+            const auto &statOBJ = spawnOBJ["stat"].GetObject();
+            rtype::components::Stat stat(statOBJ["hp"].GetUint(), statOBJ["attack"].GetUint(),
+                                         statOBJ["defense"].GetUint(), statOBJ["speed"].GetUint(),
+                                         statOBJ["shield"].GetUint());
+            const auto &argOBJ = spawnOBJ["argument"].GetObject();
+            unsigned int nbArg = argOBJ["nbArg"].GetUint();
+            std::vector<float> args;
+            for (unsigned int i = 1; i <= nbArg; ++i) {
+                args.push_back(argOBJ[("Arg" + std::to_string(i)).c_str()].GetFloat());
+            }
             _log(logging::Debug) << "add spawn -> " << ID << std::endl;
-            action.add<scenario::Spawn>(std::move(ID));
+            _action.add<scenario::Spawn>(std::move(ID),
+                                         std::move(texture),
+                                         scale,
+                                         startY,
+                                         std::move(stat),
+                                         std::move(script),
+                                         nbArg,
+                                         std::move(args),
+                                         _textures);
         }
 
         void _parseWait(const rapidjson::Document &document)
         {
             unsigned int duration = document.GetObject()["wait"].GetUint();
             _log(logging::Debug) << "add a waiting -> " << duration << std::endl;
-            action.add<scenario::Wait>(duration);
+            _action.add<scenario::Wait>(duration, _action);
         }
 
         void _parseWaitKillAll([[maybe_unused]] const rapidjson::Document &document)
         {
             _log(logging::Debug) << "add a waitkillall" << std::endl;
-            action.add<scenario::WaitKillAll>();
+            _action.add<scenario::WaitKillAll>(_action);
         }
 
         void _parseConfigInside(const rapidjson::Document &document)
@@ -95,11 +134,37 @@ namespace scenario
             }
         }
 
-    public:
-        Action action;
+        void configure(const std::string &path) noexcept
+        {
+            _parseScenario(path);
+        }
+
+        void update([[maybe_unused]]double timeSinceLastFrame) noexcept
+        {
+            if (_action.isWaiting() && _action.isWaitDone()) {
+                _action.setWait(false);
+            }
+            while(!(!_action) && !_action.isWaiting()) {
+                _action.execute();
+            }
+
+            _ettMgr.for_each<rtype::rtc::Enemy>([this, timeSinceLastFrame](rtype::Entity &ett){
+                auto &table = ett.getComponent<rtype::rtc::Lua>().tableName;
+                _lua[table]["update"](ett.getID(), timeSinceLastFrame);
+            });
+
+            _ettMgr.for_each<rtype::rtc::Allied>([this, timeSinceLastFrame](rtype::Entity &ett){
+                auto &table = ett.getComponent<rtype::rtc::Lua>().tableName;
+                _lua[table]["update"](ett.getID(), timeSinceLastFrame);
+            });
+        }
 
     private:
+        rtype::EntityManager &_ettMgr;
         gutils::EventManager &_evtMgr;
+        rtype::lua::LuaManager &_lua;
+        sfutils::ResourceManager<sf::Texture, rtype::demo::SpriteT> &_textures;
+        Action _action{_ettMgr};
         logging::Logger _log{"scenario", logging::Debug};
         ParsingMap _parsingMap;
     };

@@ -7,9 +7,14 @@
 
 #include <utils/Enums.hpp>
 
-namespace rtype
+namespace rtype::ui
 {
     ENUM(UIWidgets,
+         PlayerPV,
+         PlayerShield,
+         AllyPVTwo,
+         AllyPVThree,
+         AllyPVFour,
          ShieldPlayerOne
     );
 }

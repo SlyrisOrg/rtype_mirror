@@ -10,6 +10,8 @@
 #include <rtype/entity/ECS.hpp>
 #include <rtype/config/Configuration.hpp>
 #include <rtype/utils/DemoUtils.hpp>
+#include <rtype/utils/QuadTree.hpp>
+#include <rtype/lua/LuaManager.hpp>
 
 namespace rtype
 {
@@ -21,10 +23,21 @@ namespace rtype
             _ettMgr = ettMgr;
         }
 
+        static void setQuadTree(QuadTree<EntityManager> *quadtree) noexcept
+        {
+            _quadtree = quadtree;
+        }
+
+        static void setLuaManager(lua::LuaManager *lua) noexcept
+        {
+            _lua = lua;
+        }
+
         static Entity::ID createSpaceShip(Entity::ID spaceID,
                                           sfutils::Animation &anim,
                                           sf::Rect<int> &boundingBox,
-                                          sf::Vector2f pos) noexcept
+                                          sf::Vector2f pos,
+                                          rtc::Stat stat) noexcept
         {
             auto &ettMgr = *_ettMgr;
             ettMgr[spaceID].addComponent<rtc::Animation>(&anim,
@@ -36,7 +49,9 @@ namespace rtype
                                   static_cast<float>(pos.y + boundingBox.top)};
             sf::Vector2f size{static_cast<float>(boundingBox.width), static_cast<float>(boundingBox.height)};
             ettMgr[spaceID].addComponent<rtc::BoundingBox>(position, size, boundingBox);
+            ettMgr[spaceID].addComponent<rtc::Stat>(stat);
             ettMgr[spaceID].addComponent<rtc::Movement>();
+            (*_lua)["playerTable"]["init"](spaceID, stat.hp, stat.attack, stat.defense, stat.speed, stat.shield);
             return spaceID;
         }
 
@@ -47,7 +62,8 @@ namespace rtype
             auto &ettMgr = *_ettMgr;
             ettMgr[spaceID].addComponent<rtc::Player>(transitionMap);
             ettMgr[spaceID].addComponent<rtc::GameFieldLayer>();
-            ettMgr[spaceID].addComponent<rtc::Lua>("player.lua", "player");
+            ettMgr[spaceID].addComponent<rtc::Lua>("player.lua", "player", "playerTable");
+            ettMgr[spaceID].addComponent<rtc::Allied>();
             return createSpaceShip(spaceID, std::forward<Args>(args)...);
         }
 
@@ -61,10 +77,10 @@ namespace rtype
             sf::Sprite &sprite = ett.addComponent<rtc::Sprite>(texture).sprite;
             sprite.setPosition(sf::Vector2f{AABB.left + AABB.width,
                                             AABB.top + AABB.height / 2.f
-                                            -
-                                            ettMgr[bulletID].getComponent<rtc::Sprite>().sprite.getGlobalBounds().height /
-                                            2.f});
+                                            - ettMgr[bulletID].getComponent<rtc::Sprite>().sprite.getGlobalBounds().height / 2.f});
             ettMgr[bulletID].addComponent<rtc::BoundingBox>(ettMgr[bulletID].getComponent<rtc::Sprite>().sprite);
+            ettMgr[bulletID].addComponent<rtc::Lua>("standardAttackBullet.lua", "bullet", "standardAttackBulletTable");
+            ettMgr[bulletID].addComponent<rtc::Allied>();
             ettMgr[bulletID].addComponent<rtc::Bullet>();
             ettMgr[bulletID].addComponent<rtc::SoundEffect>(eff);
             ettMgr[bulletID].addComponent<rtc::GameFieldLayer>();
@@ -116,8 +132,62 @@ namespace rtype
             return itemID;
         }
 
+        static Entity::ID createEnemy(sf::Texture &texture,
+                                      float scale,
+                                      float ypos,
+                                      std::string &script,
+                                      unsigned int nbArgs,
+                                      std::vector<float> args,
+                                      std::string &name,
+                                      rtc::Stat &stat)
+        {
+            Entity ::ID ID = _ettMgr->createEntity();
+            auto &ettMgr = *_ettMgr;
+            sf::Vector2f pos(1921.0, ypos);
+            ettMgr[ID].addComponent<rtc::Enemy>();
+            ettMgr[ID].addComponent<rtc::GameFieldLayer>();
+            sf::Sprite &sprite = ettMgr[ID].addComponent<rtc::Sprite>(texture).sprite;
+            sprite.setPosition(pos);
+            sprite.setScale(scale, scale);
+            ettMgr[ID].addComponent<rtc::BoundingBox>(pos, sf::Vector2f(sprite.getTextureRect().width * scale,
+                                                                        sprite.getTextureRect().height * scale));
+            ettMgr[ID].addComponent<rtc::Stat>(stat);
+            ettMgr[ID].addComponent<rtc::Lua>(script + ".lua", name, script + "Table");
+            _quadtree->insert(ID);
+
+
+            lua::LuaManager &lua = *_lua;
+            switch(nbArgs) {
+                case 0 :
+                    lua[script + "Table"]["init"]();
+                    break;
+                case 1 :
+                    lua[script + "Table"]["init"](ID, args[0]);
+                    break;
+                case 2 :
+                    lua[script + "Table"]["init"](ID, args[0], args[1]);
+                    break;
+                case 3 :
+                    lua[script + "Table"]["init"](ID, args[0], args[1], args[2]);
+                    break;
+                case 4 :
+                    lua[script + "Table"]["init"](ID, args[0], args[1], args[2], args[3]);
+                    break;
+                case 5 :
+                    lua[script + "Table"]["init"](ID, args[0], args[1], args[2], args[3], args[4]);
+                    break;
+                case 6 :
+                    lua[script + "Table"]["init"](ID, args[0], args[1], args[2], args[3], args[4], args[5]);
+                    break;
+            }
+
+            return ID;
+        }
+
     private:
         static EntityManager *_ettMgr;
+        static QuadTree<EntityManager> *_quadtree;
+        static lua::LuaManager *_lua;
     };
 }
 

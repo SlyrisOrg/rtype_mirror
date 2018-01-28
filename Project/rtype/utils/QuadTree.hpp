@@ -88,7 +88,8 @@ namespace rtype
         {
             auto &bBox = _entityMng[id].template getComponent<components::BoundingBox>();
 
-            if (!bBox.AABB.intersects(node->_AABB)) {
+            if (!node->_AABB.contains(bBox.AABB.left + bBox.AABB.width / 2, bBox.AABB.top + bBox.AABB.height / 2))
+            {
                 return false;
             }
 
@@ -144,13 +145,14 @@ namespace rtype
             sf::FloatRect boundingObj = _itemMap.at(id)->_AABB;
             unsigned int subPos = NorthWest;
 
-            if (node->_childs[NorthWest]->_AABB.intersects(boundingObj))
+            sf::Vector2f center(boundingObj.left + boundingObj.width / 2, boundingObj.top + boundingObj.height / 2);
+            if (node->_childs[NorthWest]->_AABB.contains(center))
                 subPos = NorthWest;
-            else if (node->_childs[NorthEast]->_AABB.intersects(boundingObj))
+            else if (node->_childs[NorthEast]->_AABB.contains(center))
                 subPos = NorthEast;
-            else if (node->_childs[SouthWest]->_AABB.intersects(boundingObj))
+            else if (node->_childs[SouthWest]->_AABB.contains(center))
                 subPos = SouthWest;
-            else if (node->_childs[SouthEast]->_AABB.intersects(boundingObj))
+            else if (node->_childs[SouthEast]->_AABB.contains(center))
                 subPos = SouthEast;
 
             if (remove(node->_childs[subPos].get(), id)) {
@@ -194,12 +196,12 @@ namespace rtype
 
         const QuadNode *getNode(EntityID id) const
         {
-            return _itemMap.at(id);
+            return _itemMap.find(id) != _itemMap.end() ? _itemMap.at(id) : nullptr;
         }
 
         QuadNode *getNode(EntityID id)
         {
-            return _itemMap.at(id);
+            return _itemMap.find(id) != _itemMap.end() ? _itemMap.at(id) : nullptr;
         }
 
         QuadNode &getRoot() noexcept

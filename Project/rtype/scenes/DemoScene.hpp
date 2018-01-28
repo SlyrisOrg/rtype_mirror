@@ -9,16 +9,19 @@
 #include <unordered_map>
 #include <rapidjson/istreamwrapper.h>
 #include <utils/Enums.hpp>
+#include <rtype/entity/ECS.hpp>
 #include <rtype/entity/GameFactory.hpp>
 #include <rtype/gui/BaseGUI.hpp>
 #include <rtype/config/InGameConfig.hpp>
 #include <rtype/config/PlayerConfig.hpp>
 #include <rtype/lua/LuaManager.hpp>
 #include <rtype/gutils/base/AScene.hpp>
-#include <rtype/utils/Action.hpp>
 #include <rtype/utils/QuadTree.hpp>
+#include <rtype/utils/Action.hpp>
 #include <rtype/utils/DemoUtils.hpp>
+#include <rtype/systems/CollisionSystem.hpp>
 #include <rtype/systems/FieldSystem.hpp>
+#include <rtype/scenario/Scenario.hpp>
 
 namespace rtype
 {
@@ -187,6 +190,7 @@ namespace rtype
 
         void __configure() noexcept;
         bool __setGUI() noexcept;
+        void __subscribeEvents() noexcept;
         void __parseConfig(const std::string &faction);
         void __parseConfigInside(const rapidjson::Document &doc, const std::string &string);
         void __loadSprite(const demo::Sprite &val);
@@ -196,6 +200,8 @@ namespace rtype
         void __loadFogSprite() noexcept;
         void __loadStarSprite() noexcept;
         void __loadPlanetSprite() noexcept;
+        void __loadEnemySprite() noexcept;
+        void __loadScript() noexcept;
         void __setPlayerCallbacks() noexcept;
         void __unbindPlayerCallbacks() noexcept;
         void _registerAdditionalLuaFunctions() noexcept;
@@ -203,12 +209,15 @@ namespace rtype
         UIGUI _gui;
         sfutils::ResourceManager<sf::Texture, demo::SpriteT> _textures;
         std::unordered_map<std::string, sf::IntRect> _boundingBoxFactions;
+        std::unordered_map<std::string, rtc::Stat> _statFactions;
         bool _debugMode{false};
         EntityManager _ettMgr;
         rtype::lua::LuaManager _luaMgr{_ettMgr, fs::current_path() /=  "assets/scripts/"};
         QuadTree<EntityManager> _quadTree{sf::FloatRect(0.f, 0.f, 1920, 1080), _ettMgr};
         demo::AnimationSystem _animSystem{_win, _ettMgr, _debugMode, _textures, _quadTree};
+        CollisionSystem _collisionSystem{_ettMgr, _quadTree, _luaMgr};
         demo::field::FieldSystem _fieldSystem{_ettMgr, _textures, _evtMgr};
+        scenario::ScenarioSystem _scenario{_ettMgr, _evtMgr, _luaMgr, _textures};
         std::chrono::time_point<std::chrono::steady_clock> _lastShoot;
         Entity::ID _playerID;
     };
