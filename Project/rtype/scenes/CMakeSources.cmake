@@ -20,6 +20,7 @@ set(RTYPE_SCENES_HEADERS
         ${SCENES}/private/ForwardEnumQueue.hpp
         ${SCENES}/private/ForwardEnumLobby.hpp
         ${SCENES}/private/ForwardEnumInGame.hpp
+        ${SCENES}/private/ForwardGameSceneUtils.hpp
         PARENT_SCOPE)
 
 set(RTYPE_SCENES_SOURCES

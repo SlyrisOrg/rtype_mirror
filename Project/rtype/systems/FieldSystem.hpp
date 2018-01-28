@@ -36,11 +36,10 @@ namespace rtype::demo::field
         SubField(EntityManager &ettMgr,
                  sfutils::ResourceManager<sf::Texture, SpriteT> &textures,
                  gutils::EventManager &evtMgr) noexcept :
-                _ettMgr(ettMgr),
-                _textures(textures),
-                _evtMgr(evtMgr)
+            _ettMgr(ettMgr),
+            _textures(textures),
+            _evtMgr(evtMgr)
         {
-
         }
 
         std::vector<SpriteT> &sprites(Color color) noexcept
@@ -124,11 +123,10 @@ namespace rtype::demo::field
         FieldSystem(EntityManager &ettMgr,
                     sfutils::ResourceManager<sf::Texture, SpriteT> &textures,
                     gutils::EventManager &evtMgr) noexcept :
-                _ettMgr(ettMgr),
-                _textures(textures),
-                _evtMgr(evtMgr)
+            _ettMgr(ettMgr),
+            _textures(textures),
+            _evtMgr(evtMgr)
         {
-
         }
 
     private:
@@ -175,9 +173,12 @@ namespace rtype::demo::field
                         const auto &speed = itemPack.GetObject()["speedDistribution"].GetArray();
                         const auto &scale = itemPack.GetObject()["scaleDistribution"].GetArray();
                         const auto &respawn = itemPack.GetObject()["respawnPos"].GetArray();
-                        pack.speed.param(std::uniform_real_distribution<float>(speed[0].GetFloat(), speed[1].GetFloat()).param());
-                        pack.scale.param(std::uniform_real_distribution<float>(scale[0].GetFloat(), scale[1].GetFloat()).param());
-                        pack.respawn.param(std::uniform_real_distribution<float>(respawn[0].GetFloat(), respawn[1].GetFloat()).param());
+                        pack.speed.param(
+                            std::uniform_real_distribution<float>(speed[0].GetFloat(), speed[1].GetFloat()).param());
+                        pack.scale.param(
+                            std::uniform_real_distribution<float>(scale[0].GetFloat(), scale[1].GetFloat()).param());
+                        pack.respawn.param(std::uniform_real_distribution<float>(respawn[0].GetFloat(),
+                                                                                 respawn[1].GetFloat()).param());
                         pack.layer = layer;
                         subField->getItems().push_back(std::move(pack));
                     }
@@ -224,13 +225,15 @@ namespace rtype::demo::field
 
             for (auto &sub : _subFields) {
                 unsigned int j = 0;
-                for (auto [nbItem, speed, scale, alpha, layer, respawn] : sub->getItems()) {
+                for (auto[nbItem, speed, scale, alpha, layer, respawn] : sub->getItems()) {
                     (void)respawn;
                     for (unsigned int i = 0; i < nbItem; ++i) {
                         std::vector<SpriteT> &sprite = sub->sprites(_parallax.color[_mt() % 2]);
                         GameFactory::createFieldItem(_textures.get(sprite[_mt() % sprite.size()]),
-                                                     sf::Vector2f(sub->getDistX()(_mt) - sub->getPosSub(), sub->getDistY()(_mt) - sub->getPosSub()),
-                                                     _parallax.globalSpeed * speed(_mt) * _parallax.speed[layer], scale(_mt), alpha, layer,
+                                                     sf::Vector2f(sub->getDistX()(_mt) - sub->getPosSub(),
+                                                                  sub->getDistY()(_mt) - sub->getPosSub()),
+                                                     _parallax.globalSpeed * speed(_mt) * _parallax.speed[layer],
+                                                     scale(_mt), alpha, layer,
                                                      sub.get(), j);
                     }
                     ++j;
@@ -238,7 +241,8 @@ namespace rtype::demo::field
             }
         }
 
-        void update(double timeSinceLastFrame) noexcept {
+        void update(double timeSinceLastFrame) noexcept
+        {
             unsigned long rand = _mt() % 10000;
             if (rand <= 1) {
                 Color col = Color::Blue;
@@ -252,21 +256,24 @@ namespace rtype::demo::field
                 }
                 _parallax.color[rand] = col;
             }
-            _ettMgr.for_each<rtc::FieldItem>([this, &timeSinceLastFrame](rtype::Entity &ett) {
-                sf::Sprite &sprite =  ett.getComponent<rtc::Sprite>().sprite;
+            _ettMgr.for_each<rtc::FieldItem<demo::field::SubField>>([this, &timeSinceLastFrame](rtype::Entity &ett) {
+                sf::Sprite &sprite = ett.getComponent<rtc::Sprite>().sprite;
                 if (sprite.getPosition().x + sprite.getGlobalBounds().width < 0) {
                     ett.mark();
-                    SubField *sub = ett.getComponent<rtc::FieldItem>().subField;
-                    unsigned int itemPckIdx = ett.getComponent<rtc::FieldItem>().itemPackIdx;
-                    auto [nbItem, speed, scale, alpha, layer, respawn] = sub->getItems()[itemPckIdx];
+                    SubField *sub = ett.getComponent<rtc::FieldItem<demo::field::SubField>>().subField;
+                    unsigned int itemPckIdx = ett.getComponent<rtc::FieldItem<demo::field::SubField>>().itemPackIdx;
+                    auto[nbItem, speed, scale, alpha, layer, respawn] = sub->getItems()[itemPckIdx];
                     (void)nbItem;
                     std::vector<SpriteT> &sprite = sub->sprites(_parallax.color[_mt() % 2]);
                     GameFactory::createFieldItem(_textures.get(sprite[_mt() % sprite.size()]),
-                                                 sf::Vector2f(1921.0 + respawn(_mt), sub->getDistY()(_mt) - sub->getPosSub()),
-                                                 _parallax.globalSpeed * speed(_mt) * _parallax.speed[layer], scale(_mt), alpha, layer, sub, itemPckIdx);
+                                                 sf::Vector2f(1921.0 + respawn(_mt),
+                                                              sub->getDistY()(_mt) - sub->getPosSub()),
+                                                 _parallax.globalSpeed * speed(_mt) * _parallax.speed[layer],
+                                                 scale(_mt), alpha, layer, sub, itemPckIdx);
                 } else {
-                    sprite.setPosition(sprite.getPosition().x - (ett.getComponent<rtc::Speed>().speed * timeSinceLastFrame),
-                    sprite.getPosition().y);
+                    sprite.setPosition(
+                        sprite.getPosition().x - (ett.getComponent<rtc::Speed>().speed * timeSinceLastFrame),
+                        sprite.getPosition().y);
                 }
             });
         }
@@ -285,7 +292,6 @@ namespace rtype::demo::field
         std::random_device _rd;
         std::mt19937 _mt{_rd()};
         Parallax _parallax;
-
     };
 }
 

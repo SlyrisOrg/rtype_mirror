@@ -1,0 +1,47 @@
+{
+  "actions": [
+    {
+      "music": "DarkVoidAmb"
+    },
+
+    {
+      "wait": 10000
+    },
+
+    {
+      "music": "CloseStarInstrumentalAmb"
+    },
+
+    {
+    "spawn": {
+        "id": "minion",
+        "texture" : "Minion2",
+        "IA" : "stayAndShoot",
+        "argument" : {
+          "nbArg" : 3,
+          "Arg1" : 1200,
+          "Arg2" : 350,
+          "Arg3" : 3,
+          "comment" : "Arg1 : posTargetX, Arg2 : posTargetY, Arg3 : fire rate"
+        },
+        "startY" : 350,
+        "scale" : 1.2,
+        "stat" : {
+          "hp" : 100,
+          "attack" : 20,
+          "defense" : 5,
+          "speed" :  250,
+          "shield" : 0
+        }
+      }
+    },
+
+    {
+      "waitKillAll" : null
+    },
+
+    {
+      "stopMusic" : "CloseStarInstrumentalAmb"
+    }
+  ]
+}

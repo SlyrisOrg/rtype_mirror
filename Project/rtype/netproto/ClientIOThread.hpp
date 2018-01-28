@@ -26,7 +26,6 @@ namespace net
         void _readPackets(const boost::system::error_code &ec)
         {
             if (!ec) {
-                _log(logging::Debug) << __PRETTY_FUNCTION__ << std::endl;
                 _log(logging::Debug) << _conn->available() << std::endl;
                 while (_conn->available() > 0) {
                     auto packet = _conn->pop();
