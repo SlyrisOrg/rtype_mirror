@@ -45,6 +45,7 @@ namespace rtype
         void receive(const gutils::evt::GameHostPort &hostPort) noexcept;
 
     private:
+        void _registerAdditionalLuaFunctions() noexcept;
         void _setPlayerCallbacks() noexcept;
         void _loadAllSprites();
         bool _setGUI() noexcept;
@@ -158,6 +159,7 @@ namespace rtype
         ig::FieldSystem _fieldSystem{_ettMgr, _textures, _evtMgr};
         unsigned long nbPacketsSend{0};
         unsigned long nbPacketsReceive{0};
+        rtype::lua::LuaManager _luaMgr{_ettMgr, fs::path(fs::current_path() / "assets/scripts/")};
     };
 }
 
