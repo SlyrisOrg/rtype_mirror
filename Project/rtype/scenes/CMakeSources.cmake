@@ -7,7 +7,6 @@ set(RTYPE_SCENES_HEADERS
         ${SCENES}/LoginScene.hpp
         ${SCENES}/ProfilScene.hpp
         ${SCENES}/CreateScene.hpp
-        ${SCENES}/GameScene.hpp
         ${SCENES}/LoadingScene.hpp
         ${SCENES}/QueueScene.hpp
         ${SCENES}/LobbyScene.hpp
@@ -24,7 +23,6 @@ set(RTYPE_SCENES_HEADERS
         PARENT_SCOPE)
 
 set(RTYPE_SCENES_SOURCES
-        ${SCENES}/GameScene.cpp
         ${SCENES}/DemoScene.cpp
         ${SCENES}/LoginScene.cpp
         ${SCENES}/CreateScene.cpp

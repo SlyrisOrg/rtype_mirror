@@ -11,6 +11,7 @@
 #include <rtype/utils/AnimatedSprite.hpp>
 #include <rtype/utils/DemoUtils.hpp>
 #include <meta/Reflection.hpp>
+#include <rtype/core/SafeCEGUI.hpp>
 
 namespace rtype::demo::field
 {
@@ -26,8 +27,10 @@ namespace rtype::components
 {
     struct Lua
     {
-        explicit Lua(std::string _scriptName, std::string _selfName) noexcept : scriptName(std::move(_scriptName)),
-                                                                                selfName(std::move(_selfName))
+        explicit Lua(std::string _scriptName, std::string _selfName, std::string _tableName) noexcept :
+                scriptName(std::move(_scriptName)),
+                selfName(std::move(_selfName)),
+                tableName(std::move(_tableName))
         {
         }
 
@@ -37,8 +40,10 @@ namespace rtype::components
         }
 
         reflect_class(Lua);
+
         std::string scriptName;
         std::string selfName;
+        std::string tableName;
     };
 
     struct Sprite
@@ -48,10 +53,16 @@ namespace rtype::components
         {
         }
 
+        void setPosition(float x, float y) noexcept
+        {
+            sprite.setPosition(x, y);
+        }
+
         static constexpr auto memberMap() noexcept
         {
-            return meta::makeMap();
+            return meta::makeMap(reflect_member(&Sprite::setPosition));
         }
+
 
         reflect_class(Sprite);
 
@@ -293,6 +304,14 @@ namespace rtype::components
         reflect_class(Layer<layer>);
     };
 
+    using StarFieldLayer = Layer<StarField>;
+    using Fog1Layer = Layer<Fog1>;
+    using Planet1Layer = Layer<Planet1>;
+    using Fog2Layer = Layer<Fog2>;
+    using Planet2Layer = Layer<Planet2>;
+    using GameFieldLayer = Layer<GameField>;
+    using Fog3Layer = Layer<Fog3>;
+
     template<typename T>
     struct FieldItem
     {
@@ -312,13 +331,59 @@ namespace rtype::components
         unsigned int itemPackIdx;
     };
 
-    using StarFieldLayer = Layer<StarField>;
-    using Fog1Layer = Layer<Fog1>;
-    using Planet1Layer = Layer<Planet1>;
-    using Fog2Layer = Layer<Fog2>;
-    using Planet2Layer = Layer<Planet2>;
-    using GameFieldLayer = Layer<GameField>;
-    using Fog3Layer = Layer<Fog3>;
+    struct Stat
+    {
+        Stat(unsigned int hp_,
+             unsigned int attack_,
+             unsigned int defense_,
+             unsigned int speed_,
+             unsigned int shield_,
+             CEGUI::ProgressBar *bar = nullptr) noexcept
+                : hp(hp_), hpBar(bar), attack(attack_), defense(defense_), speed(speed_), shield(shield_)
+        {
+            if (hpBar)
+                hpBar->setProgress(1.0);
+        }
+        unsigned int hp;
+        unsigned int hpMax{hp};
+        CEGUI::ProgressBar *hpBar{nullptr};
+        unsigned int attack;
+        unsigned int defense;
+        unsigned int speed;
+        unsigned int shield;
+
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap(reflect_member(&Stat::hp),
+                                 reflect_member(&Stat::attack),
+                                 reflect_member(&Stat::defense),
+                                 reflect_member(&Stat::speed),
+                                 reflect_member(&Stat::shield));
+        }
+
+        reflect_class(Stat);
+    };
+
+    struct Enemy
+    {
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(Enemy);
+    };
+
+    struct Allied
+    {
+        static constexpr auto memberMap() noexcept
+        {
+            return meta::makeMap();
+        }
+
+        reflect_class(Allied);
+    };
+
 }
 
 #endif //RTYPE_COMPONENTS_HPP

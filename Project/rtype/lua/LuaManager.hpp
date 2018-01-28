@@ -123,6 +123,10 @@ namespace rtype::lua
             _luaState["Entity"]["get"s + T::className() + "Component"s] = [](rtype::Entity &self) {
                 return std::ref(self.getComponent<T>());
             };
+
+            _luaState["Entity"]["has"s + T::className() + "Component"s] = [](rtype::Entity &self) {
+                return self.hasComponent<T>();
+            };
         }
 
         template <typename ...Types>

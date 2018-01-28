@@ -29,3 +29,11 @@ end
 function affz()
     print('z');
 end
+
+function update_internal(id, timeSinceLastFrame)
+    print("lua1");
+end
+
+testTable = {
+    update = update_internal;
+}
