@@ -94,12 +94,12 @@
   ],
   "Box": {
     "position": {
-      "x": 51,
-      "y": 10
+      "x": 29,
+      "y": 38
     },
     "size": {
-      "width": 100,
-      "height": 129
+      "width": 136,
+      "height": 97
     }
   }
 }
