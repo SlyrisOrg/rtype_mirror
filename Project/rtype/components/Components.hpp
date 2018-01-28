@@ -17,6 +17,11 @@ namespace rtype::demo::field
     class SubField;
 }
 
+namespace ig
+{
+    class SubField;
+}
+
 namespace rtype::components
 {
     struct Lua
@@ -288,9 +293,10 @@ namespace rtype::components
         reflect_class(Layer<layer>);
     };
 
+    template<typename T>
     struct FieldItem
     {
-        explicit FieldItem(demo::field::SubField *sub, unsigned int itemPckIdx) noexcept
+        explicit FieldItem(T *sub, unsigned int itemPckIdx) noexcept
             : subField(sub), itemPackIdx(itemPckIdx)
         {
         }
@@ -302,7 +308,7 @@ namespace rtype::components
 
         reflect_class(FieldItem);
 
-        demo::field::SubField *subField;
+        T *subField;
         unsigned int itemPackIdx;
     };
 

@@ -9,6 +9,7 @@ set(RTYPE_SYSTEMS_HEADERS
         ${SYSTEMS}/Systems.hpp
         ${SYSTEMS}/SVideo.hpp
         ${SYSTEMS}/SAudio.hpp
+        ${SYSTEMS}/GameFieldSystem.hpp
         ${SYSTEMS}/FieldSystem.hpp
         PARENT_SCOPE)
 
