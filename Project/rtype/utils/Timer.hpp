@@ -46,6 +46,33 @@ namespace rtype::utils
             return _lastTime;
         }
 
+        std::chrono::microseconds elapsedMicro()
+        {
+            if (!_run)
+                return _uElapsed;
+            _uElapsed = std::chrono::duration_cast<std::chrono::microseconds>
+                    (std::chrono::system_clock::now() - _start);
+            return _uElapsed;
+        }
+
+        std::chrono::milliseconds elapsedMilli()
+        {
+            if (!_run)
+                return std::chrono::duration_cast<std::chrono::milliseconds>(_uElapsed);
+            _uElapsed = std::chrono::duration_cast<std::chrono::microseconds>
+                    (std::chrono::system_clock::now() - _start);
+            return std::chrono::duration_cast<std::chrono::milliseconds>(_uElapsed);
+        }
+
+        std::chrono::milliseconds elapsedSec()
+        {
+            if (!_run)
+                return std::chrono::duration_cast<std::chrono::seconds>(_uElapsed);
+            _uElapsed = std::chrono::duration_cast<std::chrono::microseconds>
+                    (std::chrono::system_clock::now() - _start);
+            return std::chrono::duration_cast<std::chrono::seconds>(_uElapsed);
+        }
+
         void reset() noexcept
         {
             _start = std::chrono::system_clock::now();
@@ -53,6 +80,7 @@ namespace rtype::utils
 
     private:
         std::chrono::time_point<std::chrono::system_clock> _start;
+        std::chrono::microseconds _uElapsed;
         std::string _lastTime;
         bool _run{false};
     };

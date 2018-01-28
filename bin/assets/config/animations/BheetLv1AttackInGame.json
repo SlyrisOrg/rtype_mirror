@@ -92,6 +92,7 @@
       }
     }
   ],
+
   "Box": {
     "position": {
       "x": 51,
@@ -101,5 +102,13 @@
       "width": 100,
       "height": 129
     }
+  },
+
+  "Stat" : {
+    "hp" : 100,
+    "attack" : 50,
+    "defense" : 5,
+    "speed" :  700,
+    "shield" : 0
   }
 }

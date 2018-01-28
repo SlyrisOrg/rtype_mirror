@@ -36,7 +36,13 @@ namespace rtype
         _fieldSystem.clear();
         _ettMgr.clear();
         __unbindPlayerCallbacks();
+        _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::BattleExtInstrumentalAmb);
+        _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::AbandonedFacilitiesInstrumentalAmb);
+        _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::SpaceshipBridgeInstrumentalAmb);
+        _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::MarketInstrumentalAmb);
+        _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::DarkVoidAmb);
         _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::CitadelInstrumentalAmb);
+        _evtMgr.emit<gutils::evt::StopMusic>(Configuration::Music::CloseStarInstrumentalAmb);
     }
 
     void DemoScene::draw() noexcept
@@ -48,11 +54,13 @@ namespace rtype
         auto spriteDrawer = [this](rtype::Entity &ett) {
             if (this->_debugMode && ett.hasComponent<rtc::BoundingBox>()) {
                 _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
-                try {
-                    _win.draw(_quadTree.getNode(ett.getID())->_shapeDebug);
+
+                auto node = _quadTree.getNode(ett.getID());
+                if (node) {
+                    _win.draw(node->_shapeDebug);
                 }
-                catch (const std::out_of_range &error) {
-                    _log(lg::Error) << error.what() << std::endl;
+                else {
+                    _log(lg::Error) << "not a member of the quadtree" << std::endl;
                 }
             }
             this->_win.draw(ett.getComponent<rtc::Sprite>().sprite);
@@ -61,11 +69,12 @@ namespace rtype
         auto animDrawer = [this](rtype::Entity &ett) {
             if (this->_debugMode) {
                 _win.draw(ett.getComponent<rtc::BoundingBox>().shapeDebug);
-                try {
-                    _win.draw(_quadTree.getNode(ett.getID())->_shapeDebug);
+                auto node = _quadTree.getNode(ett.getID());
+                if (node) {
+                    _win.draw(node->_shapeDebug);
                 }
-                catch (const std::out_of_range &error) {
-                    _log(lg::Error) << error.what() << std::endl;
+                else {
+                    _log(lg::Error) << "not a member of the quadtree" << std::endl;
                 }
             }
             _win.draw(ett.getComponent<rtc::Animation>().anim);
@@ -97,7 +106,12 @@ namespace rtype
     {
         ActionTarget::processEvents(timeSinceLastFrame);
         __bulletSystem(timeSinceLastFrame);
+        _collisionSystem.update(timeSinceLastFrame);
         _fieldSystem.update(timeSinceLastFrame);
+        _scenario.update(timeSinceLastFrame);
+        rtc::Stat &stat = _ettMgr[_playerID].getComponent<rtc::Stat>();
+        static_cast<CEGUI::ProgressBar &>(_gui[ui::UIWidgets::PlayerPV]).setProgress(
+                static_cast<float>(stat.hp) / stat.hpMax);
         _animSystem.update(timeSinceLastFrame);
         _ettMgr.sweepEntities();
     }
@@ -159,23 +173,36 @@ namespace rtype
         if (start) {
             __parseConfig("Bheet");
             GameFactory::setEntityManager(&_ettMgr);
+            GameFactory::setQuadTree(&_quadTree);
+            GameFactory::setLuaManager(&_luaMgr);
             _registerAdditionalLuaFunctions();
             __loadBulletSprite();
             __loadStarSprite();
             __loadFogSprite();
             __loadPlanetSprite();
+            __loadEnemySprite();
             _fieldSystem.configure();
+            __loadScript();
+            _scenario.configure("assets/config/level/levelDemo.json");
             __createGameObjects();
             __setPlayerCallbacks();
-            _luaMgr.loadAll();
-            _evtMgr.emit<gutils::evt::PlayMusic>(Configuration::Music::CitadelInstrumentalAmb, true);
+            //_evtMgr.emit<gutils::evt::PlayMusic>(Configuration::Music::CitadelInstrumentalAmb, true);
         }
     }
 
     bool DemoScene::__setGUI() noexcept
     {
         using namespace cfg::play;
-        return GUIManager::setGUI<UIWidgets, nbWidgets>(UILayout, _gui, _log);
+        return GUIManager::setGUI<ui::UIWidgets, nbWidgets>(UILayout, _gui, _log);
+    }
+
+    void __subscribeEvents() noexcept
+    {/*
+        using namespace rtype::ui;
+        using pb = CEGUI::PushButton;
+        using evt = CEGUI::Event;
+        using Ds = DemoScene;
+      */
     }
 
     void DemoScene::__parseConfig(const std::string &faction)
@@ -222,13 +249,27 @@ namespace rtype
                                                            boxCFG.GetObject()["position"].GetObject()["y"].GetInt(),
                                                            boxCFG.GetObject()["size"].GetObject()["width"].GetInt(),
                                                            boxCFG.GetObject()["size"].GetObject()["height"].GetInt()});
+        const auto &statCFG = doc["Stat"].GetObject();
+        const auto &resStat = _statFactions.emplace(faction, rtc::Stat{statCFG["hp"].GetUint(),
+                                                                       statCFG["attack"].GetUint(),
+                                                                       statCFG["defense"].GetUint(),
+                                                                       statCFG["speed"].GetUint(),
+                                                                       statCFG["shield"].GetUint(),
+                                                                       &static_cast<CEGUI::ProgressBar &>(
+                                                                               _gui[ui::UIWidgets::PlayerPV])});
         _log(lg::Debug) << "\nFaction: " << faction
                         << "\nBox: { x: "
                         << res.first->second.left << " y: "
                         << res.first->second.top << " width: "
                         << res.first->second.width << " height: "
-                        << res.first->second.height
-                        << " }" << std::endl;
+                        << res.first->second.height << " }"
+                        << "\nStat: { hp : "
+                        << resStat.first->second.hp << " atk :"
+                        << resStat.first->second.attack << " def : "
+                        << resStat.first->second.defense << " spd : "
+                        << resStat.first->second.speed << " shield : "
+                        << resStat.first->second.shield << " }"
+                        << std::endl;
     }
 
     void DemoScene::__loadSprite(const demo::Sprite &val)
@@ -268,7 +309,8 @@ namespace rtype
                                                      _animSystem.get(
                                                          (demo::AnimationSystem::Animation::BheetLv1AttackTopDown)),
                                                      _boundingBoxFactions["Bheet"],
-                                                     sf::Vector2f(200, 200));
+                                                     sf::Vector2f(200, 200),
+                                                     _statFactions.at("Bheet"));
         _quadTree.insert(id);
         _playerID = id;
         _animSystem.setPlayerID(_playerID);
@@ -372,6 +414,23 @@ namespace rtype
         __loadSprite(demo::Sprite::Bullet);
     }
 
+    void DemoScene::__loadEnemySprite() noexcept
+    {
+        __loadSprite(demo::Sprite::Boss);
+        __loadSprite(demo::Sprite::Minion1);
+        __loadSprite(demo::Sprite::Minion2);
+        __loadSprite(demo::Sprite::Minion3);
+        __loadSprite(demo::Sprite::Minion4);
+        __loadSprite(demo::Sprite::Minion5);
+    }
+
+    void DemoScene::__loadScript() noexcept
+    {
+        _luaMgr.loadScript("player.lua");
+        _luaMgr.loadScript("stayAndShoot.lua");
+        _luaMgr.loadScript("standardAttackBullet.lua");
+    }
+
     void DemoScene::__bulletSystem(double timeSinceLastFrame) noexcept
     {
         _ettMgr.for_each<rtc::Bullet, rtc::Sprite, rtc::BoundingBox>([this, &timeSinceLastFrame](Entity &ett) {
@@ -390,19 +449,23 @@ namespace rtype
     void DemoScene::__setPlayerCallbacks() noexcept
     {
         setKeyCallback(cfg::player::Right, [this](const sf::Event &, double timeSinceLastFrame) {
-            _luaMgr.executeFunction("moveRight", _playerID, timeSinceLastFrame);
+            _luaMgr[_ettMgr[_playerID].getComponent<rtc::Lua>().tableName]["moveRight"](_playerID, timeSinceLastFrame);
+            //_luaMgr.executeFunction("moveRight", _playerID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Left, [this](const sf::Event &, double timeSinceLastFrame) {
-            _luaMgr.executeFunction("moveLeft", _playerID, timeSinceLastFrame);
+            _luaMgr[_ettMgr[_playerID].getComponent<rtc::Lua>().tableName]["moveLeft"](_playerID, timeSinceLastFrame);
+            //_luaMgr.executeFunction("moveLeft", _playerID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Up, [this](const sf::Event &, double timeSinceLastFrame) {
-            _luaMgr.executeFunction("moveUp", _playerID, timeSinceLastFrame);
+            _luaMgr[_ettMgr[_playerID].getComponent<rtc::Lua>().tableName]["moveUp"](_playerID, timeSinceLastFrame);
+            //_luaMgr.executeFunction("moveUp", _playerID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Down, [this](const sf::Event &, double timeSinceLastFrame) {
-            _luaMgr.executeFunction("moveDown", _playerID, timeSinceLastFrame);
+            _luaMgr[_ettMgr[_playerID].getComponent<rtc::Lua>().tableName]["moveDown"](_playerID, timeSinceLastFrame);
+            //_luaMgr.executeFunction("moveDown", _playerID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::SpaceShoot, [this](const sf::Event &, [[maybe_unused]] double timeSinceLastFrame) {

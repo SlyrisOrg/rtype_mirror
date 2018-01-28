@@ -13,7 +13,7 @@ namespace cfg::play
     static inline constexpr const char *UILayout = "RTUI.layout";
 
     //! Utils
-    static inline constexpr const unsigned int nbWidgets = rtype::UIWidgets::size();
+    static inline constexpr const unsigned int nbWidgets = rtype::ui::UIWidgets::size();
 }
 
 #endif //RTYPE_INGAMECONFIG_HPP

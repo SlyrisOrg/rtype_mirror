@@ -27,7 +27,10 @@ namespace rtype
         components::Layer<components::LayerType::Fog3>,
         components::FieldItem<rtype::demo::field::SubField>,
         components::FieldItem<ig::SubField>,
-        components::Lua>;
+        components::Lua,
+        components::Enemy,
+        components::Allied,
+        components::Stat>;
     using EntityManager = game::EntityManager<Components>;
     using Entity = EntityManager::Entity;
     namespace rtc = rtype::components;
