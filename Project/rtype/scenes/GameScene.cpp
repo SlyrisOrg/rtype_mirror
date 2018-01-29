@@ -173,11 +173,16 @@ namespace rtype
     {
         auto start = _setGUI();
         if (start) {
+            _luaMgr.loadAll();
+            _luaMgr.loadScript("player.lua");
             GameFactory::setEntityManager(&_ettMgr);
+            GameFactory::setLuaManager(&_luaMgr);
+            GameFactory::setQuadTree(&_quadTree);
             _loadAllSprites();
             _configureAnimations("Bheet");
             _configureAnimations("Kooy");
             _fieldSystem.configure();
+            _registerAdditionalLuaFunctions();
             _configureNetwork();
         }
     }
@@ -293,11 +298,11 @@ namespace rtype
                     val = ig::Animation::KooyLv1AttackTopDown;
                 else
                     val = ig::Animation::BheetLv1AttackTopDown;
-                size_t id = GameFactory::createPlayerSpaceShip(map,
+                Entity::ID id = GameFactory::createPlayerSpaceShip(map,
                                                                _animations.get(val),
                                                                _boundingBoxFactions[cur.factionName],
                                                                cur.pos,
-                                                               rtype::components::Stat{1,1,1,1,1});
+                                                               rtype::components::Stat{1,1,1,700,1});
                 _quadTree.insert(id);
                 _log(lg::Debug) << "createNickname: " << cur.nickName << std::endl;
                 _entities.emplace(cur.nickName, id);
@@ -400,25 +405,35 @@ namespace rtype
             this->_ioThread->sendPacket(game::Move{game::Move::Direction::Right, cfg::profil::nickname,
                                                    static_cast<float>(timeSinceLastFrame)});
             nbPacketsSend++;
-           auto[box, animation] = this->_ettMgr[_entities[cfg::profil::nickname]].getComponents<rtc::BoundingBox, rtc::Animation>();
-            sfutils::AnimatedSprite &anim = animation.anim;
-            auto limitX = (cfg::game::width - box.AABB.width);
-            if (box.AABB.left <= limitX) {
-                box.setPosition(static_cast<float>(box.getPosition().x + (450 * timeSinceLastFrame)),
-                                box.getPosition().y);
-                anim.setPosition(box.getPosition().x - box.relativeAABB.left,
-                                 box.getPosition().y - box.relativeAABB.top);
-                _quadTree.move(_entities[cfg::profil::nickname]);
-            }
+            Entity::ID ID = _entities[cfg::profil::nickname];
+            _luaMgr[_ettMgr[ID].getComponent<rtc::Lua>().tableName]["moveRight"](ID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Left, [this](const sf::Event &, double timeSinceLastFrame) {
+            this->_ioThread->sendPacket(game::Move{game::Move::Direction::Left,
+                                                   cfg::profil::nickname,
+                                                   static_cast<float>(timeSinceLastFrame)});
+            nbPacketsSend++;
+            Entity::ID ID = _entities[cfg::profil::nickname];
+            _luaMgr[_ettMgr[ID].getComponent<rtc::Lua>().tableName]["moveLeft"](ID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Up, [this](const sf::Event &, double timeSinceLastFrame) {
+            this->_ioThread->sendPacket(game::Move{game::Move::Direction::Up,
+                                                   cfg::profil::nickname,
+                                                   static_cast<float>(timeSinceLastFrame)});
+            nbPacketsSend++;
+            Entity::ID ID = _entities[cfg::profil::nickname];
+            _luaMgr[_ettMgr[ID].getComponent<rtc::Lua>().tableName]["moveUp"](ID, timeSinceLastFrame);
         });
 
         setKeyCallback(cfg::player::Down, [this](const sf::Event &, double timeSinceLastFrame) {
+            this->_ioThread->sendPacket(game::Move{game::Move::Direction::Down,
+                                                   cfg::profil::nickname,
+                                                   static_cast<float>(timeSinceLastFrame)});
+            nbPacketsSend++;
+            Entity::ID ID = _entities[cfg::profil::nickname];
+            _luaMgr[_ettMgr[ID].getComponent<rtc::Lua>().tableName]["moveDown"](ID, timeSinceLastFrame);
         });
     }
 
@@ -433,5 +448,10 @@ namespace rtype
                              pos.y - box.relativeAABB.top);
             _quadTree.move(_entities[cfg::profil::nickname]);
         }
+    }
+
+    void GameScene::_registerAdditionalLuaFunctions() noexcept
+    {
+        _luaMgr["quadMove"] = [this](Entity::ID id) { this->_quadTree.move(id); };
     }
 }
