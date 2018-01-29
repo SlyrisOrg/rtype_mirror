@@ -85,7 +85,8 @@ namespace scenario
                                          std::move(script),
                                          nbArg,
                                          std::move(args),
-                                         _textures);
+                                         _textures,
+                                         _evtMgr);
         }
 
         void _parseWait(const rapidjson::Document &document)

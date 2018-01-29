@@ -117,6 +117,34 @@
     },
 
     {
+      "spawn": {
+        "id": "boss",
+        "texture" : "Minion1",
+        "IA" : "stayAndShoot",
+        "argument" : {
+          "nbArg" : 3,
+          "Arg1" : 1350,
+          "Arg2" : 600,
+          "Arg3" : 3,
+          "comment" : "Arg1 : posTargetX, Arg2 : posTargetY, Arg3 : fire rate"
+        },
+        "startY" : 350,
+        "scale" : 1,
+        "stat" : {
+          "hp" : 1500,
+          "attack" : 20,
+          "defense" : 5,
+          "speed" :  750,
+          "shield" : 0
+        }
+      }
+    },
+
+    {
+      "waitKillAll" : null
+    },
+
+    {
       "stopMusic" : "CloseStarInstrumentalAmb"
     }
   ]
