@@ -13,6 +13,7 @@
 #include <rtype/config/Configuration.hpp>
 #include <rtype/scenes/EnumScenes.hpp>
 #include <rtype/protocol/MatchMaking.hpp>
+#include <rtype/components/Components.hpp>
 
 namespace gutils
 {
@@ -35,6 +36,16 @@ namespace gutils
 namespace gutils::evt
 {
     using namespace std::string_view_literals;
+
+    struct SetPvBoss final : public gutils::InsideEvents
+    {
+        SetPvBoss(rtype::components::Stat& _stat) : stat(_stat)
+        {
+
+        }
+
+        rtype::components::Stat& stat;
+    };
 
     struct GameHostPort final : public gutils::InsideEvents
     {

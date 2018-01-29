@@ -14,6 +14,7 @@
 #include <log/Logger.hpp>
 #include <rtype/entity/GameFactory.hpp>
 #include <rtype/utils/DemoUtils.hpp>
+#include <rtype/core/SafeCEGUI.hpp>
 
 namespace scenario
 {
@@ -175,7 +176,8 @@ namespace scenario
                        std::string &&script_,
                        unsigned int nbArg_,
                        std::vector<float> &&arg_,
-                       sfutils::ResourceManager<sf::Texture, rtype::demo::SpriteT> &textures_) noexcept
+                       sfutils::ResourceManager<sf::Texture, rtype::demo::SpriteT> &textures_,
+                       gutils::EventManager &evt) noexcept
                 : ID(std::move(_ID)),
                   texture(texture_),
                   script(script_),
@@ -184,7 +186,8 @@ namespace scenario
                   stat(stat_),
                   nbArgs(nbArg_),
                   args(arg_),
-                  textures(textures_)
+                  textures(textures_),
+                  _evtMgr(evt)
         {
         }
 
@@ -196,6 +199,9 @@ namespace scenario
         void run() noexcept final
         {
             rtype::demo::SpriteT sprite = rtype::demo::Sprite(texture);
+            if (ID == "boss")
+                _evtMgr.emit<gutils::evt::SetPvBoss>(stat);
+                //stat.hpBar = &static_cast<CEGUI::ProgressBar &>(_gui[ui::UIWidgets::PlayerPV]);
             rtype::GameFactory::createEnemy(textures.get(sprite), scale, startY, script, nbArgs, args, ID, stat);
         }
 
@@ -208,6 +214,7 @@ namespace scenario
         unsigned int nbArgs;
         std::vector<float> args;
         sfutils::ResourceManager<sf::Texture, rtype::demo::SpriteT> &textures;
+        gutils::EventManager &_evtMgr;
     };
 
     struct WaitKillAll final : ActionType

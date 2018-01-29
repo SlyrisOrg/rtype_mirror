@@ -168,6 +168,7 @@ namespace rtype
         DemoScene(Args &&...args) noexcept : gutils::AScene(std::forward<Args>(args)...),
                                              ActionTarget(cfg::player::playerInputs)
         {
+            _evtMgr.subscribe<gutils::evt::SetPvBoss>(*this);
         }
 
         ~DemoScene() noexcept = default;
@@ -183,7 +184,7 @@ namespace rtype
         bool mouseMoved(const gutils::evt::MouseMoved &evt) noexcept final;
         bool mousePressed(const gutils::evt::MouseButtonPressed &evt) noexcept final;
         bool mouseReleased(const gutils::evt::MouseButtonReleased &evt) noexcept final;
-
+        void receive(const gutils::evt::SetPvBoss &evt) noexcept;
     private:
         using UIGUI = BaseGUI<cfg::play::nbWidgets>;
         using AnimDemo = demo::AnimationSystem::Animation::EnumType;
