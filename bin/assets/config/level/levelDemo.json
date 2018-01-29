@@ -117,6 +117,118 @@
     },
 
     {
+      "spawn": {
+        "id": "boss",
+        "texture" : "Minion1",
+        "IA" : "stayAndShoot",
+        "argument" : {
+          "nbArg" : 3,
+          "Arg1" : 1350,
+          "Arg2" : 600,
+          "Arg3" : 3,
+          "comment" : "Arg1 : posTargetX, Arg2 : posTargetY, Arg3 : fire rate"
+        },
+        "startY" : 350,
+        "scale" : 1,
+        "stat" : {
+          "hp" : 1200,
+          "attack" : 20,
+          "defense" : 5,
+          "speed" :  750,
+          "shield" : 0
+        }
+      }
+    },
+
+    {
+      "waitKillAll" : null
+    },
+
+    {
+      "spawn": {
+        "id": "minion",
+        "texture" : "Minion4",
+        "IA" : "stayAndShoot",
+        "argument" : {
+          "nbArg" : 3,
+          "Arg1" : 1200,
+          "Arg2" : 350,
+          "Arg3" : 3,
+          "comment" : "Arg1 : posTargetX, Arg2 : posTargetY, Arg3 : fire rate"
+        },
+        "startY" : 350,
+        "scale" : 1.2,
+        "stat" : {
+          "hp" : 100,
+          "attack" : 20,
+          "defense" : 5,
+          "speed" :  250,
+          "shield" : 0
+        }
+      }
+    },
+
+    {
+      "waitKillAll" : null
+    },
+
+    {
+      "spawn": {
+        "id": "minion",
+        "texture" : "Minion5",
+        "IA" : "stayAndShoot",
+        "argument" : {
+          "nbArg" : 3,
+          "Arg1" : 1200,
+          "Arg2" : 350,
+          "Arg3" : 3,
+          "comment" : "Arg1 : posTargetX, Arg2 : posTargetY, Arg3 : fire rate"
+        },
+        "startY" : 350,
+        "scale" : 1.2,
+        "stat" : {
+          "hp" : 100,
+          "attack" : 20,
+          "defense" : 5,
+          "speed" :  250,
+          "shield" : 0
+        }
+      }
+    },
+
+    {
+      "waitKillAll" : null
+    },
+
+    {
+      "spawn": {
+        "id": "boss",
+        "texture" : "Boss",
+        "IA" : "stayAndShoot",
+        "argument" : {
+          "nbArg" : 3,
+          "Arg1" : 1000,
+          "Arg2" : 0,
+          "Arg3" : 3,
+          "comment" : "Arg1 : posTargetX, Arg2 : posTargetY, Arg3 : fire rate"
+        },
+        "startY" : 0,
+        "scale" : 1,
+        "stat" : {
+          "hp" : 5500,
+          "attack" : 20,
+          "defense" : 5,
+          "speed" :  250,
+          "shield" : 0
+        }
+      }
+    },
+
+    {
+      "waitKillAll" : null
+    },
+
+    {
       "stopMusic" : "CloseStarInstrumentalAmb"
     }
   ]

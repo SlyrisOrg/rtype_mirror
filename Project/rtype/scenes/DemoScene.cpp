@@ -113,6 +113,11 @@ namespace rtype
             rtc::Stat &stat = _ettMgr[_playerID].getComponent<rtc::Stat>();
             static_cast<CEGUI::ProgressBar &>(_gui[ui::UIWidgets::PlayerPV]).setProgress(
                     static_cast<float>(stat.hp) / stat.hpMax);
+            _ettMgr.for_each<rtc::Enemy, rtc::Stat>([this](Entity &ett){
+                auto &statt = ett.getComponent<rtc::Stat>();
+                if (statt.hpBar)
+                    statt.hpBar->setProgress(static_cast<float>(statt.hp) / statt.hpMax);
+            });
             if (stat.hp <= 0)
                 _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Login);
         }
@@ -505,5 +510,11 @@ namespace rtype
         _luaMgr["quadMove"] = [this](Entity::ID id) { this->_quadTree.move(id); };
         _luaMgr["quadRemove"] = [this](Entity::ID id) { this->_quadTree.remove(id); };
 
+    }
+
+    void DemoScene::receive(const gutils::evt::SetPvBoss &evt) noexcept {
+        auto& stat = evt.stat;
+        stat.hpBar = static_cast<CEGUI::ProgressBar *>(&_gui[ui::UIWidgets::PVBoss]);
+        stat.hpBar->setProgress(1);
     }
 }
