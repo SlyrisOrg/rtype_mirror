@@ -54,10 +54,10 @@ namespace rtype
         void _configureAnimations(const std::string &faction);
         void _parseConfigInside(const rapidjson::Document &doc, const std::string &string);
         void _loadSprite(const ig::Sprite &val);
-        void _animLoad(const ig::Sprite &sprite, const ig::Animation &anim,
+        void _animLoad(const ig::Sprite &sprite, const ig::Anim &anim,
                        [[maybe_unused]] sf::Vector2<unsigned int> &&sprInfo,
                        sf::Vector3<unsigned int> &&sheetInfo);
-        void _initFrames(const ig::Animation &anim,
+        void _initFrames(const ig::Anim &anim,
                          const ig::Sprite &sprite,
                          unsigned int nbColumns,
                          unsigned int nbLines,
@@ -123,24 +123,24 @@ namespace rtype
         std::unordered_map<int, std::pair<int, int>> _maulTransMap
             {
                 {
-                    ig::Anim::BheetLv1AttackTopDown,
-                    {ig::Anim::BheetLv1AttackTurnUp,      ig::Anim::BheetLv1AttackTurnDown}
+                    ig::Anim::MaulLv1TankTopDown,
+                    {ig::Anim::MaulLv1TankTurnUp,      ig::Anim::MaulLv1TankTurnDown}
                 },
                 {
-                    ig::Anim::BheetLv1AttackTurnUp,
-                    {ig::Anim::BheetLv1AttackTurnUp,      ig::Anim::BheetLv1AttackRedressUp}
+                    ig::Anim::MaulLv1TankTurnUp,
+                    {ig::Anim::MaulLv1TankTurnUp,      ig::Anim::MaulLv1TankRedressUp}
                 },
                 {
-                    ig::Anim::BheetLv1AttackTurnDown,
-                    {ig::Anim::BheetLv1AttackRedressDown, ig::Anim::BheetLv1AttackTurnDown}
+                    ig::Anim::MaulLv1TankTurnDown,
+                    {ig::Anim::MaulLv1TankRedressDown, ig::Anim::MaulLv1TankTurnDown}
                 },
                 {
-                    ig::Anim::BheetLv1AttackRedressUp,
-                    {ig::Anim::BheetLv1AttackTurnUp,      ig::Anim::BheetLv1AttackRedressUp}
+                    ig::Anim::MaulLv1TankRedressUp,
+                    {ig::Anim::MaulLv1TankTurnUp,      ig::Anim::MaulLv1TankRedressUp}
                 },
                 {
-                    ig::Anim::BheetLv1AttackRedressDown,
-                    {ig::Anim::BheetLv1AttackRedressDown, ig::Anim::BheetLv1AttackTurnDown}
+                    ig::Anim::MaulLv1TankRedressDown,
+                    {ig::Anim::MaulLv1TankRedressDown, ig::Anim::MaulLv1TankTurnDown}
                 }
             };
 

@@ -181,6 +181,7 @@ namespace rtype
             _loadAllSprites();
             _configureAnimations("Bheet");
             _configureAnimations("Kooy");
+            _configureAnimations("Maul");
             _fieldSystem.configure();
             _registerAdditionalLuaFunctions();
             _configureNetwork();
@@ -232,7 +233,7 @@ namespace rtype
             std::string_view animName = v.GetObject()["name"].GetString();
             ig::Sprite spriteValue = animName;
             _loadSprite(spriteValue);
-            ig::Animation animValue = animName;
+            ig::Anim animValue = animName;
             sf::Vector2u spriteInfo{v.GetObject()["spriteInfo"].GetObject()["width"].GetUint(),
                                     v.GetObject()["spriteInfo"].GetObject()["height"].GetUint()};
             sf::Vector3<unsigned int> sheetInfo{v.GetObject()["sheetInfo"].GetObject()["rows"].GetUint(),
@@ -255,7 +256,7 @@ namespace rtype
                         << " }" << std::endl;
     }
 
-    void GameScene::_animLoad(const ig::Sprite &sprite, const ig::Animation &anim,
+    void GameScene::_animLoad(const ig::Sprite &sprite, const ig::Anim &anim,
                               [[maybe_unused]] sf::Vector2<unsigned int> &&sprInfo,
                               sf::Vector3<unsigned int> &&sheetInfo)
     {
@@ -269,7 +270,7 @@ namespace rtype
         _log(lg::Debug) << "Loading Image " << val.toString() + ".png" << " successfully loaded." << std::endl;
     }
 
-    void GameScene::_initFrames(const ig::Animation &anim, const ig::Sprite &sprite, unsigned int nbColumns,
+    void GameScene::_initFrames(const ig::Anim &anim, const ig::Sprite &sprite, unsigned int nbColumns,
                                 unsigned int nbLines, unsigned int nbAnims)
     {
         auto &text = _animations.load(anim, &_textures.get(sprite));
@@ -293,11 +294,11 @@ namespace rtype
                 const auto &map = _factionTransitionMap[cur.factionName];
                 ig::AnimT val;
                 if (cur.factionName == "Bheet")
-                    val = ig::Animation::BheetLv1AttackTopDown;
+                    val = ig::Anim::BheetLv1AttackTopDown;
                 else if (cur.factionName == "Kooy")
-                    val = ig::Animation::KooyLv1AttackTopDown;
+                    val = ig::Anim::KooyLv1AttackTopDown;
                 else
-                    val = ig::Animation::BheetLv1AttackTopDown;
+                    val = ig::Anim::MaulLv1TankTopDown;
                 Entity::ID id = GameFactory::createPlayerSpaceShip(map,
                                                                _animations.get(val),
                                                                _boundingBoxFactions[cur.factionName],
