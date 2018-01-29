@@ -1,0 +1,114 @@
+{
+  "Animation": [
+    {
+      "name": "MaulLv1TankTopDown",
+      "action": "Idle",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 1,
+        "column": 1,
+        "nbSprite": 1
+      }
+    },
+    {
+      "name": "MaulLv1TankTurnUp",
+      "action": "MoveUp",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 3,
+        "column": 10,
+        "nbSprite": 30
+      }
+    },
+    {
+      "name": "MaulLv1TankTurnDown",
+      "action": "MoveDown",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 3,
+        "column": 10,
+        "nbSprite": 30
+      }
+    },
+    {
+      "name": "MaulLv1TankRedressUp",
+      "action": "StopMoveUp",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 3,
+        "column": 10,
+        "nbSprite": 30
+      }
+    },
+    {
+      "name": "MaulLv1TankRedressDown",
+      "action": "StopMoveDown",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 3,
+        "column": 10,
+        "nbSprite": 30
+      }
+    },
+    {
+      "name": "MaulLv1TankRollUp",
+      "action": "RollUp",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 6,
+        "column": 10,
+        "nbSprite": 60
+      }
+    },
+    {
+      "name": "MaulLv1TankRollDown",
+      "action": "RollDown",
+      "spriteInfo": {
+        "width": 200,
+        "height": 150
+      },
+      "sheetInfo": {
+        "rows": 6,
+        "column": 10,
+        "nbSprite": 60
+      }
+    }
+  ],
+
+  "Box": {
+    "position": {
+      "x": 39,
+      "y": 13
+    },
+    "size": {
+      "width": 117,
+      "height": 128
+    }
+  },
+
+  "Stat" : {
+    "hp" : 200,
+    "attack" : 15,
+    "defense" : 20,
+    "speed" :  500,
+    "shield" : 0
+  }
+}
