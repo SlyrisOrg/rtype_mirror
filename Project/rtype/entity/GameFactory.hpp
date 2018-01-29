@@ -67,7 +67,7 @@ namespace rtype
             return createSpaceShip(spaceID, std::forward<Args>(args)...);
         }
 
-        static Entity::ID createBullet(sf::Texture &texture,
+        static Entity::ID createBullet(Entity::ID shooter, sf::Texture &texture,
                                        const sf::FloatRect &AABB,
                                        Configuration::SoundEffect eff) noexcept
         {
@@ -84,6 +84,8 @@ namespace rtype
             ettMgr[bulletID].addComponent<rtc::Bullet>();
             ettMgr[bulletID].addComponent<rtc::SoundEffect>(eff);
             ettMgr[bulletID].addComponent<rtc::GameFieldLayer>();
+            lua::LuaManager &lua = *_lua;
+            lua["standardAttackBulletTable"]["init"](bulletID, shooter);
             return bulletID;
         }
 

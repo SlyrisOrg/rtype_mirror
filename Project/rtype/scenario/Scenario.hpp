@@ -14,6 +14,7 @@
 #include <rtype/entity/ECS.hpp>
 #include <rtype/lua/LuaManager.hpp>
 #include <rtype/utils/DemoUtils.hpp>
+#include <rtype/scenes/EnumScenes.hpp>
 
 
 namespace scenario
@@ -147,6 +148,9 @@ namespace scenario
             while(!(!_action) && !_action.isWaiting()) {
                 _action.execute();
             }
+
+            if (!_action)
+                _evtMgr.emit<gutils::evt::ChangeScene>(rtype::Scene::Login);
 
             _ettMgr.for_each<rtype::rtc::Enemy>([this, timeSinceLastFrame](rtype::Entity &ett){
                 auto &table = ett.getComponent<rtype::rtc::Lua>().tableName;

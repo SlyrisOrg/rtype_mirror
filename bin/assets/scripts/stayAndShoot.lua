@@ -24,12 +24,14 @@ function internal_init(meID, targetX_, targetY_, fireRate_)
 end
 
 function internal_collide(meID, collideID)
+    print("halooo");
     local ettMe = getEntity(meID);
     local ettCol = getEntity(collideID);
 
     if ettCol:hasAlliedComponent()
     then
     end
+    print("hollllaaaaa");
 end
 
 function internal_update(meID, timeSinceLastUpdate)
@@ -84,6 +86,10 @@ function internal_update(meID, timeSinceLastUpdate)
         end
         sprite:setPosition(Pos[x] - relativePos[x], Pos[y] - relativePos[y]);
         quadMove(meID);
+    end
+
+    if stat.hp <= 0 then
+        mark(meID);
     end
 end
 

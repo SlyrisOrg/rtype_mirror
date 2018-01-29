@@ -107,6 +107,7 @@ function internal_collide(meID, collideID)
     forced_move = true;
     nb_move = 7;
     hp = hp - (0.07 * getEntity(collideID):getStatComponent().attack) - getEntity(meID):getStatComponent().defense;
+    if hp < 0 then hp = 0 end;
     getEntity(meID):getStatComponent().hp = hp;
 end
 

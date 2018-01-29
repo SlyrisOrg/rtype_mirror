@@ -109,10 +109,20 @@ namespace rtype
         _collisionSystem.update(timeSinceLastFrame);
         _fieldSystem.update(timeSinceLastFrame);
         _scenario.update(timeSinceLastFrame);
-        rtc::Stat &stat = _ettMgr[_playerID].getComponent<rtc::Stat>();
-        static_cast<CEGUI::ProgressBar &>(_gui[ui::UIWidgets::PlayerPV]).setProgress(
-                static_cast<float>(stat.hp) / stat.hpMax);
-        _animSystem.update(timeSinceLastFrame);
+        if (_ettMgr.nbEntities() > 0) {
+            rtc::Stat &stat = _ettMgr[_playerID].getComponent<rtc::Stat>();
+            static_cast<CEGUI::ProgressBar &>(_gui[ui::UIWidgets::PlayerPV]).setProgress(
+                    static_cast<float>(stat.hp) / stat.hpMax);
+            if (stat.hp <= 0)
+                _evtMgr.emit<gutils::evt::ChangeScene>(Scene::Login);
+        }
+        if (_ettMgr.nbEntities() > 0) {
+            _animSystem.update(timeSinceLastFrame);
+            _ettMgr.for_each<rtc::BoundingBox>([this](Entity &ett){
+                if (ett.isMarked())
+                    _quadTree.remove(ett.getID());
+            });
+        }
         _ettMgr.sweepEntities();
     }
 
@@ -475,7 +485,7 @@ namespace rtype
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) &&
                 std::chrono::duration_cast<std::chrono::milliseconds>(res - _lastShoot) > 200ms) {
-                auto id = GameFactory::createBullet(_textures.get(demo::Sprite::Bullet), boundingBox.AABB,
+                auto id = GameFactory::createBullet(_playerID, _textures.get(demo::Sprite::Bullet), boundingBox.AABB,
                                                     Configuration::SoundEffect::Laser4);
                 this->_quadTree.insert(id);
                 _evtMgr.emit<gutils::evt::PlaySoundEffect>(_ettMgr[id].getComponent<rtc::SoundEffect>().se,
@@ -493,5 +503,7 @@ namespace rtype
     void DemoScene::_registerAdditionalLuaFunctions() noexcept
     {
         _luaMgr["quadMove"] = [this](Entity::ID id) { this->_quadTree.move(id); };
+        _luaMgr["quadRemove"] = [this](Entity::ID id) { this->_quadTree.remove(id); };
+
     }
 }

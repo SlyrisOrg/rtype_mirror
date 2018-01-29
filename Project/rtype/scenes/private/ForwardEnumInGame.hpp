@@ -15,6 +15,8 @@ namespace rtype::ui
          AllyPVTwo,
          AllyPVThree,
          AllyPVFour,
+         PVBoss,
+         LabelScore,
          ShieldPlayerOne
     );
 }

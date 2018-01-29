@@ -42,7 +42,7 @@ namespace rtype
                 for (size_t i = 0; i < size - 1; ++i){
                     Entity::ID curItem = itemsQ.front();
                     itemsQ.pop_front();
-                    for (auto &&item : itemsQ) {
+                    for (auto &&item : itemsQ) {;
                         if (_ettMgr[curItem].getComponent<rtc::BoundingBox>().AABB.intersects(
                                 _ettMgr[item].getComponent<rtc::BoundingBox>().AABB)) {
                             _lua[_ettMgr[curItem].getComponent<rtc::Lua>().tableName]["onCollide"](curItem, item);
