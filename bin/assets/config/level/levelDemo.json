@@ -208,7 +208,7 @@
         "argument" : {
           "nbArg" : 3,
           "Arg1" : 1000,
-          "Arg2" : 0,
+          "Arg2" : -200,
           "Arg3" : 3,
           "comment" : "Arg1 : posTargetX, Arg2 : posTargetY, Arg3 : fire rate"
         },
