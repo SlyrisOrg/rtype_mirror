@@ -57,6 +57,7 @@ namespace rtype
     public:
         ~IOThread() noexcept
         {
+            _io.stop();
             if (_thread.joinable()) {
                 _thread.join();
             }

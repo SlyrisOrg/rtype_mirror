@@ -92,7 +92,7 @@ namespace rtype
         _textures.clear();
         _quadTree.clear();
         _fieldSystem.clear();
-        _ioThread.release();
+        _ioThread.reset();
     }
 
     void GameScene::update(double timeSinceLastFrame) noexcept
